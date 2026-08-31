@@ -156,6 +156,15 @@
           :class="{ 'is-open': mineOpen }"
           @click="emit('openMine')"
         />
+        <button
+          type="button"
+          class="pc-tour-help"
+          aria-label="使用指引"
+          title="使用指引"
+          @click="emit('replayTour')"
+        >
+          ?
+        </button>
       </div>
     </div>
 
@@ -312,6 +321,7 @@ const emit = defineEmits([
   "reset",
   "openMine",
   "openBook",
+  "replayTour",
   "admin",
   "switchUser",
   "changeView"

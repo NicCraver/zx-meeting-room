@@ -21,6 +21,7 @@
   "dependencies": {
     "axios": "^1.13.2",
     "dayjs": "^1.11.19",
+    "driver.js": "^1.8.0",
     "element-plus": "^2.11.7",
     "vant": "^4.9.21",
     "vue": "^3.5.22",

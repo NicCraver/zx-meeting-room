@@ -22,6 +22,7 @@
       @reset="resetFilters"
       @open-mine="toggleMine"
       @open-book="openManualBooking"
+      @replay-tour="replayTour"
       @admin="router.push('/admin')"
       @switch-user="switchDemoUser"
       @change-view="onChangeView"
@@ -47,6 +48,7 @@
       @notice="onNotice"
     />
 
+    <BookingTour ref="tourRef" :ready="tourReady" />
     <CreateScheduleModal
       v-if="bookingRoom && bookingRange"
       :room="bookingRoom"
@@ -90,6 +92,7 @@ import { draftFromToolbar } from "./bookingDefaults";
 import { AcPageLoading } from "@/components/base";
 import PcToolbar from "./components/PcToolbar.vue";
 import BookingAiBar from "./components/BookingAiBar.vue";
+import BookingTour from "./components/BookingTour.vue";
 import PcTimelineBoard from "./components/PcTimelineBoard.vue";
 import CreateScheduleModal from "./components/CreateScheduleModal.vue";
 import MyBookingsModal from "./components/MyBookingsModal.vue";
@@ -97,6 +100,7 @@ import MyBookingsModal from "./components/MyBookingsModal.vue";
 import "./booking.css";
 
 const router = useRouter();
+const tourRef = ref(null);
 const isAdmin = ref(false);
 const bookingRoom = ref(null);
 const bookingRange = ref(null);
@@ -122,6 +126,9 @@ const {
   loading,
   reload
 } = board;
+
+const tourReady = computed(() => !loading.value);
+const replayTour = () => tourRef.value?.replay?.();
 
 const todayIso = shanghaiToday();
 
