@@ -139,14 +139,23 @@
       </div>
 
       <div class="pc-toolbar-end">
-        <button
-          type="button"
-          class="pc-link-btn"
+        <span class="pc-book-cta-wrap" title="+ 预约会议室">
+          <AcButton
+            id="tour-book-cta"
+            data-tour="book-cta"
+            class="pc-book-cta"
+            type="primary"
+            :title="bookCtaTitle"
+            @click="emit('openBook')"
+          />
+        </span>
+        <AcButton
+          type="primary"
+          plain
+          title="我的预定"
           :class="{ 'is-open': mineOpen }"
           @click="emit('openMine')"
-        >
-          我的预定
-        </button>
+        />
       </div>
     </div>
 
@@ -216,13 +225,7 @@
           <polyline points="15 18 9 12 15 6" />
         </svg>
       </button>
-      <button
-        type="button"
-        class="pc-text-btn pc-today-btn"
-        @click="emit('today')"
-      >
-        回到今天
-      </button>
+      <AcButton title="回到今天" @click="emit('today')" />
       <button
         type="button"
         class="pc-icon-btn"
@@ -268,17 +271,14 @@
       </div>
 
       <div class="pc-toolbar-end pc-toolbar-checks">
-        <button type="button" class="pc-link-btn" @click="emit('switchUser')">
-          切换用户
-        </button>
-        <button
+        <AcButton title="切换用户" @click="emit('switchUser')" />
+        <AcButton
           v-if="isAdmin"
-          type="button"
-          class="pc-link-btn"
+          type="primary"
+          plain
+          title="会议室管理"
           @click="emit('admin')"
-        >
-          会议室管理
-        </button>
+        />
       </div>
     </div>
   </div>
@@ -286,6 +286,7 @@
 
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { AcButton } from "@/components/base";
 
 const props = defineProps({
   dateLabel: { type: String, required: true },
@@ -310,10 +311,27 @@ const emit = defineEmits([
   "update:filters",
   "reset",
   "openMine",
+  "openBook",
   "admin",
   "switchUser",
   "changeView"
 ]);
+
+const compactCta = ref(
+  typeof window !== "undefined" ? window.matchMedia("(max-width: 720px)").matches : false
+);
+let ctaMql;
+if (typeof window !== "undefined") {
+  ctaMql = window.matchMedia("(max-width: 720px)");
+  const onCtaMql = (e) => {
+    compactCta.value = e.matches;
+  };
+  if (ctaMql.addEventListener) ctaMql.addEventListener("change", onCtaMql);
+  else ctaMql.addListener(onCtaMql);
+}
+const bookCtaTitle = computed(() =>
+  compactCta.value ? "+" : "+ 预约会议室"
+);
 
 const openMenu = ref(null);
 

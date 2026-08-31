@@ -1,6 +1,8 @@
 <template>
   <div
+    id="room-table"
     class="tl-board"
+    data-tour="room-table"
     :class="{ 'is-week': isWeek }"
     @pointermove="handlePointerMove"
     @pointerup="handlePointerUp"
@@ -15,6 +17,7 @@
             <span
               v-for="(d, i) in weekDates"
               :key="d.value"
+              v-show="!weekDayLabelHidden(i)"
               class="tl-axis-label tl-axis-label-week"
               :style="{ left: WEEK.pct(i, TL.DAY_MIN / 2) }"
             >
@@ -22,7 +25,7 @@
               <span class="tl-axis-date">{{ d.day }}</span>
             </span>
             <span
-              v-if="showNow"
+              v-if="showNow && !hideWeekNowLabel"
               class="tl-axis-now"
               :style="{ left: weekNowLeft }"
             >
@@ -147,12 +150,26 @@
             </div>
           </button>
 
-          <div class="tl-track" @pointerdown="handlePointerDown(room, $event)">
+          <div
+            class="tl-track"
+            :data-tour="room.id === rooms[0]?.id ? 'empty-slot' : undefined"
+            @pointerdown="handlePointerDown(room, $event)"
+            @pointermove="onTrackHover(room, $event)"
+            @pointerleave="clearHover"
+          >
             <span
               v-if="pastWidth"
               class="tl-past"
               :style="{ width: pastWidth }"
             />
+            <div
+              v-if="hoverHint && hoverHint.roomId === room.id && !selection"
+              class="tl-slot-hover"
+              title="点击预约此时段"
+              :style="hoverHint.style"
+            >
+              <span class="tl-slot-hover-plus" aria-hidden="true">+</span>
+            </div>
             <div
               v-for="ev in roomEvents(room)"
               :key="ev.key"
@@ -291,8 +308,10 @@ import {
   toMinutes,
   WEEK,
   weekDaySlotWindow,
+  weekDragSlot,
   weekExpandDays,
-  weekRangeLabel
+  weekRangeLabel,
+  minutesNear
 } from "../time";
 import { placeConfirmCard } from "../confirmPlace";
 import PcRoomPopover from "./PcRoomPopover.vue";
@@ -326,6 +345,7 @@ const nowMin = ref(shanghaiNowMinutes());
 const dragRef = ref(null);
 /** 拖选过程中最新选区（pointerup 时 props 可能尚未同步） */
 const lastSelection = ref(null);
+const hoverHint = ref(null);
 const tip = ref(null);
 const confirmBtn = ref(null);
 const confirmCard = ref(null);
@@ -383,6 +403,33 @@ const showNow = computed(() => {
   if (isWeek.value) return todayWeekIndex.value >= 0;
   return props.isToday;
 });
+
+const hideWeekNowLabel = computed(() => {
+  const sel = weekSelection.value;
+  if (!sel) return false;
+  const today = todayWeekIndex.value;
+  if (sel.startDay === today && minutesNear(sel.start, nowMin.value)) {
+    return true;
+  }
+  if (sel.endDay === today && minutesNear(sel.end, nowMin.value)) return true;
+  return false;
+});
+
+const weekDayLabelHidden = (dayIndex) => {
+  const noon = TL.DAY_MIN / 2;
+  if (
+    showNow.value &&
+    todayWeekIndex.value === dayIndex &&
+    minutesNear(noon, nowMin.value)
+  ) {
+    return true;
+  }
+  const sel = weekSelection.value;
+  if (!sel) return false;
+  if (sel.startDay === dayIndex && minutesNear(noon, sel.start)) return true;
+  if (sel.endDay === dayIndex && minutesNear(noon, sel.end)) return true;
+  return false;
+};
 
 const pastWidth = computed(() => {
   if (isWeek.value) {
@@ -536,6 +583,42 @@ const confirmRoom = computed(() => {
   return props.rooms.find((r) => r.id === sel.roomId) || null;
 });
 
+const clearHover = () => {
+  hoverHint.value = null;
+};
+
+const onTrackHover = (room, e) => {
+  if (dragRef.value || props.selection || props.bookingOpen) {
+    hoverHint.value = null;
+    return;
+  }
+  if (e.target.closest(".tl-event")) {
+    hoverHint.value = null;
+    return;
+  }
+  const track = e.currentTarget;
+  const rect = track.getBoundingClientRect();
+  if (isWeek.value) {
+    const { dayIndex, minute } = WEEK.pointAt(rect, e.clientX);
+    const start = minute;
+    const end = Math.min(TL.DAY_MIN, start + 60);
+    hoverHint.value = {
+      roomId: room.id,
+      style: WEEK.eventStyle(dayIndex, start, end)
+    };
+    return;
+  }
+  const start = TL.minuteAt(rect, e.clientX);
+  const end = Math.min(TL.DAY_MIN, start + 60);
+  hoverHint.value = {
+    roomId: room.id,
+    style: {
+      left: TL.pct(start),
+      width: TL.pct(end - start)
+    }
+  };
+};
+
 const handlePointerDown = (room, e) => {
   if (e.button !== 0) return;
   if (props.selection?.confirmed) {
@@ -579,12 +662,16 @@ const handlePointerDown = (room, e) => {
       emit("notice", "剩余空闲不足 30 分钟");
       return;
     }
+    const end = Math.min(high, start + TL.SNAP);
     dragRef.value = {
       view: "week",
       room,
+      track,
       rect,
       anchorDay: dayIndex,
       anchorMin: start,
+      start,
+      end,
       low,
       high,
       opts
@@ -595,7 +682,7 @@ const handlePointerDown = (room, e) => {
       startDay: dayIndex,
       endDay: dayIndex,
       start,
-      end: Math.min(high, start + TL.SNAP),
+      end,
       dates: day ? [day.date] : [],
       confirmed: false
     };
@@ -650,19 +737,28 @@ const handlePointerMove = (e) => {
   const drag = dragRef.value;
   if (!drag) return;
   if (drag.view === "week") {
+    if (drag.track) drag.rect = drag.track.getBoundingClientRect();
     const point = WEEK.pointAt(drag.rect, e.clientX);
-    let start = Math.min(drag.anchorMin, point.minute);
-    let end = Math.max(drag.anchorMin, point.minute);
-    if (end === start) end = start + TL.SNAP;
-    start = Math.max(drag.low, start);
-    end = Math.min(drag.high, end);
-    if (end - start < TL.SNAP) return;
+    const slot = weekDragSlot({
+      anchorDay: drag.anchorDay,
+      anchorMin: drag.anchorMin,
+      pointDay: point.dayIndex,
+      pointMin: point.minute,
+      prevStart: drag.start,
+      prevEnd: drag.end,
+      low: drag.low,
+      high: drag.high,
+      snap: TL.SNAP
+    });
+    if (!slot) return;
+    drag.start = slot.start;
+    drag.end = slot.end;
     const [startDay, endDay] = weekExpandDays(
       drag.room,
       drag.anchorDay,
       point.dayIndex,
-      start,
-      end,
+      slot.start,
+      slot.end,
       drag.opts
     );
     if (endDay < startDay) return;
@@ -671,8 +767,8 @@ const handlePointerMove = (e) => {
       roomId: drag.room.id,
       startDay,
       endDay,
-      start,
-      end,
+      start: slot.start,
+      end: slot.end,
       dates: (drag.room.weekDays || [])
         .slice(startDay, endDay + 1)
         .map((d) => d.date),

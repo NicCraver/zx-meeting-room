@@ -1,5 +1,6 @@
 <template>
   <div class="pc-app">
+    <AcPageLoading v-if="loading && !rooms.length" text="数据加载中..." />
     <PcToolbar
       :date-label="dateLabel"
       :days="days"
@@ -20,6 +21,7 @@
       @today="goToday"
       @reset="resetFilters"
       @open-mine="toggleMine"
+      @open-book="openManualBooking"
       @admin="router.push('/admin')"
       @switch-user="switchDemoUser"
       @change-view="onChangeView"
@@ -41,6 +43,7 @@
     <CreateScheduleModal
       v-if="bookingRoom && bookingRange"
       :room="bookingRoom"
+      :rooms="visibleRooms"
       :range-text="bookingRange.text"
       :date-label="bookingRange.dateLabel"
       :date-iso="bookingRange.dateIso"
@@ -76,6 +79,8 @@ import {
   weekRangeLabel,
   workweekOf
 } from "./time";
+import { draftFromToolbar } from "./bookingDefaults";
+import { AcPageLoading } from "@/components/base";
 import PcToolbar from "./components/PcToolbar.vue";
 import PcTimelineBoard from "./components/PcTimelineBoard.vue";
 import CreateScheduleModal from "./components/CreateScheduleModal.vue";
@@ -106,6 +111,7 @@ const {
   places,
   rooms,
   visibleRooms,
+  loading,
   reload
 } = board;
 
@@ -193,6 +199,36 @@ const toggleMine = async () => {
   }
   mine.open.value = true;
   await mine.reload();
+};
+
+const openManualBooking = () => {
+  const nowParts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Shanghai",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(new Date());
+  const pick = (type) => Number(nowParts.find((p) => p.type === type)?.value || 0);
+  const nowMin = pick("hour") * 60 + pick("minute");
+  const draft = draftFromToolbar({
+    nowMin,
+    todayIso: todayIso,
+    rooms: visibleRooms.value
+  });
+  if (!draft.room) {
+    showToastError("暂无会议室");
+    return;
+  }
+  bookingRoom.value = draft.room;
+  bookingRange.value = {
+    start: draft.start,
+    end: draft.end,
+    dates: draft.dates,
+    dateIso: draft.dateIso,
+    dateLabel: dateShort.value,
+    text: `${fromMinutes(draft.start)} - ${fromMinutes(draft.end)}`
+  };
+  selection.value = null;
 };
 
 const handleCommitRange = (room, picked) => {

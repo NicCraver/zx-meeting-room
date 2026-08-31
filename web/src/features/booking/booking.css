@@ -1412,6 +1412,14 @@
 
 .pc-toolbar-end { margin-left: auto; }
 
+.pc-book-cta-wrap {
+  flex-shrink: 0;
+}
+
+.pc-book-cta {
+  font-weight: 600;
+}
+
 .pc-toolbar-tools {
   display: flex;
   align-items: center;
@@ -1935,6 +1943,26 @@ button.tl-room-cell {
 .tl-event.mine .tl-event-time,
 .tl-event.mine .tl-event-title {
   color: var(--color-on-primary);
+}
+
+.tl-slot-hover {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(62, 126, 255, 0.1);
+  border: 1px dashed var(--color-primary);
+  pointer-events: none;
+}
+
+.tl-slot-hover-plus {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-primary);
+  line-height: 1;
 }
 
 .tl-picking {
