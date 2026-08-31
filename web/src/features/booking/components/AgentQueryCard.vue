@@ -7,7 +7,10 @@
           <strong>{{ room.roomName }}</strong>
           <span
             >{{ room.buildingName }} {{ room.floorName }} ·
-            {{ room.capacity }}人</span
+            {{ room.capacity }}人
+            <template v-if="(room.facilities || []).length">
+              · {{ room.facilities.join(" / ") }}
+            </template></span
           >
         </div>
         <div class="ai-buddy-occ">
@@ -43,6 +46,14 @@
             >
             <span class="ai-buddy-slot-cta">选这个</span>
           </button>
+          <button
+            v-if="(room.slots || [])[0]"
+            type="button"
+            class="ai-buddy-book-now"
+            @click="emit('book', room.slots[0])"
+          >
+            立即预约
+          </button>
         </div>
       </li>
     </ul>
@@ -58,7 +69,7 @@ defineProps({
   rooms: { type: Array, default: () => [] }
 });
 
-const emit = defineEmits(["pick"]);
+const emit = defineEmits(["pick", "book"]);
 
 function occLabel(room) {
   const n = (room.busy || []).length;

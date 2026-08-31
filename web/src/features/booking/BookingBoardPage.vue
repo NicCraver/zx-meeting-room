@@ -27,6 +27,13 @@
       @change-view="onChangeView"
     />
 
+    <BookingAiBar
+      :rooms="visibleRooms"
+      :board-date="boardDate"
+      @book="openFromAiDraft"
+      @open-mine="toggleMine"
+    />
+
     <PcTimelineBoard
       :rooms="visibleRooms"
       :selection="selection"
@@ -60,7 +67,7 @@
       @close="closeMine"
       @release="onRelease"
     />
-    <AiBuddyFab @booked="reload" />
+
   </div>
 </template>
 
@@ -82,10 +89,11 @@ import {
 import { draftFromToolbar } from "./bookingDefaults";
 import { AcPageLoading } from "@/components/base";
 import PcToolbar from "./components/PcToolbar.vue";
+import BookingAiBar from "./components/BookingAiBar.vue";
 import PcTimelineBoard from "./components/PcTimelineBoard.vue";
 import CreateScheduleModal from "./components/CreateScheduleModal.vue";
 import MyBookingsModal from "./components/MyBookingsModal.vue";
-import AiBuddyFab from "./components/AiBuddyFab.vue";
+
 import "./booking.css";
 
 const router = useRouter();
@@ -201,6 +209,25 @@ const toggleMine = async () => {
   await mine.reload();
 };
 
+const applyBookingDraft = (draft) => {
+  if (!draft?.room) {
+    showToastError("暂无会议室");
+    return;
+  }
+  bookingRoom.value = draft.room;
+  bookingRange.value = {
+    start: draft.start,
+    end: draft.end,
+    dates: draft.dates,
+    dateIso: draft.dateIso,
+    dateLabel: formatMonthDay(draft.dateIso),
+    text: `${fromMinutes(draft.start)} - ${fromMinutes(draft.end)}`
+  };
+  selection.value = null;
+};
+
+const openFromAiDraft = (draft) => applyBookingDraft(draft);
+
 const openManualBooking = () => {
   const nowParts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Asia/Shanghai",
@@ -219,16 +246,7 @@ const openManualBooking = () => {
     showToastError("暂无会议室");
     return;
   }
-  bookingRoom.value = draft.room;
-  bookingRange.value = {
-    start: draft.start,
-    end: draft.end,
-    dates: draft.dates,
-    dateIso: draft.dateIso,
-    dateLabel: dateShort.value,
-    text: `${fromMinutes(draft.start)} - ${fromMinutes(draft.end)}`
-  };
-  selection.value = null;
+  applyBookingDraft(draft);
 };
 
 const handleCommitRange = (room, picked) => {
