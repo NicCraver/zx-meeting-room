@@ -59,6 +59,7 @@
       :dates="bookingRange.dates"
       :start="bookingRange.start"
       :end="bookingRange.end"
+      :board-date="boardDate"
       :full-screen="false"
       @close="closeBooking"
       @success="handleBookingSuccess"

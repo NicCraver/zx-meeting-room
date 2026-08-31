@@ -28,6 +28,40 @@ export const canSubmitBooking = ({
   start,
   end,
   conflictText,
-  submitting
+  submitting,
+  occupancyLoading
 }) =>
-  Boolean(room && Number(end) - Number(start) >= 30 && !conflictText && !submitting);
+  Boolean(
+    room &&
+      Number(end) - Number(start) >= 30 &&
+      !conflictText &&
+      !submitting &&
+      !occupancyLoading
+  );
+
+/**
+ * 冲突校验必须用「预约日」的占用，不能拿看板日的 busyEvents 去套别的日期。
+ * 日视图 room.busyEvents 只属于 boardDateIso；周视图用 weekDays[].date。
+ * fetchedBusy 为 getBoard(预约日) 的结果（含空数组）；null 表示还没拉过。
+ * 返回 fetch:true 时调用方必须 getBoard(bookingDateIso) 再校验。
+ */
+export const occupancySource = ({
+  bookingDateIso,
+  boardDateIso,
+  room,
+  fetchedBusy = null
+}) => {
+  if (fetchedBusy !== null && fetchedBusy !== undefined) {
+    return { events: fetchedBusy, fetch: false };
+  }
+  if (!room) return { events: [], fetch: false };
+  if (Array.isArray(room.weekDays) && room.weekDays.length) {
+    const day = room.weekDays.find((d) => d.date === bookingDateIso);
+    if (day) return { events: day.busyEvents || [], fetch: false };
+    return { events: [], fetch: true };
+  }
+  if (bookingDateIso && boardDateIso && bookingDateIso === boardDateIso) {
+    return { events: room.busyEvents || [], fetch: false };
+  }
+  return { events: [], fetch: true };
+};

@@ -177,7 +177,8 @@ import { defaultBookingTitle } from "../defaultTitle";
 import {
   canSubmitBooking,
   conflictMessage,
-  findSlotOccupant
+  findSlotOccupant,
+  occupancySource
 } from "../bookingConflict";
 import { getUserId, getUserName, showToastError } from "@/utils";
 import { AcButton } from "@/components/base";
@@ -192,6 +193,7 @@ const props = defineProps({
   dates: { type: Array, default: () => [] },
   start: { type: Number, required: true },
   end: { type: Number, required: true },
+  boardDate: { type: String, default: "" },
   fullScreen: { type: Boolean, default: false }
 });
 
@@ -205,6 +207,7 @@ const submitting = ref(false);
 const formError = ref("");
 const conflictText = ref("");
 const extraBusy = ref(null);
+const occupancyLoading = ref(false);
 const hostName = getUserName() || "";
 const titlePlaceholder = defaultBookingTitle(hostName);
 
@@ -241,20 +244,22 @@ const bookingDates = computed(() =>
     : [dateIso.value]
 );
 
-const busyForConflict = computed(() => {
-  if (extraBusy.value) return extraBusy.value;
-  const room = selectedRoom.value;
-  if (!room) return [];
-  if (room.weekDays?.length) {
-    const day = room.weekDays.find((d) => d.date === dateIso.value);
-    return day?.busyEvents || [];
-  }
-  return room.busyEvents || [];
-});
+const occupancy = computed(() =>
+  occupancySource({
+    bookingDateIso: dateIso.value,
+    boardDateIso: props.boardDate,
+    room: selectedRoom.value,
+    fetchedBusy: extraBusy.value
+  })
+);
 
 const refreshConflict = () => {
+  if (occupancy.value.fetch) {
+    conflictText.value = "";
+    return;
+  }
   const occ = findSlotOccupant(
-    busyForConflict.value,
+    occupancy.value.events,
     startMin.value,
     endMin.value
   );
@@ -267,26 +272,35 @@ watch(
   { immediate: true }
 );
 
-watch(dateIso, async (next) => {
-  extraBusy.value = null;
-  const room = selectedRoom.value;
-  if (!room) return;
-  const onBoard =
-    next === props.dateIso &&
-    (room.busyEvents || room.weekDays?.some((d) => d.date === next));
-  if (onBoard) {
-    refreshConflict();
-    return;
-  }
-  try {
-    const data = await getBoard(next);
-    const match = (data?.rooms || []).find((r) => r.id === roomId.value);
-    extraBusy.value = match?.busyEvents || [];
-  } catch {
-    extraBusy.value = [];
-  }
-  refreshConflict();
-});
+watch(
+  () => [roomId.value, dateIso.value],
+  async () => {
+    extraBusy.value = null;
+    const src = occupancySource({
+      bookingDateIso: dateIso.value,
+      boardDateIso: props.boardDate,
+      room: selectedRoom.value,
+      fetchedBusy: null
+    });
+    if (!src.fetch) {
+      refreshConflict();
+      return;
+    }
+    occupancyLoading.value = true;
+    conflictText.value = "";
+    try {
+      const data = await getBoard(dateIso.value);
+      const match = (data?.rooms || []).find((r) => r.id === roomId.value);
+      extraBusy.value = match?.busyEvents || [];
+    } catch {
+      extraBusy.value = [];
+    } finally {
+      occupancyLoading.value = false;
+      refreshConflict();
+    }
+  },
+  { immediate: true }
+);
 
 const canSubmit = computed(() =>
   canSubmitBooking({
@@ -294,7 +308,8 @@ const canSubmit = computed(() =>
     start: startMin.value,
     end: endMin.value,
     conflictText: conflictText.value,
-    submitting: submitting.value
+    submitting: submitting.value,
+    occupancyLoading: occupancyLoading.value
   })
 );
 
