@@ -4,7 +4,7 @@
     title="我的预定"
     no-btn
     close-on-click-modal
-    width="520px"
+    width="560px"
     class="mine-bookings-dialog"
     @close="emit('close')"
   >
@@ -26,79 +26,109 @@
           </template>
         </AcEmpty>
         <template v-else>
-          <div class="mine-scope-tabs" role="tablist" aria-label="预定分类">
-            <button
-              type="button"
-              class="mine-scope-tab"
-              role="tab"
-              :aria-selected="tab === 'live'"
-              :class="{ active: tab === 'live' }"
-              @click="tab = 'live'"
-            >
-              可操作 {{ live.length }}
-            </button>
-            <button
-              type="button"
-              class="mine-scope-tab"
-              role="tab"
-              :aria-selected="tab === 'past'"
-              :class="{ active: tab === 'past' }"
-              @click="tab = 'past'"
-            >
-              历史 {{ past.length }}
-            </button>
-          </div>
-          <AcEmpty v-if="!visible.length" :title="tabEmptyTitle" />
-          <ul v-else class="mine-booking-list">
-            <li
-              v-for="b in visible"
-              :key="b.id"
-              class="mine-booking-card"
-              @click="emit('locate', b)"
-            >
-              <div class="booking-card-head">
-                <div class="booking-title" :title="b.title">{{ b.title }}</div>
-                <span
-                  class="room-status-badge"
-                  :class="statusBadgeClass(b.status)"
-                >
-                  {{ statusLabel(b.status) }}
-                </span>
-              </div>
-              <div class="booking-meta">
-                <div class="booking-meta-row">
-                  <span class="booking-meta-label">时间</span>
-                  <span class="booking-meta-value">
-                    {{ formatMineDate(b.date) }} {{ b.start }} - {{ b.end }}
-                  </span>
-                </div>
-                <div class="booking-meta-row">
-                  <span class="booking-meta-label">会议室</span>
-                  <span class="booking-meta-value">{{ formatMinePlace(b) }}</span>
-                </div>
-              </div>
-              <div
-                v-if="canChangeBooking(b.status)"
-                class="booking-actions"
-                @click.stop
+          <section
+            v-for="section in sections"
+            :key="section.key"
+            class="mine-section"
+          >
+            <h3 class="mine-section-title">{{ section.title }}</h3>
+            <ul class="mine-booking-list">
+              <li
+                v-for="b in section.items"
+                :key="b.id"
+                class="mine-booking-card"
+                :data-booking-title="b.title"
               >
-                <button
-                  type="button"
-                  class="booking-edit"
-                  @click="emit('edit', b)"
-                >
-                  修改
-                </button>
-                <button
-                  type="button"
-                  class="booking-release"
-                  @click="emit('release', b)"
-                >
-                  释放
-                </button>
-              </div>
-            </li>
-          </ul>
+                <div class="mine-card-main">
+                  <div
+                    class="mine-thumb"
+                    :class="{ preview: b.status === 'ongoing' }"
+                  >
+                    <svg
+                      class="mine-thumb-icon"
+                      viewBox="0 0 48 48"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <rect
+                        x="10"
+                        y="8"
+                        width="28"
+                        height="22"
+                        rx="3"
+                        fill="white"
+                        fill-opacity="0.22"
+                      />
+                      <rect
+                        x="14"
+                        y="12"
+                        width="20"
+                        height="14"
+                        rx="1.5"
+                        stroke="white"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M18 32h12M24 30v4"
+                        stroke="white"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M17 22.5l4-4 3.2 2.6 5.8-6.1"
+                        stroke="white"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    <span
+                      v-if="b.status === 'ongoing'"
+                      class="mine-thumb-preview"
+                    >
+                      <span class="i-carbon-view" aria-hidden="true" />
+                      预览
+                    </span>
+                  </div>
+                  <div class="mine-card-copy">
+                    <div class="mine-card-title-row">
+                      <span class="mine-card-name" :title="b.roomName">{{
+                        b.roomName
+                      }}</span>
+                      <span
+                        v-if="showStatusBadge(b.status)"
+                        class="room-status-badge"
+                        :class="statusBadgeClass(b.status)"
+                      >
+                        {{ statusLabel(b.status) }}
+                      </span>
+                    </div>
+                    <p class="mine-card-meta">时间：{{ formatMineWhen(b) }}</p>
+                    <p class="mine-card-meta">
+                      地址：{{ formatMineAddress(b) }}
+                    </p>
+                  </div>
+                </div>
+                <div class="booking-actions">
+                  <button
+                    v-if="canChangeBooking(b.status)"
+                    type="button"
+                    class="booking-action-btn"
+                    @click="emit('release', b)"
+                  >
+                    释放会议室
+                  </button>
+                  <button
+                    type="button"
+                    class="booking-action-btn"
+                    @click="emit('locate', b)"
+                  >
+                    会议详情
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </section>
         </template>
       </div>
     </div>
@@ -106,14 +136,13 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import { AcEmpty } from "@/components/base";
 import useMobileEnv from "@/composables/useMobileEnv";
 import {
   canChangeBooking,
-  defaultMineTab,
-  formatMineDate,
-  formatMinePlace,
+  formatMineAddress,
+  formatMineWhen,
   MINE_STATUS_LABEL,
   splitMineBookings
 } from "../mine";
@@ -127,20 +156,16 @@ const props = defineProps({
 const emit = defineEmits(["close", "release", "edit", "locate"]);
 
 const { mobileEnv } = useMobileEnv();
-const tab = ref(defaultMineTab(props.bookings));
 
 const split = computed(() => splitMineBookings(props.bookings));
 const live = computed(() => split.value.live);
 const past = computed(() => split.value.past);
-const visible = computed(() =>
-  tab.value === "live" ? live.value : past.value
-);
 
-watch(
-  () => props.loading,
-  (loading) => {
-    if (!loading) tab.value = defaultMineTab(props.bookings);
-  }
+const sections = computed(() =>
+  [
+    { key: "live", title: "已预定", items: live.value },
+    { key: "past", title: "已结束", items: past.value }
+  ].filter((section) => section.items.length)
 );
 
 const emptyHint = computed(() =>
@@ -149,11 +174,10 @@ const emptyHint = computed(() =>
     : "在时间轴上拖选空闲时段即可预定"
 );
 
-const tabEmptyTitle = computed(() =>
-  tab.value === "live" ? "暂无待开始或进行中的预定" : "没有历史预定"
-);
-
 const statusLabel = (status) => MINE_STATUS_LABEL[status] || status;
+
+const showStatusBadge = (status) =>
+  status === "ongoing" || status === "upcoming";
 
 const statusBadgeClass = (status) => {
   if (status === "ongoing" || status === "upcoming") return status;

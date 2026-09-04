@@ -28,6 +28,28 @@ export const formatMineDate = (iso) => {
   return formatMonthDay(iso);
 };
 
+/** 稿面日期：2026/09/04 */
+export const formatMineSlashDate = (iso) => {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso || "";
+  return iso.replaceAll("-", "/");
+};
+
+export const formatMineWhen = (booking) => {
+  const day = formatMineSlashDate(booking?.date);
+  const start = booking?.start || "";
+  const end = booking?.end || "";
+  const range = [start, end].filter(Boolean).join(" - ");
+  return [day, range].filter(Boolean).join(" ");
+};
+
+export const formatMineAddress = (booking) => {
+  const loc = [booking?.buildingName, booking?.floorName]
+    .map((x) => String(x || "").trim())
+    .filter(Boolean)
+    .join(" ");
+  return loc || "暂无";
+};
+
 export const formatMinePlace = (booking) => {
   const name = String(booking?.roomName || "").trim();
   const loc = [booking?.buildingName, booking?.floorName]

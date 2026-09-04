@@ -3,8 +3,11 @@ import { test } from "vitest";
 import {
   defaultMineTab,
   draftRangeFromMine,
+  formatMineAddress,
   formatMineDate,
   formatMinePlace,
+  formatMineSlashDate,
+  formatMineWhen,
   pickNextReleasable,
   roomFromMine,
   splitMineBookings
@@ -56,6 +59,26 @@ test("formatMineDate 用月日而不是 ISO", () => {
   assert.equal(formatMineDate("2026-09-04"), "9月4日");
   assert.equal(formatMineDate(""), "");
   assert.equal(formatMineDate("bad"), "bad");
+});
+
+test("formatMineSlashDate 用斜杠年月日", () => {
+  assert.equal(formatMineSlashDate("2026-09-04"), "2026/09/04");
+  assert.equal(formatMineSlashDate(""), "");
+});
+
+test("formatMineWhen 拼日期和时段", () => {
+  assert.equal(
+    formatMineWhen({ date: "2026-09-04", start: "11:00", end: "17:00" }),
+    "2026/09/04 11:00 - 17:00"
+  );
+});
+
+test("formatMineAddress 没楼层就写暂无", () => {
+  assert.equal(
+    formatMineAddress({ buildingName: "奥城", floorName: "4层" }),
+    "奥城 4层"
+  );
+  assert.equal(formatMineAddress({ buildingName: "", floorName: "" }), "暂无");
 });
 
 test("formatMinePlace 空楼层不留下空括号", () => {
