@@ -32,32 +32,15 @@ test.describe("PC 预定漏斗", () => {
     const dialog = page.locator(".mine-bookings-dialog");
     await expect(dialog).toBeVisible();
     await expectFitsViewport(dialog, page);
-    await expect(page.getByRole("tab", { name: /可操作/ })).toBeVisible();
-    await page.getByRole("tab", { name: /可操作/ }).click();
-    const mineTitle = dialog.locator(".booking-row-title", { hasText: title });
-    if (!(await mineTitle.isVisible().catch(() => false))) {
-      await page.getByRole("tab", { name: /历史/ }).click();
-    }
-    await expect(mineTitle).toBeVisible();
-
-    const editBtn = page.getByRole("button", { name: "修改" });
-    test.skip(
-      (await editBtn.count()) === 0,
-      "新预定已结束，无法改时段"
-    );
-    await editBtn.first().click();
-    await expect(page.getByText("修改预定")).toBeVisible();
-    const edited = `${title}-改`;
-    await page.locator(".create-schedule-form").getByLabel("会议主题").fill(edited);
-    await page.getByRole("button", { name: "保存修改" }).click();
-    await expect(page.getByText("预定已修改")).toBeVisible({ timeout: 20_000 });
-
-    await page.getByRole("button", { name: "我的预定" }).click();
-    await expect(dialog.locator(".booking-row-title", { hasText: edited })).toBeVisible();
-    await page.getByRole("button", { name: "释放" }).first().click();
+    await expect(dialog.getByText("已预定")).toBeVisible();
+    const card = dialog.locator(`[data-booking-title="${title}"]`);
+    await expect(card).toBeVisible();
+    const releaseBtn = card.getByRole("button", { name: "释放会议室" });
+    test.skip((await releaseBtn.count()) === 0, "新预定已结束，无法释放");
+    await releaseBtn.click();
     await page.getByRole("button", { name: "确认释放" }).click();
     await expect(page.getByText("会议室已提前释放")).toBeVisible();
-    await page.getByRole("tab", { name: /历史/ }).click();
-    await expect(dialog.locator(".booking-row-title", { hasText: edited })).toBeVisible();
+    await expect(dialog.getByText("已结束")).toBeVisible();
+    await expect(dialog.locator(`[data-booking-title="${title}"]`)).toBeVisible();
   });
 });

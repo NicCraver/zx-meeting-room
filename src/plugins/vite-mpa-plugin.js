@@ -2,7 +2,7 @@
  * MPA 多页面应用插件
  * 集成路由回退与平台识别（本项目只有 main / zx / m 三个入口）
  */
-export const mpaPlugin = (baseUrl = "/zx-ai-meet/") => {
+export const mpaPlugin = (baseUrl = "/ai-meet/") => {
   return {
     name: "mpa-unified",
     // 开发服务器中间件 —— 处理子入口的 history 路由回退

@@ -22,7 +22,7 @@ export default defineConfig({
   },
   webServer: {
     command: "pnpm dev",
-    url: `${baseURL}/zx-ai-meet/`,
+    url: `${baseURL}/ai-meet/`,
     reuseExistingServer: true,
     timeout: 120_000
   },

@@ -3,13 +3,13 @@ import { expect } from "@playwright/test";
 export const AUTH_QS =
   "zxAccountId=1880150187008081921&zxCorpId=6&zxClientType=app";
 
-export const meetingUrl = (path = "/zx-ai-meet/zx/") => {
+export const meetingUrl = (path = "/ai-meet/zx/") => {
   const sep = path.includes("?") ? "&" : "?";
   return `${path}${sep}${AUTH_QS}`;
 };
 
 /** 跳过首次使用指引；每条用例独立 origin。 */
-export async function openMeeting(page, path = "/zx-ai-meet/zx/") {
+export async function openMeeting(page, path = "/ai-meet/zx/") {
   await page.addInitScript(() => {
     try {
       localStorage.setItem("mr_tour_v1", "1");

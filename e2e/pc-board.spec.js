@@ -3,7 +3,7 @@ import { expectFitsViewport, openMeeting, waitPcBoard } from "./helpers.js";
 
 test.describe("PC 看板", () => {
   test("zx 入口加载会议室时间轴", async ({ page }) => {
-    await openMeeting(page, "/zx-ai-meet/zx/");
+    await openMeeting(page, "/ai-meet/zx/");
     await waitPcBoard(page);
     await expect(page.getByRole("button", { name: "+ 预约会议室" })).toBeVisible();
     await expect(page.getByRole("button", { name: "我的预定" })).toBeVisible();
@@ -12,7 +12,7 @@ test.describe("PC 看板", () => {
   });
 
   test("main 入口同样是预定看板", async ({ page }) => {
-    await openMeeting(page, "/zx-ai-meet/");
+    await openMeeting(page, "/ai-meet/");
     await waitPcBoard(page);
     await expect(page.locator('[data-tour="room-table"]')).toBeVisible();
   });
@@ -53,6 +53,6 @@ test.describe("PC 看板", () => {
     await expect(dialog).toBeVisible();
     await expect(page.getByText("加载中…")).toBeHidden({ timeout: 15_000 });
     await expectFitsViewport(dialog, page);
-    await expect(page.getByRole("tab", { name: /可操作/ })).toBeVisible();
+    await expect(dialog.getByText("我的预定").first()).toBeVisible();
   });
 });

@@ -21,7 +21,7 @@ import { mpaPlugin } from "./src/plugins/vite-mpa-plugin.js";
 import { createPagesPlugins } from "./src/plugins/vite-pages-config.js";
 
 // 部署 base，与 Jenkins moduleName / 测试机路径一致
-const base = "/zx-ai-meet/";
+const base = "/ai-meet/";
 
 // MPA 构建目标
 const buildTarget = process.env.BUILD_TARGET || "main";
