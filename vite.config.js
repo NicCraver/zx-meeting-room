@@ -103,7 +103,28 @@ export default defineConfig(({ mode }) => {
                   import.meta.dirname,
                   buildEntries[buildTarget]
                 )
+              },
+        output: {
+          // rolldown 的分组配置（不是 rollup 的 manualChunks，在 rolldown 下不生效）。
+          // 目的是让第三方库和业务代码分开缓存：业务改动不再使 vendor 整体失效。
+          // 注意：未加 element-plus 分组——试过之后 main/zx 首屏 gzip 涨了 24%~25%，
+          // 因为 element-plus 在多个路由里都有用到，分组会把全量组件强行合并进一个
+          // chunk，导致本该按路由异步加载的部分被拖进首屏 eager 图。element-plus
+          // 目前继续交给 rolldown 默认分包（按实际引用点自然拆分）。
+          advancedChunks: {
+            groups: [
+              {
+                name: "vendor-vue",
+                test: /node_modules[\\/](vue|@vue|vue-router)[\\/]/
+              },
+              { name: "vendor-vant", test: /node_modules[\\/]vant[\\/]/ },
+              {
+                name: "vendor-base",
+                test: /node_modules[\\/](axios|dayjs|is-mobile)[\\/]/
               }
+            ]
+          }
+        }
       }
     }
   };
