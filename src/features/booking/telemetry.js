@@ -43,7 +43,11 @@ const newEventId = () => {
 
 const pagePath = () => {
   if (typeof location === "undefined") return "/";
-  return location.pathname.replace(/^\/meeting/, "") || "/";
+  const prefix = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+  const path = prefix
+    ? location.pathname.replace(new RegExp(`^${prefix}`), "")
+    : location.pathname;
+  return path || "/";
 };
 
 const authQuery = () => {

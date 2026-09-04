@@ -37,7 +37,7 @@
 ## 多入口注意事项
 - 三个 HTML 入口各有独立 `main.js`。**新增全局插件、全局样式、全局指令必须同步三处**
   （`src/main.js`、`src/mpa/desktop/main.js`、`src/mpa/mobile/main.js`）。
-- 部署 base 固定 `/meeting/`，改动需同步 `vite.config.js` 与部署侧。
+- 部署 base 固定 `/zx-ai-meet/`（与 Jenkins `moduleName` / 测试机路径一致），改动需同步 `vite.config.js`。
 - 取 token 一律走 `src/utils/index.js` 的 `bootstrapAuthFromUrl()`；将来接 JSBridge 也只改这一个函数。
 
 ## 生成物勿动

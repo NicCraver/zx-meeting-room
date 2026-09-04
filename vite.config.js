@@ -20,8 +20,8 @@ import { autoExportAssets } from "./src/plugins/vite-auto-assets-exports.js";
 import { mpaPlugin } from "./src/plugins/vite-mpa-plugin.js";
 import { createPagesPlugins } from "./src/plugins/vite-pages-config.js";
 
-// 部署 base，改动需同步部署侧 nginx
-const base = "/meeting/";
+// 部署 base，与 Jenkins moduleName / 测试机路径一致
+const base = "/zx-ai-meet/";
 
 // MPA 构建目标
 const buildTarget = process.env.BUILD_TARGET || "main";

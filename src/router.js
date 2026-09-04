@@ -27,7 +27,7 @@ export const createAppRouter = (routes, subPath = "") => {
       error.message.includes("Failed to fetch dynamically imported module") ||
       error.message.includes("Importing a module script failed")
     ) {
-      fetch("/meeting/build_version", { cache: "no-cache" })
+      fetch(`${import.meta.env.BASE_URL}build_version`, { cache: "no-cache" })
         .then((x) => x.text())
         .then((v) => {
           // @ts-ignore JENKINS_BUILD_NUMBER 是 vite define 注入的编译期常量

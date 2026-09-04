@@ -9,7 +9,7 @@ test.describe("PC 管理端", () => {
     try {
       await page.waitForURL(/\/admin/, { timeout: 8_000 });
     } catch {
-      await page.goto(`/meeting/zx/admin?${AUTH_QS}`);
+      await page.goto(`/zx-ai-meet/zx/admin?${AUTH_QS}`);
     }
     await expect(page.getByRole("heading", { name: "会议室管理" })).toBeVisible();
     await expect(page.getByRole("button", { name: "新建会议室" }).first()).toBeVisible();

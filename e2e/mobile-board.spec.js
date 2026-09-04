@@ -5,7 +5,7 @@ test.describe("移动端看板", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
   test("m 入口加载房间列表与更多菜单", async ({ page }) => {
-    await openMeeting(page, "/meeting/m/");
+    await openMeeting(page, "/zx-ai-meet/m/");
     await waitMobileBoard(page);
     await expect(page.getByPlaceholder("搜索会议室")).toBeVisible();
     await page.getByRole("button", { name: "更多" }).click();
@@ -21,7 +21,7 @@ test.describe("移动端看板", () => {
   });
 
   test("点房间打开详情", async ({ page }) => {
-    await openMeeting(page, "/meeting/m/");
+    await openMeeting(page, "/zx-ai-meet/m/");
     await waitMobileBoard(page);
     await expect(page.locator(".m-room-card").first()).toBeVisible();
     await page.locator(".m-room-main").first().click();

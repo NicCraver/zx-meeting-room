@@ -2,7 +2,7 @@
 
 智能会议室前端。业务接口走编排仓 `apps/contact`（zx-contact，端口 **7004**），本仓库不再带 Node 服务端。
 
-Vue 3 + Vite 8，MPA 三入口：`index.html`（独立浏览器）/ `zx/`（PC WebView）/ `m/`（iOS·安卓 WebView），dev 端口 **6273**，base `/meeting/`。
+Vue 3 + Vite 8，MPA 三入口：`index.html`（独立浏览器）/ `zx/`（PC WebView）/ `m/`（iOS·安卓 WebView），dev 端口 **6273**，base `/zx-ai-meet/`。
 
 Vite 代理（`vite.config.js`）：
 
@@ -31,13 +31,13 @@ java "-DsocksNonProxyHosts=192.168.*|10.*|127.0.0.1|localhost" \
 # 2) 会议室前端
 cd apps/meeting
 pnpm i          # 首次
-pnpm dev        # http://localhost:6273/meeting/
+pnpm dev        # http://localhost:6273/zx-ai-meet/
 ```
 
 本机 query 鉴权（`AAuthFilter` 读 query，不读 header；`zxClientType` 必须是 `app` 或 `webapp`）：
 
 ```
-http://localhost:6273/meeting/?zxAccountId=1880150187008081921&zxCorpId=6&zxClientType=app
+http://localhost:6273/zx-ai-meet/?zxAccountId=1880150187008081921&zxCorpId=6&zxClientType=app
 ```
 
 | 字段 | 值 | 说明 |
@@ -47,7 +47,7 @@ http://localhost:6273/meeting/?zxAccountId=1880150187008081921&zxCorpId=6&zxClie
 | user.id | `1880150191235940353` | 企业内用户；管理员白名单 `meeting.admin.userIds` 用这个 |
 | 姓名 | 李权泓 | `/meetingRoom/me` 的 `userName`，`isAdmin=true` |
 
-PC 入口：`http://localhost:6273/meeting/zx/`（同一套 query）。移动：`/meeting/m/`。
+PC 入口：`http://localhost:6273/zx-ai-meet/zx/`（同一套 query）。移动：`/zx-ai-meet/m/`。
 
 助手芯片同样走 `/meetingApi` → Java `/meetingRoom`（含 `/agent/turn`）。
 

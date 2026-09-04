@@ -28,9 +28,9 @@ test("demoEnterUrl encodes identity query on the MPA base", () => {
   const url = demoEnterUrl(
     "zx-001",
     { userId: "demo-admin", userName: "李明", dept: "研发" },
-    "/meeting/"
+    "/zx-ai-meet/"
   );
-  assert.ok(url.startsWith("/meeting/?"));
+  assert.ok(url.startsWith("/zx-ai-meet/?"));
   const q = new URLSearchParams(url.slice(url.indexOf("?") + 1));
   assert.equal(q.get("corpId"), "zx-001");
   assert.equal(q.get("userId"), "demo-admin");
@@ -42,10 +42,10 @@ test("demoEnterUrl can land on admin path", () => {
   const url = demoEnterUrl(
     "zx-001",
     { userId: "demo-admin", userName: "李明", dept: "研发" },
-    "/meeting/zx/",
+    "/zx-ai-meet/zx/",
     "admin"
   );
-  assert.ok(url.startsWith("/meeting/zx/admin?"));
+  assert.ok(url.startsWith("/zx-ai-meet/zx/admin?"));
   const q = new URLSearchParams(url.slice(url.indexOf("?") + 1));
   assert.equal(q.get("userId"), "demo-admin");
 });
@@ -80,8 +80,8 @@ test("clearDemoSession drops identity keys only", () => {
 });
 
 test("demoHomeUrl normalizes trailing slash", () => {
-  assert.equal(demoHomeUrl("/meeting/zx"), "/meeting/zx/");
-  assert.equal(demoHomeUrl("/meeting/m/"), "/meeting/m/");
+  assert.equal(demoHomeUrl("/zx-ai-meet/zx"), "/zx-ai-meet/zx/");
+  assert.equal(demoHomeUrl("/zx-ai-meet/m/"), "/zx-ai-meet/m/");
 });
 
 test("destPath maps race pages off the booking home", () => {
@@ -92,8 +92,8 @@ test("destPath maps race pages off the booking home", () => {
 });
 
 test("javaEnterUrl uses zx query not demo identity", () => {
-  const url = javaEnterUrl("/meeting/");
-  assert.ok(url.startsWith("/meeting/?"));
+  const url = javaEnterUrl("/zx-ai-meet/");
+  assert.ok(url.startsWith("/zx-ai-meet/?"));
   const q = new URLSearchParams(url.slice(url.indexOf("?") + 1));
   assert.equal(q.get("zxAccountId"), "1880150187008081921");
   assert.equal(q.get("zxCorpId"), "6");
