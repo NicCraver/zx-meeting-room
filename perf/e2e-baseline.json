@@ -1,29 +1,29 @@
 {
-  "generatedAt": "2026-09-04T09:31:45.467Z",
+  "generatedAt": "2026-09-04T09:37:26.549Z",
   "entries": {
     "main": {
       "requests": 9,
       "transferBytes": 270247,
-      "domContentLoaded": 81.30000001192093,
-      "load": 82.70000000298023,
-      "fcp": 120,
-      "appFirstPaint": 79
+      "domContentLoaded": 89.5,
+      "load": 90.79999999701977,
+      "fcp": 128,
+      "appFirstPaint": 87.40000000596046
     },
     "zx": {
-      "requests": 9,
-      "transferBytes": 270247,
-      "domContentLoaded": 40.599999994039536,
-      "load": 41.79999999701977,
-      "fcp": null,
-      "appFirstPaint": 40.29999999701977
+      "requests": 6,
+      "transferBytes": 268119,
+      "domContentLoaded": 54.19999998807907,
+      "load": 54.69999998807907,
+      "fcp": 76,
+      "appFirstPaint": 53.099999994039536
     },
     "m": {
-      "requests": 9,
-      "transferBytes": 270247,
-      "domContentLoaded": 41.19999998807907,
-      "load": 41.3999999910593,
-      "fcp": null,
-      "appFirstPaint": 40.69999998807907
+      "requests": 3,
+      "transferBytes": 245237,
+      "domContentLoaded": 56,
+      "load": 57,
+      "fcp": 84,
+      "appFirstPaint": 54.400000005960464
     }
   }
 }
