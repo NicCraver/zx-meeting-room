@@ -1,0 +1,116 @@
+{
+  "generatedAt": "2026-09-04T09:24:22.690Z",
+  "entries": {
+    "main": {
+      "eagerRaw": 848545,
+      "eagerGzip": 269105,
+      "totalRaw": 1168444,
+      "files": [
+        {
+          "file": "index.html",
+          "raw": 970,
+          "gzip": 419
+        },
+        {
+          "file": "assets/main-B-VInMoY.js",
+          "raw": 234196,
+          "gzip": 70467
+        },
+        {
+          "file": "assets/rolldown-runtime-hePW80VL.js",
+          "raw": 716,
+          "gzip": 428
+        },
+        {
+          "file": "assets/http-D9Xa8pPu.js",
+          "raw": 265819,
+          "gzip": 96324
+        },
+        {
+          "file": "assets/css-D1QsGm6M.js",
+          "raw": 93997,
+          "gzip": 33170
+        },
+        {
+          "file": "assets/me-CA4TPyR8.js",
+          "raw": 1650,
+          "gzip": 916
+        },
+        {
+          "file": "assets/time-BMS00QoE.js",
+          "raw": 4295,
+          "gzip": 2032
+        },
+        {
+          "file": "assets/css-dKyg442A.css",
+          "raw": 27088,
+          "gzip": 5086
+        },
+        {
+          "file": "assets/main-C5XcTeAZ.css",
+          "raw": 219814,
+          "gzip": 60263
+        }
+      ]
+    },
+    "zx": {
+      "eagerRaw": 845977,
+      "eagerGzip": 267217,
+      "totalRaw": 1158181,
+      "files": [
+        {
+          "file": "zx/index.html",
+          "raw": 770,
+          "gzip": 420
+        },
+        {
+          "file": "assets/zx-dXdILVcC.js",
+          "raw": 237795,
+          "gzip": 72177
+        },
+        {
+          "file": "assets/rolldown-runtime-hePW80VL.js",
+          "raw": 716,
+          "gzip": 428
+        },
+        {
+          "file": "assets/css-DD0e0kM0.js",
+          "raw": 360236,
+          "gzip": 128924
+        },
+        {
+          "file": "assets/css-dKyg442A.css",
+          "raw": 27088,
+          "gzip": 5086
+        },
+        {
+          "file": "assets/zx-BEsT1mAn.css",
+          "raw": 219372,
+          "gzip": 60182
+        }
+      ]
+    },
+    "m": {
+      "eagerRaw": 780834,
+      "eagerGzip": 245012,
+      "totalRaw": 786709,
+      "files": [
+        {
+          "file": "m/index.html",
+          "raw": 1791,
+          "gzip": 833
+        },
+        {
+          "file": "assets/m-Ds2HqOa0.js",
+          "raw": 541309,
+          "gzip": 181335
+        },
+        {
+          "file": "assets/m-BTPvHukR.css",
+          "raw": 237734,
+          "gzip": 62844
+        }
+      ]
+    }
+  }
+}
