@@ -1,0 +1,223 @@
+@import "./styles/tokens.css";
+@import "./styles/element.css";
+@import "./styles/vant.css";
+
+/* 全局基础样式：三个入口共用 */
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--color-ink);
+  background: var(--color-canvas-soft);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+a:hover {
+  color: var(--color-primary-pressed);
+}
+
+button,
+[role="button"],
+.cursor-pointer {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sr-only:focus,
+.sr-only:focus-visible {
+  position: fixed;
+  left: 12px;
+  top: 12px;
+  z-index: var(--z-toast);
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 8px 12px;
+  overflow: visible;
+  clip: auto;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-radius: var(--radius-sm);
+}
+
+.el-dialog,
+.el-dialog.is-align-center {
+  border-radius: var(--zx-rounded-lg) !important;
+  box-shadow: var(--zx-shadow-heavy);
+  padding: 0;
+}
+
+.el-dialog__header {
+  padding: 0;
+  margin-right: 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.el-dialog .el-dialog__title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--color-ink);
+}
+
+.el-dialog__body {
+  padding: var(--spacing-2xl);
+  color: var(--color-body);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.el-dialog__footer {
+  padding: 0;
+  border-top: 1px solid var(--color-divider);
+  background: var(--color-canvas-soft);
+}
+
+.el-overlay {
+  background-color: var(--scrim) !important;
+}
+
+.el-message-box {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-heavy);
+  padding: 0;
+  border: none;
+}
+
+.el-message-box__header {
+  padding: var(--spacing-xl) var(--spacing-2xl);
+}
+
+.el-message-box__title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.el-message-box__content {
+  padding: 0 var(--spacing-2xl) var(--spacing-2xl);
+  color: var(--color-body);
+}
+
+.el-message-box__btns {
+  padding: var(--spacing-lg) var(--spacing-2xl);
+  background: var(--color-canvas-soft);
+}
+
+.el-message {
+  min-width: 240px;
+  padding: 10px 16px;
+  background: var(--color-canvas) !important;
+  border: none !important;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-light);
+  border-left: 3px solid var(--color-primary);
+}
+
+.el-message--success {
+  border-left-color: var(--color-success);
+}
+
+.el-message--error {
+  border-left-color: var(--color-danger);
+}
+
+.el-message--warning {
+  border-left-color: var(--color-warning);
+}
+
+.el-input__wrapper {
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 1px var(--color-hairline) inset;
+}
+
+.el-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--color-control) inset;
+}
+
+.el-input__wrapper.is-focus {
+  box-shadow:
+    0 0 0 1px var(--color-primary) inset,
+    0 0 0 2px var(--color-primary-bg) !important;
+}
+
+.el-input.is-disabled .el-input__wrapper {
+  background-color: var(--color-canvas-soft);
+  box-shadow: 0 0 0 1px var(--color-hairline) inset;
+}
+
+.el-table th.el-table__cell {
+  background: var(--color-canvas-soft);
+  color: var(--color-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+.el-table td.el-table__cell {
+  font-size: 14px;
+  line-height: 20px;
+  border-bottom-color: var(--color-divider);
+}
+
+.van-button {
+  font-weight: 400;
+}
+
+.van-button--primary {
+  background: var(--zx-color-primary);
+  border-color: var(--zx-color-primary);
+}

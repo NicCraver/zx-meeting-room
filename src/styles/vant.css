@@ -1,0 +1,53 @@
+/**
+ * Vant 主题覆盖（移动端）。只改 Vant CSS 变量。
+ */
+
+:root {
+  --van-primary-color: var(--zx-color-primary);
+  --van-success-color: var(--zx-color-success);
+  --van-danger-color: var(--zx-color-danger);
+  --van-warning-color: var(--zx-color-warning);
+
+  --van-text-color: var(--zx-color-ink);
+  --van-text-color-2: var(--zx-color-body);
+  --van-text-color-3: var(--zx-color-mute);
+  --van-border-color: var(--zx-color-hairline);
+  --van-background: var(--zx-color-canvas-soft);
+  --van-background-2: var(--zx-color-canvas);
+
+  --van-font-size-sm: var(--zx-font-size-caption);
+  --van-font-size-md: var(--zx-font-size-body-md);
+  --van-font-size-lg: var(--zx-font-size-title-sm);
+  --van-base-font: var(--zx-font-family);
+  --van-font-family: var(--zx-font-family);
+
+  --van-radius-sm: var(--zx-rounded-xs);
+  --van-radius-md: var(--zx-rounded-sm);
+  --van-radius-lg: var(--zx-rounded-lg);
+  --van-radius-max: var(--zx-rounded-full);
+
+  --van-padding-base: var(--zx-space-xs);
+  --van-padding-xs: var(--zx-space-md);
+  --van-padding-sm: var(--zx-space-lg);
+  --van-padding-md: var(--zx-space-xl);
+  --van-padding-lg: var(--zx-space-2xl);
+
+  --van-tabbar-height: 50px;
+  --van-nav-bar-height: var(--zx-layout-topbar-height);
+  --van-nav-bar-background: var(--zx-color-canvas);
+  --van-button-radius: var(--zx-rounded-sm);
+  --van-dialog-radius: var(--zx-rounded-lg);
+  --van-popup-round-radius: var(--zx-rounded-lg);
+  --van-overlay-background: var(--scrim);
+  --van-blue: var(--zx-color-primary);
+  --van-red: var(--zx-color-danger);
+  --van-orange: var(--zx-color-warning);
+}
+
+.van-button--small {
+  min-height: var(--zx-control-height);
+}
+
+.van-popup--round {
+  border-radius: var(--zx-rounded-lg) var(--zx-rounded-lg) 0 0;
+}

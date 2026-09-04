@@ -1,0 +1,193 @@
+/**
+ * 智信设计令牌 —— CSS 变量层
+ *
+ * `--zx-*` 是唯一事实来源（对齐 zhixin DESIGN.md / 原型 design/tokens.css）。
+ * `--color-*` 等旧名是别名，避免一次改光既有 `var(--color-*)`。
+ */
+
+:root {
+  /* ── 品牌主色 ───────────────────────────────── */
+  --zx-color-primary: #3e7eff;
+  --zx-color-primary-pressed: #2e6be6;
+  --zx-color-primary-border: #d8e5ff;
+  --zx-color-primary-bg: #ebf2ff;
+  --zx-color-on-primary: #ffffff;
+
+  /* ── 语义色 ─────────────────────────────────── */
+  --zx-color-success: #36d18e;
+  --zx-color-success-bg: #eafaf3;
+  --zx-color-warning: #feac00;
+  --zx-color-warning-bg: #fef6e5;
+  --zx-color-danger: #fa4141;
+  --zx-color-danger-pressed: #dd3636;
+  --zx-color-overdue: #ff950a;
+
+  /* ── 中性色 ─────────────────────────────────── */
+  --zx-color-ink: #1f2329;
+  --zx-color-body: #5d616b;
+  --zx-color-mute: #8f959e;
+  --zx-color-disabled: #c9cfd8;
+  --zx-color-control: #c9cfd8;
+  --zx-color-control-active: #e0e4e8;
+  --zx-color-hairline: #e1e5eb;
+  --zx-color-divider: #e7e7e7;
+  --zx-color-canvas: #ffffff;
+  --zx-color-canvas-soft: #f4f6f8;
+
+  /* ── 业务扩展色 ─────────────────────────────── */
+  --zx-color-biz-ts: #63e4d7;
+  --zx-color-biz-ts-bg: #effcfb;
+  --zx-color-biz-t0: #b080ff;
+  --zx-color-biz-t0-bg: #f7f2ff;
+  --zx-color-biz-external: #45c5f7;
+  --zx-color-biz-search-hit: #fdf3aa;
+
+  /* ── 渐变 ───────────────────────────────────── */
+  --zx-gradient-layout: linear-gradient(180deg, #ebf2ff 0%, #f5f8ff 100%);
+  --zx-gradient-primary-button: linear-gradient(
+    185deg,
+    #3e7eff 0%,
+    #2c65d6 100%
+  );
+  --zx-gradient-movebar: linear-gradient(90deg, #3e7eff 0%, #f5f8ff 100%);
+  --zx-gradient-add: linear-gradient(360deg, #e6edfa 0%, #dce7fc 100%);
+  --zx-gradient-header: linear-gradient(180deg, #d2e1ff 0%, #e4ecfb 100%);
+  --zx-gradient-title: linear-gradient(180deg, #e4ecfb 0%, #ecf1fa 100%);
+  --zx-gradient-tabs: linear-gradient(180deg, #ecf1fa 0%, #f4f6f8 100%);
+
+  /* ── 字体族 ─────────────────────────────────── */
+  --zx-font-family:
+    -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+    "Helvetica Neue", Arial, sans-serif;
+
+  --zx-font-size-display-lg: 28px;
+  --zx-line-height-display-lg: 40px;
+  --zx-letter-spacing-display-lg: -0.4px;
+
+  --zx-font-size-display-md: 24px;
+  --zx-line-height-display-md: 32px;
+  --zx-letter-spacing-display-md: -0.3px;
+
+  --zx-font-size-title-lg: 20px;
+  --zx-line-height-title-lg: 32px;
+
+  --zx-font-size-title-md: 18px;
+  --zx-line-height-title-md: 28px;
+
+  --zx-font-size-title-sm: 16px;
+  --zx-line-height-title-sm: 24px;
+
+  --zx-font-size-body-md: 14px;
+  --zx-line-height-body-md: 20px;
+
+  --zx-font-size-body-sm: 13px;
+  --zx-line-height-body-sm: 18px;
+
+  --zx-font-size-caption: 12px;
+  --zx-line-height-caption: 18px;
+
+  --zx-font-size-micro: 10px;
+  --zx-line-height-micro: 16px;
+
+  --zx-font-weight-regular: 400;
+  --zx-font-weight-medium: 500;
+  --zx-font-weight-semibold: 600;
+  --zx-font-weight-bold: 700;
+
+  --zx-rounded-none: 0px;
+  --zx-rounded-xs: 2px;
+  --zx-rounded-sm: 4px;
+  --zx-rounded-md: 6px;
+  --zx-rounded-lg: 8px;
+  --zx-rounded-pill: 20px;
+  --zx-rounded-full: 9999px;
+
+  --zx-space-xxs: 2px;
+  --zx-space-xs: 4px;
+  --zx-space-sm: 6px;
+  --zx-space-md: 8px;
+  --zx-space-lg: 12px;
+  --zx-space-xl: 16px;
+  --zx-space-2xl: 20px;
+
+  --zx-shadow-light: 0 0 4px 0 rgba(0, 0, 0, 0.1);
+  --zx-shadow-heavy: 0 0 10px rgba(0, 0, 0, 0.3);
+  --zx-shadow-split: 0 -1px 0 0 #f4f6f8;
+
+  --zx-layout-topbar-height: 48px;
+  --zx-layout-sidenav-width: 60px;
+  --zx-layout-menu-active-bar: 4px;
+  --zx-layout-container-max: 1200px;
+  --zx-control-height: 32px;
+  --zx-touch-target-min: 44px;
+
+  /* ── 旧名别名（会议室存量 CSS）───────────────── */
+  --color-primary: var(--zx-color-primary);
+  --color-primary-pressed: var(--zx-color-primary-pressed);
+  --color-primary-border: var(--zx-color-primary-border);
+  --color-primary-bg: var(--zx-color-primary-bg);
+  --color-on-primary: var(--zx-color-on-primary);
+
+  --color-ink: var(--zx-color-ink);
+  --color-body: var(--zx-color-body);
+  --color-mute: var(--zx-color-mute);
+  --color-disabled: var(--zx-color-disabled);
+  --color-control: var(--zx-color-control);
+  --color-control-active: var(--zx-color-control-active);
+  --color-hairline: var(--zx-color-hairline);
+  --color-divider: var(--zx-color-divider);
+  --color-canvas: var(--zx-color-canvas);
+  --color-canvas-soft: var(--zx-color-canvas-soft);
+
+  --color-success: var(--zx-color-success);
+  --color-success-bg: var(--zx-color-success-bg);
+  --color-warning: var(--zx-color-warning);
+  --color-warning-bg: var(--zx-color-warning-bg);
+  --color-danger: var(--zx-color-danger);
+  --color-danger-pressed: var(--zx-color-danger-pressed);
+  --color-overdue: var(--zx-color-overdue);
+
+  --color-biz-ts: var(--zx-color-biz-ts);
+  --color-biz-ts-bg: var(--zx-color-biz-ts-bg);
+  --color-biz-t0: var(--zx-color-biz-t0);
+  --color-biz-t0-bg: var(--zx-color-biz-t0-bg);
+  --color-biz-external: var(--zx-color-biz-external);
+  --color-biz-search-hit: var(--zx-color-biz-search-hit);
+
+  --font-family: var(--zx-font-family);
+
+  --spacing-xxs: var(--zx-space-xxs);
+  --spacing-xs: var(--zx-space-xs);
+  --spacing-sm: var(--zx-space-sm);
+  --spacing-md: var(--zx-space-md);
+  --spacing-lg: var(--zx-space-lg);
+  --spacing-xl: var(--zx-space-xl);
+  --spacing-2xl: var(--zx-space-2xl);
+
+  --radius-xs: var(--zx-rounded-xs);
+  --radius-sm: var(--zx-rounded-sm);
+  --radius-md: var(--zx-rounded-md);
+  --radius-lg: var(--zx-rounded-lg);
+  --radius-pill: var(--zx-rounded-pill);
+  --radius-full: var(--zx-rounded-full);
+
+  --shadow-light: var(--zx-shadow-light);
+  --shadow-heavy: var(--zx-shadow-heavy);
+  --shadow-split: var(--zx-shadow-split);
+
+  --topbar-height: var(--zx-layout-topbar-height);
+  --sidenav-width: var(--zx-layout-sidenav-width);
+  --menu-active-bar: var(--zx-layout-menu-active-bar);
+  --container-max: var(--zx-layout-container-max);
+  --control-height: var(--zx-control-height);
+
+  /* 会议室布局用，DESIGN.md 未列档，保留 */
+  --duration-fast: 150ms;
+  --duration: 200ms;
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --scrim: rgba(0, 0, 0, 0.45);
+  --z-nav: 20;
+  --z-overlay: 1000;
+  --z-toast: 2000;
+}

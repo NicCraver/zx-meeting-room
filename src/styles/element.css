@@ -1,0 +1,77 @@
+/**
+ * Element Plus 主题覆盖（PC 端）。
+ * 只改 Element 暴露的 CSS 变量。
+ */
+
+:root {
+  --el-color-primary: var(--zx-color-primary);
+  --el-color-primary-light-3: #6b9bff;
+  --el-color-primary-light-5: #8fb4ff;
+  --el-color-primary-light-7: var(--zx-color-primary-border);
+  --el-color-primary-light-9: var(--zx-color-primary-bg);
+  --el-color-primary-dark-2: var(--zx-color-primary-pressed);
+
+  --el-color-success: var(--zx-color-success);
+  --el-color-success-light-9: var(--zx-color-success-bg);
+  --el-color-warning: var(--zx-color-warning);
+  --el-color-danger: var(--zx-color-danger);
+  --el-color-error: var(--zx-color-danger);
+
+  --el-text-color-primary: var(--zx-color-ink);
+  --el-text-color-regular: var(--zx-color-body);
+  --el-text-color-secondary: var(--zx-color-mute);
+  --el-text-color-placeholder: var(--zx-color-mute);
+  --el-text-color-disabled: var(--zx-color-disabled);
+
+  --el-border-color: var(--zx-color-hairline);
+  --el-border-color-light: var(--zx-color-hairline);
+  --el-border-color-lighter: var(--zx-color-divider);
+  --el-border-color-extra-light: var(--zx-color-divider);
+  --el-fill-color-light: var(--zx-color-canvas-soft);
+  --el-fill-color-blank: var(--zx-color-canvas);
+  --el-bg-color: var(--zx-color-canvas);
+  --el-bg-color-page: var(--zx-color-canvas-soft);
+
+  --el-font-family: var(--zx-font-family);
+  --el-font-size-base: var(--zx-font-size-body-md);
+  --el-font-size-small: var(--zx-font-size-caption);
+
+  --el-component-size: var(--zx-control-height);
+  --el-border-radius-base: var(--zx-rounded-sm);
+  --el-border-radius-small: var(--zx-rounded-xs);
+  --el-border-radius-round: var(--zx-rounded-pill);
+
+  --el-box-shadow-light: var(--zx-shadow-light);
+  --el-box-shadow: var(--zx-shadow-light);
+  --el-box-shadow-dark: var(--zx-shadow-heavy);
+  --el-overlay-color-lighter: var(--scrim);
+  --el-dialog-border-radius: var(--zx-rounded-lg);
+}
+
+.el-button--primary:not(.is-disabled):hover {
+  background-color: var(--zx-color-primary);
+  border-color: var(--zx-color-primary);
+}
+
+.el-button--primary:not(.is-disabled):active {
+  background-color: var(--zx-color-primary-pressed);
+  border-color: var(--zx-color-primary-pressed);
+}
+
+.el-input__wrapper.is-focus {
+  box-shadow:
+    0 0 0 1px var(--zx-color-primary) inset,
+    0 0 0 2px var(--zx-color-primary-bg);
+}
+
+.el-table {
+  --el-table-header-bg-color: var(--zx-color-canvas-soft);
+  --el-table-border-color: var(--zx-color-divider);
+  --el-table-row-hover-bg-color: var(--zx-color-canvas-soft);
+}
+
+.el-table th.el-table__cell {
+  font-size: var(--zx-font-size-caption);
+  font-weight: var(--zx-font-weight-regular);
+  color: var(--zx-color-body);
+}
