@@ -23,7 +23,8 @@
     "test:e2e:headed": "playwright test --headed --slow-mo=400",
     "test:e2e:ui": "playwright test --ui",
     "format": "prettier --write src/",
-    "perf:size": "node scripts/perf-size.mjs"
+    "perf:size": "node scripts/perf-size.mjs",
+    "perf:e2e": "playwright test --config playwright.perf.config.js"
   },
   "dependencies": {
     "axios": "^1.13.2",

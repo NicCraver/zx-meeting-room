@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-09-04T09:31:45.467Z",
+  "entries": {
+    "main": {
+      "requests": 9,
+      "transferBytes": 270247,
+      "domContentLoaded": 81.30000001192093,
+      "load": 82.70000000298023,
+      "fcp": 120,
+      "appFirstPaint": 79
+    },
+    "zx": {
+      "requests": 9,
+      "transferBytes": 270247,
+      "domContentLoaded": 40.599999994039536,
+      "load": 41.79999999701977,
+      "fcp": null,
+      "appFirstPaint": 40.29999999701977
+    },
+    "m": {
+      "requests": 9,
+      "transferBytes": 270247,
+      "domContentLoaded": 41.19999998807907,
+      "load": 41.3999999910593,
+      "fcp": null,
+      "appFirstPaint": 40.69999998807907
+    }
+  }
+}
