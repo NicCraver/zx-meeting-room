@@ -85,7 +85,9 @@ export default defineConfig(({ mode }) => {
       environment: "node"
     },
     build: {
-      assetsInlineLimit: 0,
+      // 9 个 SvgIcon 图标 0.23–2.15 KB，内联成 data URI 可省下 9 次 WebView 往返；
+      // SvgIcon 的 mask-image 已按 data URL 处理引号（见 SvgIcon.vue 注释）
+      assetsInlineLimit: 4096,
       ...(mode !== "development" && { outDir: `dist_${buildTarget}` }),
       rollupOptions: {
         input:
