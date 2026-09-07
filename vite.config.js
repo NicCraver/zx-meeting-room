@@ -111,7 +111,10 @@ export default defineConfig(({ mode }) => {
           // 因为 element-plus 在多个路由里都有用到，分组会把全量组件强行合并进一个
           // chunk，导致本该按路由异步加载的部分被拖进首屏 eager 图。element-plus
           // 目前继续交给 rolldown 默认分包（按实际引用点自然拆分）。
-          advancedChunks: {
+          // 用 codeSplitting 而不是 advancedChunks：后者已标记 @deprecated（见
+          // rolldown 类型定义 define-config-*.d.mts），两者同时设置时 advancedChunks
+          // 会被忽略，且 groups 的 { name, test } 结构完全一致，直接改名即可。
+          codeSplitting: {
             groups: [
               {
                 name: "vendor-vue",
