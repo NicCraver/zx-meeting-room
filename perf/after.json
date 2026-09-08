@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-09-08T08:47:12.319Z",
+  "generatedAt": "2026-09-08T09:18:36.995Z",
   "entries": {
     "main": {
-      "eagerRaw": 856909,
-      "eagerGzip": 272429,
-      "totalRaw": 1171043,
+      "eagerRaw": 858153,
+      "eagerGzip": 272812,
+      "totalRaw": 1177078,
       "files": [
         {
           "file": "index.html",
-          "raw": 1327,
-          "gzip": 472
+          "raw": 1332,
+          "gzip": 479
         },
         {
-          "file": "assets/main-DyTEtU1c.js",
-          "raw": 217585,
-          "gzip": 64545
+          "file": "assets/main-pxHRgSwu.js",
+          "raw": 218114,
+          "gzip": 64722
         },
         {
           "file": "assets/rolldown-runtime-hePW80VL.js",
@@ -37,19 +37,19 @@
           "gzip": 23762
         },
         {
-          "file": "assets/http-BGxke6tr.js",
-          "raw": 115345,
-          "gzip": 40313
+          "file": "assets/http-CvikznDU.js",
+          "raw": 115693,
+          "gzip": 40454
         },
         {
-          "file": "assets/css-DsYMtqWO.js",
-          "raw": 75283,
+          "file": "assets/css-DGKWzsMl.js",
+          "raw": 75286,
           "gzip": 26178
         },
         {
-          "file": "assets/me-CtlHfV4j.js",
-          "raw": 1650,
-          "gzip": 916
+          "file": "assets/session-Dfm71F5O.js",
+          "raw": 1528,
+          "gzip": 860
         },
         {
           "file": "assets/time-BMS00QoE.js",
@@ -67,26 +67,26 @@
           "gzip": 5086
         },
         {
-          "file": "assets/main-B-4x_jRV.css",
-          "raw": 150583,
-          "gzip": 25349
+          "file": "assets/main-Cy8OE9ZX.css",
+          "raw": 151064,
+          "gzip": 25463
         }
       ]
     },
     "zx": {
-      "eagerRaw": 761642,
-      "eagerGzip": 226547,
-      "totalRaw": 1068224,
+      "eagerRaw": 761722,
+      "eagerGzip": 226578,
+      "totalRaw": 1068304,
       "files": [
         {
           "file": "zx/index.html",
           "raw": 949,
-          "gzip": 451
+          "gzip": 452
         },
         {
-          "file": "assets/zx-WceBorCQ.js",
+          "file": "assets/zx-BkVD7fKi.js",
           "raw": 221056,
-          "gzip": 65960
+          "gzip": 65955
         },
         {
           "file": "assets/rolldown-runtime-hePW80VL.js",
@@ -104,9 +104,9 @@
           "gzip": 23762
         },
         {
-          "file": "assets/css-pVYMzvMI.js",
-          "raw": 191379,
-          "gzip": 65645
+          "file": "assets/css-BTKfsuoZ.js",
+          "raw": 191459,
+          "gzip": 65680
         },
         {
           "file": "assets/css-dKyg442A.css",
@@ -121,19 +121,19 @@
       ]
     },
     "m": {
-      "eagerRaw": 769867,
-      "eagerGzip": 242984,
-      "totalRaw": 769867,
+      "eagerRaw": 760567,
+      "eagerGzip": 241495,
+      "totalRaw": 760567,
       "files": [
         {
           "file": "m/index.html",
           "raw": 2243,
-          "gzip": 925
+          "gzip": 923
         },
         {
-          "file": "assets/m--6GS0aO8.js",
-          "raw": 338476,
-          "gzip": 107562
+          "file": "assets/m-DnLys-95.js",
+          "raw": 338556,
+          "gzip": 107601
         },
         {
           "file": "assets/rolldown-runtime-hePW80VL.js",
@@ -161,9 +161,9 @@
           "gzip": 34014
         },
         {
-          "file": "assets/m-DJbqdEyN.css",
-          "raw": 168503,
-          "gzip": 28037
+          "file": "assets/m-Dxvs_NSo.css",
+          "raw": 159123,
+          "gzip": 26511
         }
       ]
     }

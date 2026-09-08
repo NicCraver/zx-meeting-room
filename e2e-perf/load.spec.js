@@ -89,7 +89,17 @@ test.describe("首屏加载打点", () => {
   }
 
   test.afterAll(() => {
-    const out = path.resolve(import.meta.dirname, "../perf/e2e-latest.json");
+    // 三个入口必须全部拿到数据才落盘：只要有一个 spec 失败，写出去的就是一份
+    // 看着完整、其实缺一角的假快照——比不写更危险，宁可不写。
+    if (Object.keys(results).length !== ENTRIES.length) {
+      console.warn(
+        `[perf:e2e] 只拿到 ${Object.keys(results).length}/${ENTRIES.length} 个入口的数据，跳过写快照`
+      );
+      return;
+    }
+    // 默认写去 gitignored 的临时路径，不动仓库里追踪的 perf/e2e-baseline.json /
+    // perf/e2e-after.json——那两份是里程碑快照，日常跑 pnpm perf:e2e 不该覆盖它们。
+    const out = path.resolve(import.meta.dirname, "../perf/.last/e2e.json");
     fs.mkdirSync(path.dirname(out), { recursive: true });
     fs.writeFileSync(
       out,

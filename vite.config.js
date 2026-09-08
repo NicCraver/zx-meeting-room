@@ -34,15 +34,29 @@ const buildEntries = {
 /**
  * 按入口裁掉用不到的 UI 库——但两侧不对称：
  *
- * - zx 入口恒为 pc 形态 → 不需要 vant，JS 与样式两个别名都裁：已确认 src 里
- *   没有任何 `<van-` 模板会被自动导入，Vant 组件在 zx 上不可达，唯一受影响的
- *   只有三个 main.js 里显式引入的 vant 样式，裁掉是安全的。
- * - m 入口只裁 JS 别名（转发 dialog.js 里不可达的 ElMessage / ElMessageBox 到
- *   Vant），**不裁 element-plus 样式**：DateTimeRangeField.vue 在所有入口
- *   （包括 m）都无条件渲染真实的 el-date-picker / el-popover /
- *   el-config-provider，裁掉样式会直接导致这几个组件在 m 上样式丢失，是真实的
- *   视觉回归，之前已实测验证（167 处 → 3 处），故 m 只做 JS 重定向。
- *   注：m 上这条裸标识符别名不止转发 ElMessage / ElMessageBox——同一个
+ * - zx 入口恒为 pc 形态 → dialog.js 里的 Vant 分支不可达，裁两个别名：`vant` 裸
+ *   specifier（转发 dialog.js 的具名导入）+ `vant/es/<dir>/style` 精确路径（三处
+ *   main.js 里 `vant/es/toast/style` / `vant/es/dialog/style` 这两条静态样式
+ *   import）。**这两个别名只覆盖以上这三处已知的静态 import**，覆盖不到
+ *   unplugin-vue-components 的 VantResolver 自动导入——它给组件生成的是
+ *   `from: "vant/es"`、给样式生成的是 `vant/es/<dir>/style/index`（带 /index），
+ *   两个别名都不匹配。真正撑住 zx 裁库收益的不是这两个别名，而是「src 里没有
+ *   任何 `<van-` 模板」这条代码事实：一旦有人写了 `<van-button>`，VantResolver
+ *   会绕开两个别名直接引入完整 Vant，构建照样通过，字节收益悄悄消失而没有任何
+ *   报错。这条事实现在由 `build/shims/tests/import-coverage.test.js` 里的守卫
+ *   测试断言，不是靠别名本身保证的。
+ * - m 入口裁 JS 别名（转发 dialog.js 里不可达的 ElMessage / ElMessageBox 到
+ *   Vant）+ 两条具名列出的 element-plus 弹窗样式深路径（message /
+ *   message-box）：这两条样式在 m 上唯一的消费者就是 dialog.js 的 Element Plus
+ *   分支，已经被上面那条 JS 别名整体重定向到 Vant，样式因此是确定的死代码，
+ *   实测裁掉后 CSS 体积下降、且不影响 date-picker 家族（167 处 el-popper /
+ *   el-picker-panel / el-date-editor 类名不变）。**不裁其余 element-plus
+ *   样式**：`DateTimeRangeField.vue` 在所有入口（包括 m）都无条件渲染真实的
+ *   el-date-picker / el-popover / el-config-provider，裁掉这些样式会直接导致
+ *   组件在 m 上样式丢失，是真实的视觉回归，之前已实测验证过一次（167 处 →
+ *   3 处）。**样式别名必须逐条具名列出，绝不能用通配符**——通配符会把
+ *   date-picker 家族一起裁掉，就是上面那次回归的成因。
+ *   注：m 上裸标识符别名不止转发 ElMessage / ElMessageBox——同一个
  *   `element-plus` specifier 下的 ElScrollbar 也会被替身接管，它只被
  *   src/features/agent/components/BookingAiBar.vue 用到，而该组件在 m 入口不可达，
  *   所以目前是安全的死代码路径，别以为别名只影响弹框/toast 两个函数。
@@ -52,7 +66,19 @@ const shim = (name) => resolve(import.meta.dirname, `build/shims/${name}`);
 
 const uiTrimAliases = () => {
   if (buildTarget === "m") {
-    return [{ find: /^element-plus$/, replacement: shim("element-plus.js") }];
+    return [
+      { find: /^element-plus$/, replacement: shim("element-plus.js") },
+      // 具名列出，不用通配符：只裁 dialog.js 已重定向到 Vant 的两个弹窗样式，
+      // date-picker 等其余 element-plus 样式必须保留（见上方注释）。
+      {
+        find: "element-plus/es/components/message/style/css",
+        replacement: shim("empty.css")
+      },
+      {
+        find: "element-plus/es/components/message-box/style/css",
+        replacement: shim("empty.css")
+      }
+    ];
   }
   if (buildTarget === "zx") {
     return [
