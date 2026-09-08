@@ -10,6 +10,8 @@ import { ElMessage, ElMessageBox } from "element-plus";
 const message = (options) =>
   typeof options === "string" ? options : options.message;
 
+// 转发到 Element Plus 时故意丢弃的次要选项：Vant 的 duration / forbidClick /
+// overlayStyle 等在 Element Plus 侧没有等价物，不逐个搬运——行为降级但不报错。
 export const showToast = (options) => ElMessage({ message: message(options) });
 export const showSuccessToast = (options) =>
   ElMessage.success({ message: message(options) });

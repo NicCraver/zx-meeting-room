@@ -42,6 +42,10 @@ const buildEntries = {
  *   （包括 m）都无条件渲染真实的 el-date-picker / el-popover /
  *   el-config-provider，裁掉样式会直接导致这几个组件在 m 上样式丢失，是真实的
  *   视觉回归，之前已实测验证（167 处 → 3 处），故 m 只做 JS 重定向。
+ *   注：m 上这条裸标识符别名不止转发 ElMessage / ElMessageBox——同一个
+ *   `element-plus` specifier 下的 ElScrollbar 也会被替身接管，它只被
+ *   src/features/agent/components/BookingAiBar.vue 用到，而该组件在 m 入口不可达，
+ *   所以目前是安全的死代码路径，别以为别名只影响弹框/toast 两个函数。
  * main 是独立 Web，可能被手机浏览器打开（resolveDevice 走 UA），两套都要留。
  */
 const shim = (name) => resolve(import.meta.dirname, `build/shims/${name}`);
@@ -112,7 +116,10 @@ export default defineConfig(({ mode }) => {
       ]
     },
     test: {
-      include: ["src/features/**/tests/*.test.js"],
+      include: [
+        "src/features/**/tests/*.test.js",
+        "build/shims/tests/*.test.js"
+      ],
       environment: "node"
     },
     build: {

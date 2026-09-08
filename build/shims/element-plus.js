@@ -14,6 +14,8 @@ import {
   showConfirmDialog
 } from "vant";
 
+// 转发到 Vant 时故意丢弃的次要选项：Element Plus 的 duration / appendTo /
+// showClose 等在 Vant toast 里没有等价物，不逐个搬运——行为降级但不报错。
 const toast = (options, type) => {
   const message = typeof options === "string" ? options : options.message;
   if (type === "success") return showSuccessToast({ message, forbidClick: true });
@@ -32,6 +34,9 @@ export const ElMessage = Object.assign(
   }
 );
 
+// 转发到 Vant 时同样丢弃 distinguishCancelAndClose / closeOnClickModal /
+// closeOnPressEscape 等 Element Plus 专属选项——Vant 弹框没有对应能力，
+// 行为降级但不报错。
 export const ElMessageBox = {
   confirm: (message, title, options = {}) =>
     showConfirmDialog({
