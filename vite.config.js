@@ -31,6 +31,34 @@ const buildEntries = {
   m: "m/index.html" // 移动端（iOS / 安卓 WebView）
 };
 
+/**
+ * 按入口裁掉用不到的 UI 库——但两侧不对称：
+ *
+ * - zx 入口恒为 pc 形态 → 不需要 vant，JS 与样式两个别名都裁：已确认 src 里
+ *   没有任何 `<van-` 模板会被自动导入，Vant 组件在 zx 上不可达，唯一受影响的
+ *   只有三个 main.js 里显式引入的 vant 样式，裁掉是安全的。
+ * - m 入口只裁 JS 别名（转发 dialog.js 里不可达的 ElMessage / ElMessageBox 到
+ *   Vant），**不裁 element-plus 样式**：DateTimeRangeField.vue 在所有入口
+ *   （包括 m）都无条件渲染真实的 el-date-picker / el-popover /
+ *   el-config-provider，裁掉样式会直接导致这几个组件在 m 上样式丢失，是真实的
+ *   视觉回归，之前已实测验证（167 处 → 3 处），故 m 只做 JS 重定向。
+ * main 是独立 Web，可能被手机浏览器打开（resolveDevice 走 UA），两套都要留。
+ */
+const shim = (name) => resolve(import.meta.dirname, `build/shims/${name}`);
+
+const uiTrimAliases = () => {
+  if (buildTarget === "m") {
+    return [{ find: /^element-plus$/, replacement: shim("element-plus.js") }];
+  }
+  if (buildTarget === "zx") {
+    return [
+      { find: /^vant\/es\/.*\/style$/, replacement: shim("empty.css") },
+      { find: /^vant$/, replacement: shim("vant.js") }
+    ];
+  }
+  return [];
+};
+
 export default defineConfig(({ mode }) => {
   const isVitest = Boolean(process.env.VITEST);
   return {
@@ -78,7 +106,10 @@ export default defineConfig(({ mode }) => {
       __BUILD_TARGET__: JSON.stringify(buildTarget)
     },
     resolve: {
-      alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) }
+      alias: [
+        { find: "@", replacement: fileURLToPath(new URL("./src", import.meta.url)) },
+        ...uiTrimAliases()
+      ]
     },
     test: {
       include: ["src/features/**/tests/*.test.js"],
