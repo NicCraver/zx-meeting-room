@@ -1,5 +1,9 @@
 <template>
-  <article class="ai-buddy-card ai-buddy-confirm" aria-label="确认预定">
+  <article
+    class="ai-buddy-card ai-buddy-confirm"
+    data-testid="mr-ai-confirm"
+    aria-label="确认预定"
+  >
     <h3 class="ai-buddy-card-title">确认预定</h3>
     <label class="ai-buddy-confirm-field">
       <span>主题</span>
@@ -32,6 +36,7 @@
       <button
         type="button"
         class="ai-buddy-btn-primary"
+        data-testid="mr-ai-confirm-ok"
         @click="emit('confirm', title.trim())"
       >
         确认预定

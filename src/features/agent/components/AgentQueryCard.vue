@@ -1,5 +1,9 @@
 <template>
-  <article class="ai-buddy-card ai-buddy-query" aria-label="空闲会议室">
+  <article
+    class="ai-buddy-card ai-buddy-query"
+    data-testid="mr-ai-query-card"
+    aria-label="空闲会议室"
+  >
     <h3 class="ai-buddy-card-title">{{ heading }}</h3>
     <ul v-if="rooms.length" class="ai-buddy-query-list">
       <li v-for="room in rooms" :key="room.roomId" class="ai-buddy-query-row">
@@ -38,6 +42,7 @@
             :key="`${slot.roomId}-${slot.date}-${slot.start}-${slot.end}`"
             type="button"
             class="ai-buddy-slot-btn"
+            data-testid="mr-ai-slot"
             :aria-label="`选择 ${slot.start} 到 ${slot.end}`"
             @click="emit('pick', slot)"
           >
