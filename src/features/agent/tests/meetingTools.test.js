@@ -75,6 +75,24 @@ test("list_my_meetings drops released and can filter date", async () => {
   );
 });
 
+test("search start and title are echoed and pin 15:00", async () => {
+  const found = JSON.parse(
+    await runSearchAvailabilityTool(
+      {
+        date: "2026-08-27",
+        durationMin: 60,
+        start: "15:00",
+        title: "面试"
+      },
+      { getBoard: async () => ({ rooms }), now: { date: "2026-08-27", minute: 9 * 60 } }
+    )
+  );
+  assert.equal(found.start, "15:00");
+  assert.equal(found.title, "面试");
+  assert.equal(found.rooms[0].slots[0].start, "15:00");
+  assert.equal(found.rooms[0].slots[0].end, "16:00");
+});
+
 test("search point window 15:00 and capacity miss still returns hint", async () => {
   const getBoard = async () => ({ rooms });
   const now = { date: "2026-08-27", minute: 9 * 60 };

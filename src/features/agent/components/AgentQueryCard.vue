@@ -38,7 +38,7 @@
         <div class="ai-buddy-slot-btns">
           <p class="ai-buddy-slot-hint">点选一个时段</p>
           <button
-            v-for="slot in (room.slots || []).slice(0, 3)"
+            v-for="slot in (room.slots || []).slice(0, 4)"
             :key="`${slot.roomId}-${slot.date}-${slot.start}-${slot.end}`"
             type="button"
             class="ai-buddy-slot-btn"

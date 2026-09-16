@@ -25,7 +25,7 @@ export function createDraftStore({ now = () => Date.now(), ttlMs = DRAFT_TTL_MS 
     draft = null;
   };
 
-  const pickSlot = (slot) => {
+  const pickSlot = (slot, extra = {}) => {
     const hit = issued.get(slotKey(slot));
     if (!hit) {
       throw Object.assign(new Error("该档不是本轮查询结果"), { code: "SLOT_NOT_ISSUED" });
@@ -33,7 +33,7 @@ export function createDraftStore({ now = () => Date.now(), ttlMs = DRAFT_TTL_MS 
     draft = {
       draftId: `draft-${now().toString(16)}`,
       slot: { ...hit },
-      title: "",
+      title: String(extra.title || "").trim().slice(0, 50),
       createdAt: now()
     };
     return draft;

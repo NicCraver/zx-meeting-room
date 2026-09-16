@@ -38,10 +38,14 @@ export async function runMeetingAgent({
     runTool: (call) => (runTool || runAgentTool)(call),
     onEvent
   });
-  const event = cardsFromLoop({ log: result.log, answer: result.answer });
+  const event = cardsFromLoop({
+    log: result.log,
+    answer: result.answer,
+    prompt
+  });
   return {
     event,
-    issuedRooms: event.type === "query" ? event.rooms : [],
+    issuedRooms: event.rooms || [],
     answer: result.answer,
     log: result.log,
     rounds: result.rounds

@@ -25,6 +25,60 @@ test("search with slots becomes query; answer is heading", () => {
   assert.equal(event.rooms[0].roomId, "r1");
 });
 
+test("unique preferred start becomes confirm with title", () => {
+  const event = cardsFromLoop({
+    prompt: "今天下午3点订一小时面试",
+    answer: "可以订这间",
+    log: [
+      {
+        name: "search_availability",
+        output: JSON.stringify({
+          start: "15:00",
+          title: "面试",
+          rooms: [
+            {
+              roomId: "r1",
+              roomName: "星海",
+              slots: [
+                { roomId: "r1", date: "2026-09-15", start: "15:00", end: "16:00" }
+              ]
+            }
+          ]
+        })
+      }
+    ]
+  });
+  assert.equal(event.type, "confirm");
+  assert.equal(event.slot.start, "15:00");
+  assert.equal(event.slot.roomId, "r1");
+  assert.equal(event.title, "面试");
+  assert.equal(event.rooms.length, 1);
+});
+
+test("two rooms at the same start stay query", () => {
+  const event = cardsFromLoop({
+    log: [
+      {
+        name: "search_availability",
+        output: JSON.stringify({
+          start: "15:00",
+          rooms: [
+            {
+              roomId: "r1",
+              slots: [{ roomId: "r1", date: "2026-09-15", start: "15:00", end: "16:00" }]
+            },
+            {
+              roomId: "r2",
+              slots: [{ roomId: "r2", date: "2026-09-15", start: "15:00", end: "16:00" }]
+            }
+          ]
+        })
+      }
+    ]
+  });
+  assert.equal(event.type, "query");
+});
+
 test("search with no slots is need_more", () => {
   const event = cardsFromLoop({
     log: [{ name: "search_availability", output: JSON.stringify({ rooms: [] }) }]

@@ -4,15 +4,17 @@ import { fallbackAdvice, searchFreeSlots } from "../findFree.js";
 export const SEARCH_AVAILABILITY_TOOL = {
   name: "search_availability",
   description:
-    "按日期查空闲会议室。必须传 date（yyyy-MM-dd）。时间一律 24 小时制（下午 3 点 = 15:00）。windowStart/windowEnd 是搜索区间，整段 durationMin 必须能放进去；用户说「X点开始、Y分钟」时 windowStart=X、windowEnd=X+Y、durationMin=Y。capacity 是最少人数，没说人数不要传。不要编造房间或时段，结果里的 slots 才能给用户点选。",
+    "按日期查空闲会议室。必须传 date（yyyy-MM-dd）。时间一律 24 小时制（下午 3 点 = 15:00）。用户说「X点开始」时传 start=X、durationMin=时长，不要只传 window。windowStart/windowEnd 只用于模糊时段（上午/下午）。capacity 是最少人数，没说人数不要传。title 是会议主题（如面试）。不要编造房间或时段，结果里的 slots 才能给用户点选。",
   parameters: {
     type: "object",
     properties: {
       date: { type: "string", description: "日期 yyyy-MM-dd" },
       durationMin: { type: "number", description: "时长分钟，默认 60" },
-      windowStart: { type: "string", description: "时段开始 HH:mm" },
-      windowEnd: { type: "string", description: "时段结束 HH:mm" },
+      start: { type: "string", description: "开始时刻 HH:mm，24 小时制。下午 3 点传 15:00" },
+      windowStart: { type: "string", description: "搜索区间开始 HH:mm，仅模糊时段用" },
+      windowEnd: { type: "string", description: "搜索区间结束 HH:mm，仅模糊时段用" },
       capacity: { type: "number", description: "最少人数" },
+      title: { type: "string", description: "会议主题，如面试" },
       buildingName: { type: "string" },
       floorName: { type: "string" },
       facilities: {
@@ -69,6 +71,7 @@ export async function runSearchAvailabilityTool(argumentsJson, deps = {}) {
   const query = {
     dateIso: date,
     durationMin: Number(args.durationMin) || 60,
+    start: args.start || null,
     windowStart: args.windowStart || null,
     windowEnd: args.windowEnd || null,
     capacity: args.capacity == null ? null : Number(args.capacity),
@@ -77,6 +80,8 @@ export async function runSearchAvailabilityTool(argumentsJson, deps = {}) {
     facilities: Array.isArray(args.facilities) ? args.facilities : []
   };
   const found = searchFreeSlots(rooms, query, now);
+  const title = String(args.title || "").trim();
+  if (title) found.title = title.slice(0, 50);
   if (!found.rooms.length) {
     found.hint = fallbackAdvice(rooms, query, now);
   }

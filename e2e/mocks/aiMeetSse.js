@@ -62,6 +62,25 @@ export function aiMeetSseFrames(body = {}) {
     });
   }
 
+  if (/下午\s*\d+\s*点|面试/.test(prompt) && /订|预定|预约/.test(prompt)) {
+    return sse({
+      type: "done",
+      kind: "tool_call",
+      toolCalls: [
+        {
+          name: "search_availability",
+          arguments: JSON.stringify({
+            date: TODAY,
+            start: "15:00",
+            durationMin: 60,
+            title: /面试/.test(prompt) ? "面试" : undefined
+          }),
+          callId: "c-search"
+        }
+      ]
+    });
+  }
+
   return sse({
     type: "done",
     kind: "tool_call",

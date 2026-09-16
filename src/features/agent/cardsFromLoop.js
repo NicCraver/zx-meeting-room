@@ -24,11 +24,29 @@ const lastTool = (log) => {
 const hasSlots = (rooms) =>
   (rooms || []).some((room) => Array.isArray(room?.slots) && room.slots.length);
 
+const flattenSlots = (rooms) => {
+  const out = [];
+  for (const room of rooms || []) {
+    for (const slot of room.slots || []) out.push(slot);
+  }
+  return out;
+};
+
+export function inferAgentBookingTitle(prompt) {
+  const raw = String(prompt || "");
+  if (/面试/.test(raw)) return "面试";
+  if (/评审/.test(raw)) return "评审";
+  if (/周会/.test(raw)) return "周会";
+  if (/站会|晨会/.test(raw)) return "站会";
+  return "";
+}
+
 /**
  * 用最近一次工具 JSON 切卡；answer 只当标题/说明。
- * @param {{ log?: unknown[], answer?: string }} input
+ * 指定 start 且只有一档命中时出确认卡，不把精确预定打成列表。
+ * @param {{ log?: unknown[], answer?: string, prompt?: string }} input
  */
-export function cardsFromLoop({ log, answer } = {}) {
+export function cardsFromLoop({ log, answer, prompt } = {}) {
   const text = String(answer || "").trim();
   const tool = lastTool(log);
   if (!tool) {
@@ -42,6 +60,19 @@ export function cardsFromLoop({ log, answer } = {}) {
   if (tool.name === "search_availability") {
     const rooms = Array.isArray(data?.rooms) ? data.rooms : [];
     if (hasSlots(rooms)) {
+      const start = data?.start;
+      const exact = start
+        ? flattenSlots(rooms).filter((slot) => slot.start === start)
+        : [];
+      if (exact.length === 1) {
+        return {
+          type: "confirm",
+          slot: exact[0],
+          title: String(data.title || "").trim() || inferAgentBookingTitle(prompt),
+          rooms,
+          expression: "expect"
+        };
+      }
       return {
         type: "query",
         heading: text || data.heading || "",

@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { createStore, openMeeting, waitPcBoard } from "../helpers/open.js";
 import { tid } from "../locators.js";
+import { defaultRooms } from "../mocks/seed.js";
 
 test.describe("PC 助手", () => {
   test.describe.configure({ timeout: 45_000 });
@@ -96,5 +97,19 @@ test.describe("PC 助手", () => {
     await tid(page, "mr-ai-chip-my-meetings").click();
     await expect(tid(page, "mr-ai-mine-card")).toBeVisible();
     await expect(tid(page, "mr-ai-mine-card").getByText("我的周会")).toBeVisible();
+  });
+
+  test("下午3点面试唯一空房出确认卡且主题为面试", async ({ page }) => {
+    const store = createStore({
+      rooms: defaultRooms().filter((r) => r.id === "room-a"),
+      bookings: []
+    });
+    await openMeeting(page, { store });
+    await waitPcBoard(page);
+    await tid(page, "mr-ai-input").fill("预定下午3点一小时的面试会议");
+    await tid(page, "mr-ai-send").click();
+    await expect(tid(page, "mr-ai-confirm")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByLabel("会议主题")).toHaveValue("面试");
+    await expect(tid(page, "mr-ai-confirm").getByText("星海")).toBeVisible();
   });
 });

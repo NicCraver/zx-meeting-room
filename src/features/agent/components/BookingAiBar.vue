@@ -335,6 +335,15 @@ const runMessage = async (message) => {
       signal: ac.signal
     });
     if (ac.signal.aborted || gen !== turnGen) return;
+    if (event.type === "confirm" && event.slot) {
+      drafts.issueFromRooms(event.rooms || issuedRooms);
+      const draftCard = drafts.pickSlot(event.slot, { title: event.title });
+      onEvent(
+        { type: "confirm", draft: draftCard, expression: "expect" },
+        gen
+      );
+      return;
+    }
     if (event.type === "query") drafts.issueFromRooms(issuedRooms);
     if (event.type === "release_confirm") drafts.setRelease(event.booking);
     onEvent(event, gen);

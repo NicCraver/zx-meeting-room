@@ -130,6 +130,33 @@ test("point or too-narrow window still yields a slot of durationMin", () => {
   assert.equal(narrow.rooms[0].slots[0].end, "16:00");
 });
 
+test("start pins 15:00 even when a wide afternoon window would slice it off", () => {
+  const found = searchFreeSlots(
+    rooms,
+    {
+      dateIso: today,
+      durationMin: 60,
+      start: "15:00",
+      windowStart: "13:00",
+      windowEnd: "18:00"
+    },
+    { date: today, minute: 8 * 60 }
+  );
+  assert.equal(found.start, "15:00");
+  assert.equal(found.rooms[0].slots[0].start, "15:00");
+  assert.equal(found.rooms[0].slots[0].end, "16:00");
+});
+
+test("start=03:00 is treated as 15:00", () => {
+  const found = searchFreeSlots(
+    rooms,
+    { dateIso: today, durationMin: 60, start: "03:00" },
+    { date: today, minute: 8 * 60 }
+  );
+  assert.equal(found.start, "15:00");
+  assert.equal(found.rooms[0].slots[0].start, "15:00");
+});
+
 test("early-morning 3点 window is treated as 15:00 when rooms are not open yet", () => {
   const found = searchFreeSlots(
     rooms,

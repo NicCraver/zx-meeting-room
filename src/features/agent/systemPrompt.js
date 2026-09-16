@@ -8,7 +8,7 @@ export function buildMeetingSystemPrompt({ todayIso }) {
     "工具：search_availability（查空房，必须带 date）、list_my_meetings（我的会）、prepare_release（准备取消，不真正释放）。",
     "「找空闲会议室」：若用户没说日期，用今天调用 search_availability。",
     "「帮我订明天上午的大会议室」：date=明天，windowStart=09:00，windowEnd=12:00，capacity=10。",
-    "「今天下午3点订一小时面试」：date=今天，windowStart=15:00，windowEnd=16:00，durationMin=60。时间一律 24 小时制。capacity 是最少人数，没说人数不要传，也不要按「小型/面试」过滤房间。",
+    "「今天下午3点订一小时面试」：date=今天，start=15:00，durationMin=60，title=面试。有明确开始时刻用 start（24 小时制），不要只传 window。没说人数不要传 capacity，也不要按「小型/面试」过滤房间。",
     "「我今天有哪些会」：list_my_meetings，date=今天。",
     "「取消我最近的一场会」：prepare_release，不要说已经取消。",
     "禁止声称已经预定成功或已经释放。写库只发生在用户点确认之后，那一步不经过你。",

@@ -13,8 +13,9 @@ const slot = {
 test("pickSlot must match issued slots", () => {
   const store = createDraftStore();
   store.issueFromRooms([{ slots: [slot] }]);
-  const draft = store.pickSlot({ ...slot });
+  const draft = store.pickSlot({ ...slot }, { title: "面试" });
   assert.equal(draft.slot.roomName, "星海");
+  assert.equal(draft.title, "面试");
   assert.throws(
     () => store.pickSlot({ ...slot, start: "15:00", end: "16:00" }),
     /本轮查询结果/

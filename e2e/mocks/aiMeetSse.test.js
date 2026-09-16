@@ -34,6 +34,15 @@ test("cancel and mine chips pick the matching tool", () => {
   assert.equal(JSON.parse(mine[0].toolCalls[0].arguments).date, TODAY);
 });
 
+test("3pm interview uses start and title", () => {
+  const frames = aiMeetSseFrames({ prompt: "预定下午3点一小时的面试会议" });
+  const args = JSON.parse(frames[0].toolCalls[0].arguments);
+  assert.equal(args.date, TODAY);
+  assert.equal(args.start, "15:00");
+  assert.equal(args.durationMin, 60);
+  assert.equal(args.title, "面试");
+});
+
 test("book large room uses tomorrow morning window", () => {
   const frames = aiMeetSseFrames({ prompt: "帮我订明天上午的大会议室" });
   const args = JSON.parse(frames[0].toolCalls[0].arguments);
