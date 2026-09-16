@@ -74,20 +74,34 @@
     >
       {{ ui.status }}
     </div>
-    <AgentMarkdown
-      v-else-if="card?.type === 'need_more'"
-      class="booking-ai-status"
-      :source="card.text"
-    />
     <div
-      v-else-if="card?.type === 'error'"
-      class="booking-ai-status"
-      role="alert"
+      v-else-if="card"
+      class="booking-ai-results"
+      data-testid="mr-ai-results"
     >
-      <span>{{ card.msg }}</span>
-      <AcButton title="重试" @click="retry" />
-    </div>
-    <el-scrollbar v-else-if="card" class="booking-ai-results">
+      <button
+        type="button"
+        class="booking-ai-result-close"
+        data-testid="mr-ai-result-close"
+        aria-label="关闭"
+        @click="dismiss"
+      >
+        <SvgIcon name="close" class="w-4 h-4" />
+      </button>
+      <AgentMarkdown
+        v-if="card.type === 'need_more'"
+        class="ai-buddy-card-copy booking-ai-need-more"
+        :source="card.text"
+      />
+      <div
+        v-else-if="card.type === 'error'"
+        class="booking-ai-error"
+        role="alert"
+      >
+        <span>{{ card.msg }}</span>
+        <AcButton title="重试" @click="retry" />
+      </div>
+      <el-scrollbar v-else class="booking-ai-results-scroll">
       <AgentQueryCard
         v-if="card.type === 'query'"
         :heading="card.heading"
@@ -148,14 +162,15 @@
           </button>
         </div>
       </article>
-    </el-scrollbar>
+      </el-scrollbar>
+    </div>
   </section>
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { ElScrollbar } from "element-plus";
-import { AcButton } from "@/components/base";
+import { AcButton, SvgIcon } from "@/components/base";
 import { getUserName } from "@/utils";
 import {
   AI_CHIPS,
@@ -172,7 +187,10 @@ import {
   isEmptySlotNeedMore
 } from "../applyEvent.js";
 import { streamAiMeet } from "@/api/module/aiMeet.js";
-import { confirmBookingAction, confirmReleaseAction } from "../assistantActions.js";
+import {
+  confirmBookingAction,
+  confirmReleaseAction
+} from "../assistantActions.js";
 import { createDraftStore } from "../draftStore.js";
 import { runMeetingAgent } from "../runMeetingAgent.js";
 import { waitHintAt, waitHintsForAction } from "../waitHints.js";
@@ -338,10 +356,7 @@ const runMessage = async (message) => {
     if (event.type === "confirm" && event.slot) {
       drafts.issueFromRooms(event.rooms || issuedRooms);
       const draftCard = drafts.pickSlot(event.slot, { title: event.title });
-      onEvent(
-        { type: "confirm", draft: draftCard, expression: "expect" },
-        gen
-      );
+      onEvent({ type: "confirm", draft: draftCard, expression: "expect" }, gen);
       return;
     }
     if (event.type === "query") drafts.issueFromRooms(issuedRooms);

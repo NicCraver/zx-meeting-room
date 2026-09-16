@@ -57,7 +57,11 @@ export function messageFromNonSseBody(contentType, bodyText) {
     if (!json || typeof json !== "object") {
       return "";
     }
-    if (json.type === "delta" || json.type === "done" || json.type === "error") {
+    if (
+      json.type === "delta" ||
+      json.type === "done" ||
+      json.type === "error"
+    ) {
       return "";
     }
     return String(json.msg || json.message || json.code || "");

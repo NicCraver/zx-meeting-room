@@ -10,9 +10,18 @@ export const SEARCH_AVAILABILITY_TOOL = {
     properties: {
       date: { type: "string", description: "日期 yyyy-MM-dd" },
       durationMin: { type: "number", description: "时长分钟，默认 60" },
-      start: { type: "string", description: "开始时刻 HH:mm，24 小时制。下午 3 点传 15:00" },
-      windowStart: { type: "string", description: "搜索区间开始 HH:mm，仅模糊时段用" },
-      windowEnd: { type: "string", description: "搜索区间结束 HH:mm，仅模糊时段用" },
+      start: {
+        type: "string",
+        description: "开始时刻 HH:mm，24 小时制。下午 3 点传 15:00"
+      },
+      windowStart: {
+        type: "string",
+        description: "搜索区间开始 HH:mm，仅模糊时段用"
+      },
+      windowEnd: {
+        type: "string",
+        description: "搜索区间结束 HH:mm，仅模糊时段用"
+      },
       capacity: { type: "number", description: "最少人数" },
       title: { type: "string", description: "会议主题，如面试" },
       buildingName: { type: "string" },

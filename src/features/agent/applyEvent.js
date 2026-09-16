@@ -192,7 +192,10 @@ export function applyAgentEvent(state, event) {
 
 /** 确认卡取消：回到上一张空档/换档卡，不收起助手。 */
 export function backFromConfirm(state) {
-  if (state.card?.type !== "confirm" && state.card?.type !== "release_confirm") {
+  if (
+    state.card?.type !== "confirm" &&
+    state.card?.type !== "release_confirm"
+  ) {
     return state;
   }
   if (state.backCard) {

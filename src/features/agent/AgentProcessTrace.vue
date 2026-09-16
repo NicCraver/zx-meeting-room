@@ -19,22 +19,20 @@
           >模型思考中…</span
         >
         <template v-else-if="step.stream">
-          {{ step.stream }}<span
+          {{ step.stream
+          }}<span
             v-if="step.pending"
             class="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-black align-[-2px]"
           />
         </template>
-        <span
-          v-else-if="step.resultKind === 'tool_call'"
-          class="text-body"
+        <span v-else-if="step.resultKind === 'tool_call'" class="text-body"
           >本轮无文本，模型请求调用工具</span
         >
       </div>
       <pre
         v-if="step.detail"
         class="mt-2 whitespace-pre-wrap break-words text-3 text-body"
-        >{{ step.detail }}</pre
-      >
+        >{{ step.detail }}</pre>
     </li>
   </ol>
 </template>

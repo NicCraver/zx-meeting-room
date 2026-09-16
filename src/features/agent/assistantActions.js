@@ -23,8 +23,12 @@ const suggestFromBoard = async (date, durationMin, getBoardFn, now) => {
 };
 
 const durationOf = (slot) => {
-  const [sh, sm] = String(slot.start || "00:00").split(":").map(Number);
-  const [eh, em] = String(slot.end || "00:00").split(":").map(Number);
+  const [sh, sm] = String(slot.start || "00:00")
+    .split(":")
+    .map(Number);
+  const [eh, em] = String(slot.end || "00:00")
+    .split(":")
+    .map(Number);
   return eh * 60 + em - (sh * 60 + sm);
 };
 
@@ -38,7 +42,10 @@ export async function confirmBookingAction(draft, title, deps = {}) {
   }
   const book = deps.createBooking || (await bookingApi()).createBooking;
   const userName = deps.userName || "";
-  const finalTitle = String(title || "").trim().slice(0, 50) || defaultBookingTitle(userName);
+  const finalTitle =
+    String(title || "")
+      .trim()
+      .slice(0, 50) || defaultBookingTitle(userName);
   try {
     const result = await book({
       roomId: slot.roomId,

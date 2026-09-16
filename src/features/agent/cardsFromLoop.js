@@ -13,8 +13,18 @@ const lastTool = (log) => {
   const rows = Array.isArray(log) ? log : [];
   for (let i = rows.length - 1; i >= 0; i -= 1) {
     const row = rows[i];
-    const name = row?.name || String(row?.step || "").split("-").slice(2).join("-");
-    if (row && (name === "search_availability" || name === "list_my_meetings" || name === "prepare_release")) {
+    const name =
+      row?.name ||
+      String(row?.step || "")
+        .split("-")
+        .slice(2)
+        .join("-");
+    if (
+      row &&
+      (name === "search_availability" ||
+        name === "list_my_meetings" ||
+        name === "prepare_release")
+    ) {
       return { ...row, name };
     }
   }
@@ -68,7 +78,8 @@ export function cardsFromLoop({ log, answer, prompt } = {}) {
         return {
           type: "confirm",
           slot: exact[0],
-          title: String(data.title || "").trim() || inferAgentBookingTitle(prompt),
+          title:
+            String(data.title || "").trim() || inferAgentBookingTitle(prompt),
           rooms,
           expression: "expect"
         };

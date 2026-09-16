@@ -5,7 +5,10 @@ export const DRAFT_TTL_MS = 10 * 60 * 1000;
 export const slotKey = (slot) =>
   `${slot?.roomId || ""}|${slot?.date || ""}|${slot?.start || ""}|${slot?.end || ""}`;
 
-export function createDraftStore({ now = () => Date.now(), ttlMs = DRAFT_TTL_MS } = {}) {
+export function createDraftStore({
+  now = () => Date.now(),
+  ttlMs = DRAFT_TTL_MS
+} = {}) {
   /** @type {Map<string, object>} */
   let issued = new Map();
   /** @type {{ draftId: string, slot: object, title: string, createdAt: number } | null} */
@@ -28,12 +31,16 @@ export function createDraftStore({ now = () => Date.now(), ttlMs = DRAFT_TTL_MS 
   const pickSlot = (slot, extra = {}) => {
     const hit = issued.get(slotKey(slot));
     if (!hit) {
-      throw Object.assign(new Error("该档不是本轮查询结果"), { code: "SLOT_NOT_ISSUED" });
+      throw Object.assign(new Error("该档不是本轮查询结果"), {
+        code: "SLOT_NOT_ISSUED"
+      });
     }
     draft = {
       draftId: `draft-${now().toString(16)}`,
       slot: { ...hit },
-      title: String(extra.title || "").trim().slice(0, 50),
+      title: String(extra.title || "")
+        .trim()
+        .slice(0, 50),
       createdAt: now()
     };
     return draft;
@@ -71,7 +78,9 @@ export function createDraftStore({ now = () => Date.now(), ttlMs = DRAFT_TTL_MS 
     return {
       draftId: draft.draftId,
       slot: draft.slot,
-      title: String(title || "").trim().slice(0, 50)
+      title: String(title || "")
+        .trim()
+        .slice(0, 50)
     };
   };
 
@@ -82,7 +91,9 @@ export function createDraftStore({ now = () => Date.now(), ttlMs = DRAFT_TTL_MS 
   const takeRelease = () => {
     const row = releaseBooking;
     if (!row) {
-      throw Object.assign(new Error("没有待释放的预定"), { code: "NO_RELEASE" });
+      throw Object.assign(new Error("没有待释放的预定"), {
+        code: "NO_RELEASE"
+      });
     }
     return row;
   };

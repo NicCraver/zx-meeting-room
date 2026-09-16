@@ -45,7 +45,9 @@ export const trackAgentStreamEvent = (ui, event) => {
       extra.roomCount = Array.isArray(event.rooms) ? event.rooms.length : 0;
     }
     if (event.type === "suggest") {
-      extra.optionCount = Array.isArray(event.options) ? event.options.length : 0;
+      extra.optionCount = Array.isArray(event.options)
+        ? event.options.length
+        : 0;
     }
     if (event.type === "need_more") {
       extra.empty = isEmptySlotNeedMore({
@@ -57,16 +59,16 @@ export const trackAgentStreamEvent = (ui, event) => {
     return;
   }
   if (event.type === "booked") {
-    track(
-      "agent_booked",
-      withSession(ui, { bookingId: event.bookingId })
-    );
+    track("agent_booked", withSession(ui, { bookingId: event.bookingId }));
     return;
   }
   if (event.type === "error") {
     track(
       "agent_fail",
-      withSession(ui, event.code ? { code: String(event.code).slice(0, 32) } : {})
+      withSession(
+        ui,
+        event.code ? { code: String(event.code).slice(0, 32) } : {}
+      )
     );
   }
 };

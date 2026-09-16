@@ -53,7 +53,8 @@ export function createProcessTrace() {
 }
 
 export function formatLlmRequest(payload) {
-  const tools = (payload.tools || []).map((item) => item.name).join("、") || "无";
+  const tools =
+    (payload.tools || []).map((item) => item.name).join("、") || "无";
   const results = payload.toolResults || [];
   const lines = [
     `toolChoice: ${payload.toolChoice || "(默认)"}`,

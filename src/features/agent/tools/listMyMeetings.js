@@ -1,5 +1,3 @@
-
-
 export const LIST_MY_MEETINGS_TOOL = {
   name: "list_my_meetings",
   description:
@@ -39,7 +37,8 @@ export async function runListMyMeetingsTool(argumentsJson, deps = {}) {
   const args = parseArgs(argumentsJson);
   const date = String(args.date || "").trim();
   const fetchMine =
-    deps.listMyBookings || (await import("@/api/module/booking")).listMyBookings;
+    deps.listMyBookings ||
+    (await import("@/api/module/booking")).listMyBookings;
   const list = await fetchMine();
   const rows = (Array.isArray(list) ? list : [])
     .filter((b) => b && b.status !== "released")

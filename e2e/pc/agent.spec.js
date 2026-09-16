@@ -99,6 +99,16 @@ test.describe("PC 助手", () => {
     await expect(tid(page, "mr-ai-mine-card").getByText("我的周会")).toBeVisible();
   });
 
+  test("关闭结果卡回到快捷指令", async ({ page }) => {
+    await openMeeting(page);
+    await waitPcBoard(page);
+    await tid(page, "mr-ai-chip-my-meetings").click();
+    await expect(tid(page, "mr-ai-mine-card")).toBeVisible();
+    await tid(page, "mr-ai-result-close").click();
+    await expect(tid(page, "mr-ai-mine-card")).toHaveCount(0);
+    await expect(tid(page, "mr-ai-chip-my-meetings")).toBeVisible();
+  });
+
   test("下午3点面试唯一空房出确认卡且主题为面试", async ({ page }) => {
     const store = createStore({
       rooms: defaultRooms().filter((r) => r.id === "room-a"),

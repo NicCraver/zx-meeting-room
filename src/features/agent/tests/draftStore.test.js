@@ -35,7 +35,11 @@ test("updateSlot can retarget time after picking an issued slot", () => {
   const store = createDraftStore();
   store.issueFromRooms([{ slots: [slot] }]);
   store.pickSlot(slot);
-  const next = store.updateSlot({ start: "15:00", end: "16:30", date: "2026-09-16" });
+  const next = store.updateSlot({
+    start: "15:00",
+    end: "16:30",
+    date: "2026-09-16"
+  });
   assert.equal(next.slot.roomId, "r1");
   assert.equal(next.slot.start, "15:00");
   assert.equal(next.slot.end, "16:30");
@@ -49,5 +53,8 @@ test("updateSlot rejects inverted range", () => {
   const store = createDraftStore();
   store.issueFromRooms([{ slots: [slot] }]);
   store.pickSlot(slot);
-  assert.throws(() => store.updateSlot({ start: "16:00", end: "15:00" }), /结束时间/);
+  assert.throws(
+    () => store.updateSlot({ start: "16:00", end: "15:00" }),
+    /结束时间/
+  );
 });

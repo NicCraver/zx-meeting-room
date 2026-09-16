@@ -12,7 +12,7 @@ test("renders bold and lists", () => {
 });
 
 test("drops raw html", () => {
-  const html = renderMarkdown('hi <script>alert(1)</script> **x**');
+  const html = renderMarkdown("hi <script>alert(1)</script> **x**");
   assert.doesNotMatch(html, /<script>/i);
   assert.match(html, /<strong>x<\/strong>/);
 });

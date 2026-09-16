@@ -40,7 +40,12 @@ test("unique preferred start becomes confirm with title", () => {
               roomId: "r1",
               roomName: "星海",
               slots: [
-                { roomId: "r1", date: "2026-09-15", start: "15:00", end: "16:00" }
+                {
+                  roomId: "r1",
+                  date: "2026-09-15",
+                  start: "15:00",
+                  end: "16:00"
+                }
               ]
             }
           ]
@@ -65,11 +70,25 @@ test("two rooms at the same start stay query", () => {
           rooms: [
             {
               roomId: "r1",
-              slots: [{ roomId: "r1", date: "2026-09-15", start: "15:00", end: "16:00" }]
+              slots: [
+                {
+                  roomId: "r1",
+                  date: "2026-09-15",
+                  start: "15:00",
+                  end: "16:00"
+                }
+              ]
             },
             {
               roomId: "r2",
-              slots: [{ roomId: "r2", date: "2026-09-15", start: "15:00", end: "16:00" }]
+              slots: [
+                {
+                  roomId: "r2",
+                  date: "2026-09-15",
+                  start: "15:00",
+                  end: "16:00"
+                }
+              ]
             }
           ]
         })
@@ -81,7 +100,9 @@ test("two rooms at the same start stay query", () => {
 
 test("search with no slots is need_more", () => {
   const event = cardsFromLoop({
-    log: [{ name: "search_availability", output: JSON.stringify({ rooms: [] }) }]
+    log: [
+      { name: "search_availability", output: JSON.stringify({ rooms: [] }) }
+    ]
   });
   assert.equal(event.type, "need_more");
   assert.equal(event.text, "没有符合条件的空档");
@@ -94,7 +115,16 @@ test("list_my_meetings maps bookings; empty is need_more", () => {
       {
         name: "list_my_meetings",
         output: JSON.stringify({
-          bookings: [{ id: "b1", title: "周会", roomName: "星海", date: "2026-09-15", start: "16:00", end: "17:00" }]
+          bookings: [
+            {
+              id: "b1",
+              title: "周会",
+              roomName: "星海",
+              date: "2026-09-15",
+              start: "16:00",
+              end: "17:00"
+            }
+          ]
         })
       }
     ]
@@ -104,7 +134,9 @@ test("list_my_meetings maps bookings; empty is need_more", () => {
   assert.equal(hit.text, "今天有一场");
 
   const empty = cardsFromLoop({
-    log: [{ name: "list_my_meetings", output: JSON.stringify({ bookings: [] }) }]
+    log: [
+      { name: "list_my_meetings", output: JSON.stringify({ bookings: [] }) }
+    ]
   });
   assert.equal(empty.type, "need_more");
 });
@@ -115,7 +147,14 @@ test("prepare_release maps confirm or need_more", () => {
       {
         name: "prepare_release",
         output: JSON.stringify({
-          booking: { id: "bk-1", title: "周会", roomName: "星海", date: "2026-09-15", start: "16:00", end: "17:00" }
+          booking: {
+            id: "bk-1",
+            title: "周会",
+            roomName: "星海",
+            date: "2026-09-15",
+            start: "16:00",
+            end: "17:00"
+          }
         })
       }
     ]

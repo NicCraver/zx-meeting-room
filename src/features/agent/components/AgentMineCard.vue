@@ -1,27 +1,49 @@
 <template>
   <article
-    class="ai-buddy-card"
+    class="ai-buddy-card ai-buddy-mine"
     data-testid="mr-ai-mine-card"
     aria-label="我的会议"
   >
     <h3 class="ai-buddy-card-title">我的会议</h3>
-    <AgentMarkdown v-if="text" class="ai-buddy-card-copy" :source="text" />
-    <ul class="ai-buddy-query-list">
-      <li v-for="row in bookings" :key="row.id" class="ai-buddy-query-row">
-        <div class="ai-buddy-query-meta">
-          <strong>{{ row.title || "会议" }}</strong>
-          <span>{{ row.roomName }} · {{ row.date }} {{ row.start }}–{{ row.end }}</span>
+    <p v-if="lead" class="ai-buddy-mine-lead">{{ lead }}</p>
+    <ul class="ai-buddy-mine-list">
+      <li v-for="row in bookings" :key="row.id" class="ai-buddy-mine-row">
+        <div class="ai-buddy-mine-head">
+          <strong class="ai-buddy-mine-title">{{ row.title || "会议" }}</strong>
+          <span
+            v-if="statusLabel(row.status)"
+            class="room-status-badge"
+            :class="row.status"
+          >
+            {{ statusLabel(row.status) }}
+          </span>
         </div>
+        <p class="ai-buddy-mine-meta">{{ row.roomName }}</p>
+        <p class="ai-buddy-mine-meta">{{ formatMineWhen(row) }}</p>
       </li>
     </ul>
   </article>
 </template>
 
 <script setup>
-import AgentMarkdown from "./AgentMarkdown.vue";
+import { computed } from "vue";
+import { formatMineWhen, MINE_STATUS_LABEL } from "@/features/booking/mine.js";
 
-defineProps({
+const props = defineProps({
   text: { type: String, default: "" },
   bookings: { type: Array, default: () => [] }
+});
+
+const statusLabel = (status) => MINE_STATUS_LABEL[status] || "";
+
+const lead = computed(() => {
+  const n = props.bookings.length;
+  const raw = String(props.text || "")
+    .replace(/[#*_`]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (raw && raw.length <= 24) return raw;
+  if (n > 1) return `共 ${n} 场`;
+  return "";
 });
 </script>

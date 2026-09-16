@@ -1,4 +1,11 @@
-import { getAccountId, getCorpId, getDept, getToken, getUserId, getUserName } from "@/utils";
+import {
+  getAccountId,
+  getCorpId,
+  getDept,
+  getToken,
+  getUserId,
+  getUserName
+} from "@/utils";
 import { flushSseLines } from "./sseLines.js";
 import { encodeHeaderValue } from "./headers.js";
 

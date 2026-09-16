@@ -102,6 +102,16 @@
         :class="{ 'is-on': Boolean(ui.card || ui.status) }"
       >
         <div class="ai-buddy-card-slot-inner">
+          <button
+            v-if="ui.card"
+            type="button"
+            class="booking-ai-result-close"
+            data-testid="mr-ai-result-close"
+            aria-label="关闭"
+            @click="dismiss"
+          >
+            <SvgIcon name="close" class="w-4 h-4" />
+          </button>
           <p
             v-if="ui.status"
             class="ai-buddy-status"
@@ -244,18 +254,16 @@ import {
   writeDebugEnabled
 } from "../debugLog";
 import { streamAiMeet } from "@/api/module/aiMeet";
-import { confirmBookingAction, confirmReleaseAction } from "../assistantActions";
+import {
+  confirmBookingAction,
+  confirmReleaseAction
+} from "../assistantActions";
 import { createDraftStore } from "../draftStore";
 import { runMeetingAgent } from "../runMeetingAgent";
 import { isBuddyChrome } from "../chrome";
 import { shouldShowBuddyPrompts } from "../prompts";
 import { buildSuggestionTurnBody } from "../suggestions";
-import {
-  easeInOutCubic,
-  lerpPose,
-  morphSquash,
-  poseFor
-} from "../buddyPose";
+import { easeInOutCubic, lerpPose, morphSquash, poseFor } from "../buddyPose";
 import { defaultBookingTitle } from "@/features/booking/defaultTitle";
 import { waitHintAt, waitHintsForAction } from "../waitHints";
 import {
@@ -267,6 +275,7 @@ import {
   trackAgentStreamEvent
 } from "../telemetry";
 import { getUserName } from "@/utils";
+import { SvgIcon } from "@/components/base";
 import AgentConfirmCard from "./AgentConfirmCard.vue";
 import AgentDebugPanel from "./AgentDebugPanel.vue";
 import AgentMarkdown from "./AgentMarkdown.vue";

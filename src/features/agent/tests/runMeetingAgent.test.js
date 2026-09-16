@@ -7,7 +7,9 @@ describe("runMeetingAgent", () => {
       {
         roomId: "r1",
         roomName: "星海",
-        slots: [{ roomId: "r1", date: "2026-09-15", start: "14:00", end: "15:00" }]
+        slots: [
+          { roomId: "r1", date: "2026-09-15", start: "14:00", end: "15:00" }
+        ]
       }
     ];
     const payloads = [];
@@ -34,8 +36,12 @@ describe("runMeetingAgent", () => {
       runTool: async () => JSON.stringify({ heading: "工具标题", rooms })
     });
     expect(payloads[0].toolChoice).toBe("auto");
-    expect(payloads[0].tools.map((t) => t.name)).toContain("search_availability");
-    expect(payloads[0].tools.map((t) => t.name)).not.toContain("create_booking");
+    expect(payloads[0].tools.map((t) => t.name)).toContain(
+      "search_availability"
+    );
+    expect(payloads[0].tools.map((t) => t.name)).not.toContain(
+      "create_booking"
+    );
     expect(payloads[1].toolResults[0].callId).toBe("c1");
     expect(result.event.type).toBe("query");
     expect(result.event.heading).toBe("这些档可以");
@@ -53,7 +59,8 @@ describe("runMeetingAgent", () => {
             toolCalls: [
               {
                 name: "search_availability",
-                arguments: '{"date":"2026-09-15","start":"15:00","durationMin":60}',
+                arguments:
+                  '{"date":"2026-09-15","start":"15:00","durationMin":60}',
                 callId: "c1"
               }
             ]
@@ -69,7 +76,12 @@ describe("runMeetingAgent", () => {
               roomId: "r1",
               roomName: "星海",
               slots: [
-                { roomId: "r1", date: "2026-09-15", start: "15:00", end: "16:00" }
+                {
+                  roomId: "r1",
+                  date: "2026-09-15",
+                  start: "15:00",
+                  end: "16:00"
+                }
               ]
             }
           ]

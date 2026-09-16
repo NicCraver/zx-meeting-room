@@ -1,8 +1,5 @@
 import { getAccountId, getCorpId, getToken } from "@/utils";
-import {
-  messageFromNonSseBody,
-  splitSseEvents
-} from "@/features/agent/sse.js";
+import { messageFromNonSseBody, splitSseEvents } from "@/features/agent/sse.js";
 
 const streamHeaders = () => {
   const token = getToken("access_token") || "";

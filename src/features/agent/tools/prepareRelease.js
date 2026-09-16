@@ -39,14 +39,19 @@ const toRow = (b) => ({
 export async function runPrepareReleaseTool(argumentsJson, deps = {}) {
   const args = parseArgs(argumentsJson);
   const fetchMine =
-    deps.listMyBookings || (await import("@/api/module/booking")).listMyBookings;
+    deps.listMyBookings ||
+    (await import("@/api/module/booking")).listMyBookings;
   const list = await fetchMine();
   const items = Array.isArray(list) ? list : [];
   const bookingId = String(args.bookingId || "").trim();
   let booking = null;
   if (bookingId) {
     booking = items.find((b) => b && b.id === bookingId) || null;
-    if (booking && booking.status !== "upcoming" && booking.status !== "ongoing") {
+    if (
+      booking &&
+      booking.status !== "upcoming" &&
+      booking.status !== "ongoing"
+    ) {
       booking = null;
     }
   } else {

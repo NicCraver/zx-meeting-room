@@ -57,9 +57,33 @@ test("search skips occupied half-open interval and missing date does not hit boa
 
 test("list_my_meetings drops released and can filter date", async () => {
   const listMyBookings = async () => [
-    { id: "a", date: "2026-09-15", start: "10:00", end: "11:00", title: "A", roomName: "星海", status: "upcoming" },
-    { id: "b", date: "2026-09-15", start: "16:00", end: "17:00", title: "B", roomName: "星海", status: "released" },
-    { id: "c", date: "2026-09-16", start: "09:00", end: "10:00", title: "C", roomName: "明月", status: "upcoming" }
+    {
+      id: "a",
+      date: "2026-09-15",
+      start: "10:00",
+      end: "11:00",
+      title: "A",
+      roomName: "星海",
+      status: "upcoming"
+    },
+    {
+      id: "b",
+      date: "2026-09-15",
+      start: "16:00",
+      end: "17:00",
+      title: "B",
+      roomName: "星海",
+      status: "released"
+    },
+    {
+      id: "c",
+      date: "2026-09-16",
+      start: "09:00",
+      end: "10:00",
+      title: "C",
+      roomName: "明月",
+      status: "upcoming"
+    }
   ];
   const all = JSON.parse(await runListMyMeetingsTool({}, { listMyBookings }));
   assert.deepEqual(
@@ -84,7 +108,10 @@ test("search start and title are echoed and pin 15:00", async () => {
         start: "15:00",
         title: "面试"
       },
-      { getBoard: async () => ({ rooms }), now: { date: "2026-08-27", minute: 9 * 60 } }
+      {
+        getBoard: async () => ({ rooms }),
+        now: { date: "2026-08-27", minute: 9 * 60 }
+      }
     )
   );
   assert.equal(found.start, "15:00");
@@ -98,7 +125,12 @@ test("search point window 15:00 and capacity miss still returns hint", async () 
   const now = { date: "2026-08-27", minute: 9 * 60 };
   const point = JSON.parse(
     await runSearchAvailabilityTool(
-      { date: "2026-08-27", durationMin: 60, windowStart: "15:00", windowEnd: "15:00" },
+      {
+        date: "2026-08-27",
+        durationMin: 60,
+        windowStart: "15:00",
+        windowEnd: "15:00"
+      },
       { getBoard, now }
     )
   );
@@ -107,7 +139,13 @@ test("search point window 15:00 and capacity miss still returns hint", async () 
 
   const miss = JSON.parse(
     await runSearchAvailabilityTool(
-      { date: "2026-08-27", durationMin: 60, windowStart: "15:00", windowEnd: "16:00", capacity: 99 },
+      {
+        date: "2026-08-27",
+        durationMin: 60,
+        windowStart: "15:00",
+        windowEnd: "16:00",
+        capacity: 99
+      },
       { getBoard, now }
     )
   );
@@ -119,7 +157,11 @@ test("runAgentTool dispatches search_availability through shipped runner", async
   let boardCalls = 0;
   const output = JSON.parse(
     await runAgentTool(
-      { name: "search_availability", arguments: '{"date":"2026-08-27"}', callId: "c1" },
+      {
+        name: "search_availability",
+        arguments: '{"date":"2026-08-27"}',
+        callId: "c1"
+      },
       {
         getBoard: async () => {
           boardCalls += 1;
@@ -136,21 +178,54 @@ test("runAgentTool dispatches search_availability through shipped runner", async
 test("prepare_release picks nearest upcoming and does not release", async () => {
   let released = false;
   const listMyBookings = async () => [
-    { id: "ended", date: "2026-09-14", start: "14:00", end: "15:00", title: "昨", roomName: "明月", status: "ended" },
-    { id: "later", date: "2026-09-15", start: "16:00", end: "17:00", title: "周会", roomName: "星海", status: "upcoming" },
-    { id: "soon", date: "2026-09-15", start: "11:00", end: "12:00", title: "午会", roomName: "星海", status: "upcoming" }
+    {
+      id: "ended",
+      date: "2026-09-14",
+      start: "14:00",
+      end: "15:00",
+      title: "昨",
+      roomName: "明月",
+      status: "ended"
+    },
+    {
+      id: "later",
+      date: "2026-09-15",
+      start: "16:00",
+      end: "17:00",
+      title: "周会",
+      roomName: "星海",
+      status: "upcoming"
+    },
+    {
+      id: "soon",
+      date: "2026-09-15",
+      start: "11:00",
+      end: "12:00",
+      title: "午会",
+      roomName: "星海",
+      status: "upcoming"
+    }
   ];
   const hit = JSON.parse(
     await runPrepareReleaseTool(
       {},
-      { listMyBookings, todayIso: "2026-09-15", releaseBooking: async () => { released = true; } }
+      {
+        listMyBookings,
+        todayIso: "2026-09-15",
+        releaseBooking: async () => {
+          released = true;
+        }
+      }
     )
   );
   assert.equal(hit.booking.id, "soon");
   assert.equal(released, false);
 
   const empty = JSON.parse(
-    await runPrepareReleaseTool({}, { listMyBookings: async () => [], todayIso: "2026-09-15" })
+    await runPrepareReleaseTool(
+      {},
+      { listMyBookings: async () => [], todayIso: "2026-09-15" }
+    )
   );
   assert.equal(empty.booking, null);
 });
