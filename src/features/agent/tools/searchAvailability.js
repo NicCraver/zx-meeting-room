@@ -1,10 +1,10 @@
 import { shanghaiToday } from "@/features/booking/time";
-import { searchFreeSlots } from "../findFree.js";
+import { fallbackAdvice, searchFreeSlots } from "../findFree.js";
 
 export const SEARCH_AVAILABILITY_TOOL = {
   name: "search_availability",
   description:
-    "按日期查空闲会议室。必须传 date（yyyy-MM-dd）。不要编造房间或时段，结果里的 slots 才能给用户点选。",
+    "按日期查空闲会议室。必须传 date（yyyy-MM-dd）。时间一律 24 小时制（下午 3 点 = 15:00）。windowStart/windowEnd 是搜索区间，整段 durationMin 必须能放进去；用户说「X点开始、Y分钟」时 windowStart=X、windowEnd=X+Y、durationMin=Y。capacity 是最少人数，没说人数不要传。不要编造房间或时段，结果里的 slots 才能给用户点选。",
   parameters: {
     type: "object",
     properties: {
@@ -66,19 +66,19 @@ export async function runSearchAvailabilityTool(argumentsJson, deps = {}) {
     date: shanghaiToday(),
     minute: shanghaiNowMinutes()
   };
-  const found = searchFreeSlots(
-    rooms,
-    {
-      dateIso: date,
-      durationMin: Number(args.durationMin) || 60,
-      windowStart: args.windowStart || null,
-      windowEnd: args.windowEnd || null,
-      capacity: args.capacity == null ? null : Number(args.capacity),
-      buildingName: args.buildingName || null,
-      floorName: args.floorName || null,
-      facilities: Array.isArray(args.facilities) ? args.facilities : []
-    },
-    now
-  );
+  const query = {
+    dateIso: date,
+    durationMin: Number(args.durationMin) || 60,
+    windowStart: args.windowStart || null,
+    windowEnd: args.windowEnd || null,
+    capacity: args.capacity == null ? null : Number(args.capacity),
+    buildingName: args.buildingName || null,
+    floorName: args.floorName || null,
+    facilities: Array.isArray(args.facilities) ? args.facilities : []
+  };
+  const found = searchFreeSlots(rooms, query, now);
+  if (!found.rooms.length) {
+    found.hint = fallbackAdvice(rooms, query, now);
+  }
   return JSON.stringify(found);
 }

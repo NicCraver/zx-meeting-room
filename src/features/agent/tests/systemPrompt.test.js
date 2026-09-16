@@ -11,4 +11,6 @@ test("system prompt names tools and forbids write claims", () => {
   assert.match(text, /禁止声称已经预定成功或已经释放/);
   assert.doesNotMatch(text, /create_booking/);
   assert.doesNotMatch(text, /release_booking/);
+  assert.match(text, /15:00/);
+  assert.match(text, /24\s*小时/);
 });

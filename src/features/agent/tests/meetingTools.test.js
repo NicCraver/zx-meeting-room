@@ -75,6 +75,28 @@ test("list_my_meetings drops released and can filter date", async () => {
   );
 });
 
+test("search point window 15:00 and capacity miss still returns hint", async () => {
+  const getBoard = async () => ({ rooms });
+  const now = { date: "2026-08-27", minute: 9 * 60 };
+  const point = JSON.parse(
+    await runSearchAvailabilityTool(
+      { date: "2026-08-27", durationMin: 60, windowStart: "15:00", windowEnd: "15:00" },
+      { getBoard, now }
+    )
+  );
+  assert.equal(point.rooms.length > 0, true);
+  assert.equal(point.rooms[0].slots[0].start, "15:00");
+
+  const miss = JSON.parse(
+    await runSearchAvailabilityTool(
+      { date: "2026-08-27", durationMin: 60, windowStart: "15:00", windowEnd: "16:00", capacity: 99 },
+      { getBoard, now }
+    )
+  );
+  assert.deepEqual(miss.rooms, []);
+  assert.match(String(miss.hint || ""), /空闲/);
+});
+
 test("runAgentTool dispatches search_availability through shipped runner", async () => {
   let boardCalls = 0;
   const output = JSON.parse(

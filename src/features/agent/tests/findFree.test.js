@@ -99,3 +99,49 @@ test("empty result still offers a non-empty fallback", () => {
   assert.match(advice, /没有空闲/);
   assert.ok(advice.length > 10);
 });
+
+test("point or too-narrow window still yields a slot of durationMin", () => {
+  const now = { date: today, minute: 8 * 60 };
+  const point = searchFreeSlots(
+    rooms,
+    {
+      dateIso: today,
+      durationMin: 60,
+      windowStart: "15:00",
+      windowEnd: "15:00"
+    },
+    now
+  );
+  assert.equal(point.rooms.length > 0, true);
+  assert.equal(point.rooms[0].slots[0].start, "15:00");
+  assert.equal(point.rooms[0].slots[0].end, "16:00");
+
+  const narrow = searchFreeSlots(
+    rooms,
+    {
+      dateIso: today,
+      durationMin: 60,
+      windowStart: "15:00",
+      windowEnd: "15:30"
+    },
+    now
+  );
+  assert.equal(narrow.rooms[0].slots[0].start, "15:00");
+  assert.equal(narrow.rooms[0].slots[0].end, "16:00");
+});
+
+test("early-morning 3点 window is treated as 15:00 when rooms are not open yet", () => {
+  const found = searchFreeSlots(
+    rooms,
+    {
+      dateIso: today,
+      durationMin: 60,
+      windowStart: "03:00",
+      windowEnd: "04:00"
+    },
+    { date: today, minute: 8 * 60 }
+  );
+  assert.equal(found.rooms.length > 0, true);
+  assert.equal(found.rooms[0].slots[0].start, "15:00");
+  assert.equal(found.rooms[0].slots[0].end, "16:00");
+});

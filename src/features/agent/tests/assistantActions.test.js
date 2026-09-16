@@ -33,6 +33,7 @@ test("confirmBookingAction M4010 becomes suggest from board slots", async () => 
       createBooking: async () => {
         throw Object.assign(new Error("占用"), { code: "M4010", msg: "该时段已被占用" });
       },
+      now: { date: "2026-09-15", minute: 9 * 60 },
       getBoard: async () => ({
         rooms: [
           {

@@ -5,12 +5,12 @@ import { shanghaiNowMinutes } from "./tools/searchAvailability.js";
 
 const bookingApi = () => import("@/api/module/booking");
 
-const suggestFromBoard = async (date, durationMin, getBoardFn) => {
+const suggestFromBoard = async (date, durationMin, getBoardFn, now) => {
   const data = await getBoardFn(date);
   const found = searchFreeSlots(
     Array.isArray(data?.rooms) ? data.rooms : [],
     { dateIso: date, durationMin: durationMin || 60 },
-    { date: shanghaiToday(), minute: shanghaiNowMinutes() }
+    now || { date: shanghaiToday(), minute: shanghaiNowMinutes() }
   );
   const options = [];
   for (const room of found.rooms || []) {
@@ -58,7 +58,12 @@ export async function confirmBookingAction(draft, title, deps = {}) {
   } catch (err) {
     if (err?.code === "M4010") {
       const fetchBoard = deps.getBoard || (await bookingApi()).getBoard;
-      const options = await suggestFromBoard(slot.date, durationOf(slot), fetchBoard);
+      const options = await suggestFromBoard(
+        slot.date,
+        durationOf(slot),
+        fetchBoard,
+        deps.now
+      );
       return {
         type: "suggest",
         reason: err.msg || "该时段已被占用",
