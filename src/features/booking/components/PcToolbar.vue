@@ -297,17 +297,8 @@
         </button>
       </div>
 
-      <div class="pc-toolbar-end pc-toolbar-checks">
-        <button
-          type="button"
-          data-testid="mr-switch-user"
-          class="pc-link-btn"
-          @click="emit('switchUser')"
-        >
-          切换用户
-        </button>
+      <div v-if="isAdmin" class="pc-toolbar-end pc-toolbar-checks">
         <AcButton
-          v-if="isAdmin"
           data-testid="mr-toolbar-admin"
           type="primary"
           plain
@@ -349,7 +340,6 @@ const emit = defineEmits([
   "openBook",
   "replayTour",
   "admin",
-  "switchUser",
   "changeView"
 ]);
 

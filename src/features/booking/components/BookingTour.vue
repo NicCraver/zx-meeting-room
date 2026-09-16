@@ -13,10 +13,29 @@ const props = defineProps({
   ready: { type: Boolean, default: false }
 });
 
+const emit = defineEmits(["start"]);
+
 let tour = null;
 let started = false;
 
+const clearDragSlotActive = () => {
+  if (typeof document === "undefined") return;
+  const elements = document.querySelectorAll('[data-tour="drag-slot"]');
+  elements.forEach((el) => {
+    el.classList.remove("is-active", "is-playing", "driver-active-element");
+  });
+};
+
+const activateDragSlot = (element) => {
+  if (!element) return;
+  element.classList.add("is-active");
+  element.classList.remove("is-playing");
+  void element.offsetWidth;
+  element.classList.add("is-playing");
+};
+
 const destroyTour = () => {
+  clearDragSlotActive();
   if (tour) {
     tour.destroy();
     tour = null;
@@ -28,6 +47,7 @@ const startTour = () => {
   const missing = TOUR_STEPS.some((s) => !document.querySelector(s.element));
   if (missing) return;
   destroyTour();
+  emit("start");
   tour = driver({
     showProgress: true,
     allowClose: true,
@@ -38,7 +58,33 @@ const startTour = () => {
     prevBtnText: "上一步",
     doneBtnText: "开始使用",
     steps: TOUR_STEPS,
+    onHighlightStarted: (element) => {
+      const isDragSlot = Boolean(
+        element && element.getAttribute("data-tour") === "drag-slot"
+      );
+      if (isDragSlot) {
+        activateDragSlot(element);
+      } else {
+        clearDragSlotActive();
+      }
+    },
+    onHighlighted: (element) => {
+      const isDragSlot = Boolean(
+        element && element.getAttribute("data-tour") === "drag-slot"
+      );
+      if (isDragSlot) {
+        activateDragSlot(element);
+      } else {
+        clearDragSlotActive();
+      }
+    },
+    onDeselected: (element) => {
+      if (element && element.getAttribute("data-tour") === "drag-slot") {
+        clearDragSlotActive();
+      }
+    },
     onDestroyStarted: () => {
+      clearDragSlotActive();
       markTourSeen();
       if (tour) tour.destroy();
     }

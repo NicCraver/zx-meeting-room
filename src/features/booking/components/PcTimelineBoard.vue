@@ -168,6 +168,21 @@
             @pointermove="onTrackHover(room, $event)"
             @pointerleave="clearHover"
           >
+            <div
+              v-if="room.id === rooms[0]?.id"
+              class="tl-tour-drag-slot"
+              data-tour="drag-slot"
+              data-testid="mr-tour-drag-slot"
+              aria-hidden="true"
+              :style="tourDragStyle"
+            >
+              <div class="tl-tour-drag-fill">
+                <span class="tl-tour-drag-label">{{
+                  tourDragRange.label
+                }}</span>
+              </div>
+              <span class="tl-tour-drag-hand" />
+            </div>
             <span
               v-if="pastWidth"
               class="tl-past"
@@ -334,9 +349,11 @@ import {
   minutesNear,
   dayAxisHourHidden,
   dayAxisNowHidden,
-  nowScrollLeft
+  nowScrollLeft,
+  shanghaiNowMinutes
 } from "../time";
 import { placeConfirmCard } from "../confirmPlace";
+import { getTourDragRange, tourDragSlotStyle } from "../bookingTour";
 import { SvgIcon } from "@/components/base";
 
 const props = defineProps({
@@ -350,17 +367,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["update:selection", "commit", "notice", "book-room"]);
-
-const shanghaiNowMinutes = () => {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Shanghai",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23"
-  }).formatToParts(new Date());
-  const pick = (type) => Number(parts.find((p) => p.type === type)?.value || 0);
-  return pick("hour") * 60 + pick("minute");
-};
 
 const nowMin = ref(shanghaiNowMinutes());
 const boardEl = ref(null);
@@ -400,6 +406,16 @@ onBeforeUnmount(() => {
 });
 
 const isWeek = computed(() => props.viewMode === "week");
+
+const tourDragRange = computed(() => getTourDragRange(nowMin.value));
+
+const tourDragStyle = computed(() =>
+  tourDragSlotStyle(
+    props.viewMode,
+    nowMin.value,
+    todayWeekIndex.value >= 0 ? todayWeekIndex.value : 1
+  )
+);
 
 const weekSelection = computed(() =>
   props.selection?.view === "week" ? props.selection : null
@@ -859,4 +875,13 @@ watch(
     syncConfirmPos();
   }
 );
+
+const refreshNow = () => {
+  nowMin.value = shanghaiNowMinutes();
+};
+
+defineExpose({
+  scrollBoardToNow,
+  refreshNow
+});
 </script>

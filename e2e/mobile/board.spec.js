@@ -47,8 +47,15 @@ test.describe("移动看板", () => {
     await expect(tid(page, "mr-buddy-fab")).toBeVisible();
   });
 
-  test("m 无身份门户不出现管理", async ({ page }) => {
+  test("m 无身份不进列表，不出现管理", async ({ page }) => {
     await openMeeting(page, { path: "/ai-meet/m/", qs: "" });
+    await expect(tid(page, "mr-need-auth")).toBeVisible();
+    await expect(tid(page, "mr-demo-enter-booking")).toHaveCount(0);
+    await expect(tid(page, "mr-demo-enter-admin")).toHaveCount(0);
+  });
+
+  test("m debugger 门户不出现管理", async ({ page }) => {
+    await openMeeting(page, { path: "/ai-meet/m/debugger", qs: "" });
     await expect(tid(page, "mr-demo-enter-booking")).toBeVisible();
     await expect(tid(page, "mr-demo-enter-admin")).toHaveCount(0);
   });

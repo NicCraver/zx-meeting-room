@@ -22,7 +22,8 @@ let flushing = false;
 export const TELEMETRY_EVENT_NAMES = EVENT_NAMES;
 
 export const sanitizeProps = (eventName, props) => {
-  if (!props || typeof props !== "object" || Array.isArray(props)) return undefined;
+  if (!props || typeof props !== "object" || Array.isArray(props))
+    return undefined;
   const out = { ...props };
   delete out.text;
   delete out.message;

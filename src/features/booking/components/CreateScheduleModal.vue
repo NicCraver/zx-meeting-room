@@ -145,9 +145,7 @@
           class="h-11 w-full"
           data-testid="mr-form-submit"
           type="primary"
-          :title="
-            submitting ? '提交中…' : editing ? '保存修改' : '提交预定'
-          "
+          :title="submitting ? '提交中…' : editing ? '保存修改' : '提交预定'"
           :loading="submitting"
           :disabled="!canSubmit"
           @click="handleSubmit"
@@ -350,7 +348,9 @@ const handleSubmit = async () => {
     formError.value =
       error.msg ||
       error.message ||
-      (props.editing ? "修改失败，请检查时段后重试" : "预定失败，请检查时段后重试");
+      (props.editing
+        ? "修改失败，请检查时段后重试"
+        : "预定失败，请检查时段后重试");
     track("booking_fail", {
       source: "form",
       code: error.code ? String(error.code).slice(0, 32) : undefined

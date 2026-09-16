@@ -29,6 +29,19 @@ export const shanghaiToday = (now = new Date()) => {
   return `${pick("year")}-${pick("month")}-${pick("day")}`;
 };
 
+/** 上海时区当前分钟数（0 - 1439） */
+export const shanghaiNowMinutes = (now = new Date()) => {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Shanghai",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(now);
+  const h = Number(parts.find((p) => p.type === "hour")?.value || 0);
+  const m = Number(parts.find((p) => p.type === "minute")?.value || 0);
+  return h * 60 + m;
+};
+
 export const addDays = (date, days) => {
   const [y, m, d] = date.split("-").map(Number);
   const utc = Date.UTC(y, m - 1, d + days);

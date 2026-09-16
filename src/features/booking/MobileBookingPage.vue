@@ -166,7 +166,6 @@
     <MobileMoreSheet
       v-if="showMore"
       @open-mine="openMine"
-      @switch-user="switchDemoUser"
       @close="showMore = false"
     />
 
@@ -220,10 +219,14 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { NavBarHeader, SvgIcon } from "@/components/base";
-import { getAccountId, getUserId, showToastError, showToastSuccess } from "@/utils";
+import {
+  getAccountId,
+  getUserId,
+  showToastError,
+  showToastSuccess
+} from "@/utils";
 import { track } from "./telemetry";
 import { releaseBooking } from "@/api/module/booking";
-import { switchDemoUser } from "@/features/demo/session";
 import { useBoard } from "./useBoard";
 import { useMine } from "./useMine";
 import { extendSlotEnd, fromMinutes, shanghaiToday } from "./time";

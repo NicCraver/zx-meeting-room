@@ -1502,16 +1502,16 @@
   bottom: calc(268px + env(safe-area-inset-bottom, 0px));
 }
 
-.booking-ai-bar .booking-ai-results,
-.booking-ai-bar .booking-ai-results .el-scrollbar__wrap {
+.booking-ai-bar .booking-ai-results-scroll,
+.booking-ai-bar .booking-ai-results-scroll .el-scrollbar__wrap {
   max-height: min(
     52vh,
     calc(100dvh - 280px - env(safe-area-inset-bottom, 0px))
   );
 }
 
-.booking-ai-bar.is-lifted .booking-ai-results,
-.booking-ai-bar.is-lifted .booking-ai-results .el-scrollbar__wrap {
+.booking-ai-bar.is-lifted .booking-ai-results-scroll,
+.booking-ai-bar.is-lifted .booking-ai-results-scroll .el-scrollbar__wrap {
   max-height: min(
     42vh,
     calc(100dvh - 420px - env(safe-area-inset-bottom, 0px))
@@ -1541,7 +1541,52 @@
 }
 
 .booking-ai-bar .booking-ai-results {
+  position: relative;
   overflow: hidden;
+}
+
+.booking-ai-result-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--color-mute);
+  cursor: pointer;
+}
+
+.booking-ai-result-close:hover {
+  color: var(--color-ink);
+  background: rgba(31, 35, 41, 0.06);
+}
+
+.booking-ai-results .ai-buddy-card-title,
+.ai-buddy-card-slot-inner .ai-buddy-card-title {
+  padding-right: 28px;
+}
+
+.booking-ai-need-more,
+.booking-ai-error {
+  margin: 0;
+  padding: 14px 40px 14px 14px;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--color-body);
+}
+
+.booking-ai-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 /* 结果卡用输入框同一套描边，里面的 article 不再套第二层边框 */
@@ -2710,6 +2755,98 @@ button.tl-room-cell:focus-visible .tl-room-plus {
   white-space: nowrap;
 }
 
+.tl-tour-drag-slot {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  visibility: hidden;
+  overflow: visible;
+  transition: opacity 0.15s ease-out;
+}
+
+.tl-tour-drag-slot.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tl-tour-drag-fill {
+  position: relative;
+  height: 100%;
+  width: 22%;
+  background: rgba(62, 126, 255, 0.16);
+  outline: 1px solid rgba(62, 126, 255, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tl-tour-drag-slot.is-active.is-playing .tl-tour-drag-fill,
+.tl-tour-drag-slot.is-playing .tl-tour-drag-fill {
+  animation: mr-tour-drag-fill 2.2s ease-in-out infinite;
+}
+
+@keyframes mr-tour-drag-fill {
+  0%,
+  12% {
+    width: 22%;
+  }
+  72%,
+  88% {
+    width: 100%;
+  }
+  100% {
+    width: 22%;
+  }
+}
+
+.tl-tour-drag-label {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.tl-tour-drag-hand {
+  position: absolute;
+  top: 50%;
+  left: 12%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 0 2px #3e7eff,
+    0 2px 6px rgba(31, 35, 41, 0.28);
+  opacity: 0;
+}
+
+.tl-tour-drag-slot.is-playing .tl-tour-drag-hand {
+  animation: mr-tour-drag-hand 2.2s ease-in-out infinite;
+}
+
+@keyframes mr-tour-drag-hand {
+  0%,
+  12% {
+    left: 12%;
+    opacity: 1;
+  }
+  72% {
+    left: 92%;
+    opacity: 1;
+  }
+  88%,
+  100% {
+    left: 92%;
+    opacity: 0;
+  }
+}
+
 .tl-confirm-card {
   pointer-events: auto;
   position: fixed;
@@ -3052,6 +3189,7 @@ html[data-device="mobile"] .ai-buddy-dock {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
 }
 
 .ai-buddy-card-slot.is-on .ai-buddy-card-slot-inner {
@@ -3183,6 +3321,52 @@ html[data-device="mobile"] .ai-buddy-dock {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.ai-buddy-mine-lead {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--color-body);
+}
+
+.ai-buddy-mine-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ai-buddy-mine-row {
+  padding: 10px 12px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 10px;
+  background: var(--color-canvas-soft, #f7f8fa);
+}
+
+.ai-buddy-mine-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ai-buddy-mine-title {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+.ai-buddy-mine-meta {
+  margin: 2px 0 0;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-mute);
 }
 
 .ai-buddy-occ {
