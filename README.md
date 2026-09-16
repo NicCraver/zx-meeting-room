@@ -49,7 +49,7 @@ http://localhost:6273/ai-meet/?zxAccountId=1880150187008081921&zxCorpId=6&zxClie
 
 PC 入口：`http://localhost:6273/ai-meet/zx/`（同一套 query）。移动：`/ai-meet/m/`。
 
-助手芯片同样走 `/meetingApi` → Java `/meetingRoom`（含 `/agent/turn`）。
+助手芯片走 `/meetingApi` → Java `/meetingRoom`（`GET /agent/suggestions` 四条固定芯片）。对话走 `/aiChatApi` → `POST /v1/aiMeet`。
 
 ## 其它命令
 
@@ -57,7 +57,9 @@ PC 入口：`http://localhost:6273/ai-meet/zx/`（同一套 query）。移动：
 pnpm build        # web 三入口 → mergeDist，产出 web/dist/
 pnpm build:prod
 pnpm test         # Vitest 单测
-pnpm test:e2e     # Playwright UI E2E（需 Java 7004）
+pnpm test:e2e     # Playwright（内存 mock，不需要 Java）
+pnpm test:e2e:live # 真 Java :7004 冒烟；没起则 skip
+pnpm test:quality # 单测 + 默认 E2E
 pnpm typecheck
 pnpm format       # 只作用于 src/
 ```

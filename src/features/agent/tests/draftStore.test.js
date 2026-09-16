@@ -29,3 +29,24 @@ test("expired draft cannot confirm", () => {
   t += DRAFT_TTL_MS + 1;
   assert.throws(() => store.confirmPayload("评审"), /过期/);
 });
+
+test("updateSlot can retarget time after picking an issued slot", () => {
+  const store = createDraftStore();
+  store.issueFromRooms([{ slots: [slot] }]);
+  store.pickSlot(slot);
+  const next = store.updateSlot({ start: "15:00", end: "16:30", date: "2026-09-16" });
+  assert.equal(next.slot.roomId, "r1");
+  assert.equal(next.slot.start, "15:00");
+  assert.equal(next.slot.end, "16:30");
+  assert.equal(next.slot.date, "2026-09-16");
+  const payload = store.confirmPayload("评审");
+  assert.equal(payload.slot.start, "15:00");
+  assert.equal(payload.slot.end, "16:30");
+});
+
+test("updateSlot rejects inverted range", () => {
+  const store = createDraftStore();
+  store.issueFromRooms([{ slots: [slot] }]);
+  store.pickSlot(slot);
+  assert.throws(() => store.updateSlot({ start: "16:00", end: "15:00" }), /结束时间/);
+});

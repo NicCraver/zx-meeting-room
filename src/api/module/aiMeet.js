@@ -1,5 +1,8 @@
 import { getAccountId, getCorpId, getToken } from "@/utils";
-import { splitSseEvents } from "@/features/agent/sse.js";
+import {
+  messageFromNonSseBody,
+  splitSseEvents
+} from "@/features/agent/sse.js";
 
 const streamHeaders = () => {
   const token = getToken("access_token") || "";
@@ -46,15 +49,8 @@ export async function streamAiMeet(body, opts = {}) {
   const decoder = new TextDecoder();
   let buf = "";
   let donePayload = null;
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) {
-      break;
-    }
-    buf += decoder.decode(value, { stream: true });
-    const split = splitSseEvents(buf);
-    buf = split.rest;
-    for (const raw of split.events) {
+  const applyEvents = (rawList) => {
+    for (const raw of rawList) {
       const chunk = JSON.parse(raw);
       if (chunk.type === "delta" && chunk.delta) {
         onDelta?.(chunk.delta);
@@ -69,6 +65,26 @@ export async function streamAiMeet(body, opts = {}) {
         throw new Error(chunk.msg || "助手暂时不可用");
       }
     }
+  };
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      buf += decoder.decode();
+      const split = splitSseEvents(buf, { flush: true });
+      applyEvents(split.events);
+      const jsonErr = messageFromNonSseBody(
+        res.headers.get("content-type") || "",
+        buf
+      );
+      if (!donePayload && jsonErr) {
+        throw new Error(jsonErr);
+      }
+      break;
+    }
+    buf += decoder.decode(value, { stream: true });
+    const split = splitSseEvents(buf);
+    buf = split.rest;
+    applyEvents(split.events);
   }
   if (!donePayload) {
     throw new Error("流式结束但没有 done");

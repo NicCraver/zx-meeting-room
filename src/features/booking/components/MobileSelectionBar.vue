@@ -1,5 +1,9 @@
 <template>
-  <div v-if="room && selection" class="m-select-bar">
+  <div
+    v-if="room && selection"
+    class="m-select-bar"
+    data-testid="mr-select-bar"
+  >
     <div class="m-select-room">{{ room.name }}</div>
     <div class="m-select-time">
       {{ dateText }} {{ fromMinutes(selection.start) }}-{{
@@ -27,7 +31,12 @@
       <button type="button" class="btn-m-default" @click="emit('cancel')">
         取消
       </button>
-      <button type="button" class="btn-m-primary" @click="emit('book')">
+      <button
+        type="button"
+        class="btn-m-primary"
+        data-testid="mr-select-book"
+        @click="emit('book')"
+      >
         预定
       </button>
     </div>

@@ -159,7 +159,7 @@
             v-else-if="ui.card?.type === 'need_more'"
             class="ai-buddy-card"
           >
-            <p class="ai-buddy-card-copy">{{ ui.card.text }}</p>
+            <AgentMarkdown class="ai-buddy-card-copy" :source="ui.card.text" />
           </article>
           <article
             v-else-if="ui.card?.type === 'error'"
@@ -269,6 +269,7 @@ import {
 import { getUserName } from "@/utils";
 import AgentConfirmCard from "./AgentConfirmCard.vue";
 import AgentDebugPanel from "./AgentDebugPanel.vue";
+import AgentMarkdown from "./AgentMarkdown.vue";
 import AgentMineCard from "./AgentMineCard.vue";
 import AgentQueryCard from "./AgentQueryCard.vue";
 import AgentReleaseCard from "./AgentReleaseCard.vue";

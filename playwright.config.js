@@ -4,14 +4,14 @@ const baseURL = "http://127.0.0.1:6273";
 
 export default defineConfig({
   testDir: "./e2e",
-  fullyParallel: false,
-  workers: 1,
+  testIgnore: ["**/live/**", "**/mocks/**"],
+  fullyParallel: true,
+  workers: 4,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   timeout: 60_000,
   expect: { timeout: 15_000 },
   reporter: [["list"], ["html", { open: "never" }]],
-  globalSetup: "./e2e/global-setup.js",
   use: {
     baseURL,
     locale: "zh-CN",
@@ -28,8 +28,20 @@ export default defineConfig({
   },
   projects: [
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } }
+      name: "pc",
+      testMatch: ["pc/**/*.spec.js", "demo/**/*.spec.js"],
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1440, height: 900 }
+      }
+    },
+    {
+      name: "mobile",
+      testMatch: ["mobile/**/*.spec.js"],
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 390, height: 1200 }
+      }
     }
   ]
 });

@@ -6,6 +6,7 @@
         <button
           type="button"
           class="m-nav-icon"
+          data-testid="mr-m-more"
           aria-label="更多"
           @click="showMore = true"
         >
@@ -31,7 +32,12 @@
             <circle cx="11" cy="11" r="7" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <input v-model="keyword" type="search" placeholder="搜索会议室" />
+          <input
+            v-model="keyword"
+            type="search"
+            data-testid="mr-m-search"
+            placeholder="搜索会议室"
+          />
         </label>
 
         <div class="m-home-filters">
@@ -39,6 +45,7 @@
             <button
               type="button"
               class="m-filter-chip date"
+              data-testid="mr-m-filter-date"
               @click="filterSheet = 'date'"
             >
               <span>{{ dateChip }}</span>
@@ -59,6 +66,7 @@
             <button
               type="button"
               class="m-filter-chip"
+              data-testid="mr-m-filter-place"
               :class="{ active: filters.place !== 'all' }"
               @click="filterSheet = 'place'"
             >
@@ -82,6 +90,7 @@
             <button
               type="button"
               class="m-filter-chip"
+              data-testid="mr-m-filter-facilities"
               :class="{ active: filters.facilities.length > 0 }"
               @click="filterSheet = 'facilities'"
             >
@@ -108,6 +117,7 @@
           <button
             type="button"
             class="m-filter-reset"
+            data-testid="mr-m-filter-reset"
             @click="resetHomeFilters"
           >
             重置
@@ -194,8 +204,6 @@
       :loading="mine.loading.value"
       @close="mine.open.value = false"
       @release="onRelease"
-      @edit="onEditMine"
-      @locate="onLocateMine"
     />
     <ConfirmSheet
       v-if="confirmPayload"
@@ -219,7 +227,6 @@ import { switchDemoUser } from "@/features/demo/session";
 import { useBoard } from "./useBoard";
 import { useMine } from "./useMine";
 import { extendSlotEnd, fromMinutes, shanghaiToday } from "./time";
-import { draftRangeFromMine, roomFromMine } from "./mine";
 import MobileRoomList from "./components/MobileRoomList.vue";
 import MobileSelectionBar from "./components/MobileSelectionBar.vue";
 import MobileDateSheet from "./components/MobileDateSheet.vue";
@@ -352,20 +359,6 @@ const handleBookingSuccess = async (count = 1) => {
         : "预定成功，已加入「我的预定」"
   );
   await reload();
-};
-
-const onEditMine = (booking) => {
-  mine.open.value = false;
-  editingBooking.value = booking;
-  bookingRoom.value = roomFromMine(booking, rooms.value);
-  bookingRange.value = draftRangeFromMine(booking);
-  boardDate.value = booking.date;
-};
-
-const onLocateMine = (booking) => {
-  mine.open.value = false;
-  boardDate.value = booking.date;
-  selection.value = null;
 };
 
 const handleBookFromDetail = (room) => {

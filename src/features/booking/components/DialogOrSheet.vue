@@ -18,6 +18,7 @@ defineEmits(["close", "submit"]);
 <template>
   <XPopup
     v-if="sheet"
+    v-bind="$attrs"
     :bg-transparent="bgTransparent"
     :prevent-mask-close="preventMaskClose"
     :z-index="3000"

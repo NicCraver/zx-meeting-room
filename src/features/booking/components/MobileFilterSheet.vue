@@ -1,6 +1,6 @@
 <template>
   <XPopup @close="emit('close')">
-    <div class="sheet-header">
+    <div class="sheet-header" data-testid="mr-sheet-filter">
       <button type="button" class="navbar-action" @click="emit('close')">
         关闭
       </button>

@@ -1,6 +1,6 @@
 <template>
   <XPopup @close="emit('close')">
-    <div class="sheet-header">
+    <div class="sheet-header" data-testid="mr-sheet-occupancy">
       <span class="sheet-title">该时段已被预定</span>
       <button type="button" class="navbar-action" @click="emit('close')">
         关闭

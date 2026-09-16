@@ -5,7 +5,7 @@
     aria-label="我的会议"
   >
     <h3 class="ai-buddy-card-title">我的会议</h3>
-    <p v-if="text" class="ai-buddy-card-copy">{{ text }}</p>
+    <AgentMarkdown v-if="text" class="ai-buddy-card-copy" :source="text" />
     <ul class="ai-buddy-query-list">
       <li v-for="row in bookings" :key="row.id" class="ai-buddy-query-row">
         <div class="ai-buddy-query-meta">
@@ -18,6 +18,8 @@
 </template>
 
 <script setup>
+import AgentMarkdown from "./AgentMarkdown.vue";
+
 defineProps({
   text: { type: String, default: "" },
   bookings: { type: Array, default: () => [] }

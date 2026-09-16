@@ -19,7 +19,9 @@ const retryMap = new Map();
 export const baseMap = {
   base: "/api/",
   auth: "/api/oauth",
-  meeting: "/meetingApi"
+  meeting: "/meetingApi",
+  contact: "/api/contact/v1",
+  aiChat: "/aiChatApi"
 };
 
 // clientType 唯一取值入口是 bootstrapAuthFromUrl()（在各 main.js 挂载前调用），
@@ -42,7 +44,9 @@ const http = axios.create({
 });
 
 const isAuthExemptUrl = (url = "") =>
-  url.indexOf("/refresh/token") !== -1 || url.indexOf("/app/login") !== -1;
+  url.indexOf("/refresh/token") !== -1 ||
+  url.indexOf("/app/login") !== -1 ||
+  url.indexOf("getTokenByCode") !== -1;
 
 /** 本地 AAuthFilter 只读 query，每个打 Java / Node 的请求都带上。 */
 const attachLocalJavaAuth = (request) => {

@@ -58,8 +58,16 @@ watch(
     ) {
       return;
     }
-    started = true;
-    startTour();
+    const kick = (attempt = 0) => {
+      if (started) return;
+      if (TOUR_STEPS.some((s) => !document.querySelector(s.element))) {
+        if (attempt < 20) window.setTimeout(() => kick(attempt + 1), 50);
+        return;
+      }
+      started = true;
+      startTour();
+    };
+    kick();
   },
   { immediate: true }
 );

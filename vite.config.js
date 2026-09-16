@@ -64,6 +64,12 @@ const buildEntries = {
  */
 const shim = (name) => resolve(import.meta.dirname, `build/shims/${name}`);
 
+/** 同一条代理同时挂 `/path` 与 `/ai-meet/path`，避免 base 前缀把请求打成 HTML。 */
+const devProxy = (path, options) => ({
+  [path]: { ...options },
+  [`${base.replace(/\/$/, "")}${path}`]: { ...options }
+});
+
 const uiTrimAliases = () => {
   if (buildTarget === "m") {
     return [
@@ -94,14 +100,27 @@ export default defineConfig(({ mode }) => {
   return {
     base,
     server: {
-      // dev 反向代理：/api 走智信网关；会议室接口打 contact Java
+      // 两条本地后端同时挂：contact :7004（会议室 CRUD）+ ai-chat :8020（/v1/aiMeet SSE）。
+      // 键要写 base 内外两套——Vite base 是 /ai-meet/，只写 /meetingApi 时
+      // /ai-meet/meetingApi 会落到 SPA HTML。/api 仍走测试网关（oauth 等）。
       proxy: {
-        "/api": "http://192.168.10.25",
-        "/meetingApi": {
+        ...devProxy("/aiChatApi", {
+          target: "http://localhost:8020",
+          changeOrigin: true,
+          timeout: 0,
+          proxyTimeout: 0,
+          rewrite: (path) =>
+            path.replace(/^\/ai-meet/, "").replace(/^\/aiChatApi/, "")
+        }),
+        ...devProxy("/meetingApi", {
           target: "http://localhost:7004",
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/meetingApi/, "/meetingRoom")
-        }
+          rewrite: (path) =>
+            path
+              .replace(/^\/ai-meet/, "")
+              .replace(/^\/meetingApi/, "/meetingRoom")
+        }),
+        "/api": "http://192.168.10.25"
       },
       host: "0.0.0.0",
       port: 6273
@@ -144,7 +163,8 @@ export default defineConfig(({ mode }) => {
     test: {
       include: [
         "src/features/**/tests/*.test.js",
-        "build/shims/tests/*.test.js"
+        "build/shims/tests/*.test.js",
+        "e2e/mocks/*.test.js"
       ],
       environment: "node"
     },

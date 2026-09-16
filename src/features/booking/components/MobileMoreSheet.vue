@@ -1,9 +1,9 @@
 <template>
   <XPopup bg-transparent :z-index="3000" prevent-mask-close @close="emit('close')">
-    <div class="m-action-sheet" @click.stop>
+    <div class="m-action-sheet" data-testid="mr-sheet-more" @click.stop>
       <button
         type="button"
-        data-testid="mine-open"
+        data-testid="mr-mine-open"
         class="h-11 w-full rounded-sm text-body-md border text-white bg-primary border-primary"
         @click="emit('openMine')"
       >

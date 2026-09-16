@@ -74,9 +74,11 @@
     >
       {{ ui.status }}
     </div>
-    <p v-else-if="card?.type === 'need_more'" class="booking-ai-status">
-      {{ card.text }}
-    </p>
+    <AgentMarkdown
+      v-else-if="card?.type === 'need_more'"
+      class="booking-ai-status"
+      :source="card.text"
+    />
     <div
       v-else-if="card?.type === 'error'"
       class="booking-ai-status"
@@ -98,6 +100,7 @@
         :draft="card.draft"
         @confirm="confirmDraft"
         @cancel="goBack"
+        @retarget="retargetSlot"
       />
       <AgentMineCard
         v-else-if="card.type === 'mine'"
@@ -183,6 +186,7 @@ import {
 } from "../telemetry.js";
 import { defaultBookingTitle } from "@/features/booking/defaultTitle.js";
 import AgentConfirmCard from "./AgentConfirmCard.vue";
+import AgentMarkdown from "./AgentMarkdown.vue";
 import AgentMineCard from "./AgentMineCard.vue";
 import AgentQueryCard from "./AgentQueryCard.vue";
 import AgentReleaseCard from "./AgentReleaseCard.vue";
@@ -381,6 +385,19 @@ const pickSlot = (slot) => {
   }
 };
 
+const retargetSlot = (patch) => {
+  if (sending.value || card.value?.type !== "confirm") return;
+  try {
+    const next = drafts.updateSlot(patch);
+    ui.value = {
+      ...ui.value,
+      card: { ...card.value, draft: next }
+    };
+  } catch (err) {
+    failTurn(err, turnGen);
+  }
+};
+
 const confirmDraft = async (title) => {
   const draftCard = card.value?.type === "confirm" ? card.value.draft : null;
   if (!draftCard || sending.value) return;
@@ -391,7 +408,8 @@ const confirmDraft = async (title) => {
   startWait("confirm");
   try {
     drafts.confirmPayload(title);
-    const event = await confirmBookingAction(draftCard, title, {
+    const latest = drafts.peek().draft || draftCard;
+    const event = await confirmBookingAction(latest, title, {
       userName: getUserName()
     });
     if (event.type === "suggest") {

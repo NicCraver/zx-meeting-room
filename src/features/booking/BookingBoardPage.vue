@@ -66,8 +66,6 @@
       :loading="mine.loading.value"
       @close="closeMine"
       @release="onRelease"
-      @edit="onEditMine"
-      @locate="onLocateMine"
     />
     <BookingAiBar
       ref="aiBarRef"
@@ -102,7 +100,6 @@ import {
   workweekOf
 } from "./time";
 import { draftFromRoomCell, draftFromToolbar } from "./bookingDefaults";
-import { draftRangeFromMine, roomFromMine } from "./mine";
 import { AcPageLoading } from "@/components/base";
 import PcToolbar from "./components/PcToolbar.vue";
 import BookingAiBar from "@/features/agent/components/BookingAiBar.vue";
@@ -355,20 +352,6 @@ const handleBookingSuccess = async (count = 1) => {
         : "预定成功，已加入「我的预定」"
   );
   await reload();
-};
-
-const onEditMine = (booking) => {
-  mine.open.value = false;
-  editingBooking.value = booking;
-  bookingRoom.value = roomFromMine(booking, rooms.value);
-  bookingRange.value = draftRangeFromMine(booking);
-};
-
-const onLocateMine = (booking) => {
-  mine.open.value = false;
-  viewMode.value = "day";
-  boardDate.value = booking.date;
-  selection.value = null;
 };
 
 const onRelease = async (booking) => {

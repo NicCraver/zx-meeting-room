@@ -6,9 +6,10 @@
     close-on-click-modal
     width="560px"
     class="mine-bookings-dialog"
+    data-testid="mr-dialog-mine"
     @close="emit('close')"
   >
-    <div class="bookings-dialog">
+    <div class="bookings-dialog" data-testid="mr-dialog-mine-body">
       <div v-if="mobileEnv" class="sheet-header">
         <span id="bookings-dialog-title" class="sheet-title">我的预定</span>
         <button type="button" class="navbar-action" @click="emit('close')">
@@ -16,11 +17,20 @@
         </button>
       </div>
       <div class="sheet-body bookings-dialog-body">
-        <div v-if="loading" class="bookings-loading" role="status">
+        <div
+          v-if="loading"
+          class="bookings-loading"
+          data-testid="mr-mine-loading"
+          role="status"
+        >
           <span class="i-carbon-circle-dash animate-spin" aria-hidden="true" />
           加载中…
         </div>
-        <AcEmpty v-else-if="!bookings.length" title="暂无预定">
+        <AcEmpty
+          v-else-if="!bookings.length"
+          data-testid="mr-mine-empty"
+          title="暂无预定"
+        >
           <template #desc>
             <span class="text-caption text-mute">{{ emptyHint }}</span>
           </template>
@@ -31,19 +41,23 @@
             :key="section.key"
             class="mine-section"
           >
-            <h3 class="mine-section-title">{{ section.title }}</h3>
+            <h3
+              class="mine-section-title"
+              :data-testid="`mr-mine-section-${section.key}`"
+            >
+              {{ section.title }}
+            </h3>
             <ul class="mine-booking-list">
               <li
                 v-for="b in section.items"
                 :key="b.id"
                 class="mine-booking-card"
+                data-testid="mr-mine-card"
+                :data-booking-id="b.id"
                 :data-booking-title="b.title"
               >
                 <div class="mine-card-main">
-                  <div
-                    class="mine-thumb"
-                    :class="{ preview: b.status === 'ongoing' }"
-                  >
+                  <div class="mine-thumb">
                     <svg
                       class="mine-thumb-icon"
                       viewBox="0 0 48 48"
@@ -82,13 +96,6 @@
                         stroke-linejoin="round"
                       />
                     </svg>
-                    <span
-                      v-if="b.status === 'ongoing'"
-                      class="mine-thumb-preview"
-                    >
-                      <span class="i-carbon-view" aria-hidden="true" />
-                      预览
-                    </span>
                   </div>
                   <div class="mine-card-copy">
                     <div class="mine-card-title-row">
@@ -109,21 +116,14 @@
                     </p>
                   </div>
                 </div>
-                <div class="booking-actions">
+                <div v-if="canChangeBooking(b.status)" class="booking-actions">
                   <button
-                    v-if="canChangeBooking(b.status)"
                     type="button"
                     class="booking-action-btn"
+                    data-testid="mr-mine-release"
                     @click="emit('release', b)"
                   >
                     释放会议室
-                  </button>
-                  <button
-                    type="button"
-                    class="booking-action-btn"
-                    @click="emit('locate', b)"
-                  >
-                    会议详情
                   </button>
                 </div>
               </li>
@@ -153,7 +153,7 @@ const props = defineProps({
   loading: { type: Boolean, default: false }
 });
 
-const emit = defineEmits(["close", "release", "edit", "locate"]);
+const emit = defineEmits(["close", "release"]);
 
 const { mobileEnv } = useMobileEnv();
 

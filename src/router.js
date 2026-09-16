@@ -22,10 +22,11 @@ export const createAppRouter = (routes, subPath = "") => {
    * 捕获该错误 → 比对线上 build_version 与编译期常量 → 不一致就提示刷新。
    */
   router.onError((error, to) => {
-    console.log("router.onError", { error, to });
+    const message = error && error.message ? String(error.message) : String(error);
+    console.log("router.onError", { message, to: to && to.fullPath });
     if (
-      error.message.includes("Failed to fetch dynamically imported module") ||
-      error.message.includes("Importing a module script failed")
+      message.includes("Failed to fetch dynamically imported module") ||
+      message.includes("Importing a module script failed")
     ) {
       fetch(`${import.meta.env.BASE_URL}build_version`, { cache: "no-cache" })
         .then((x) => x.text())

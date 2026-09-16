@@ -3,6 +3,7 @@
     <el-form-item prop="buildingName" label-width="0" class="flex-1 !mb-0">
       <el-select
         class="w-full"
+        data-testid="mr-form-building"
         filterable
         :model-value="buildingName"
         placeholder="请选择建筑"
@@ -19,6 +20,7 @@
     <el-form-item prop="floorName" label-width="0" class="flex-1 !mb-0">
       <el-select
         class="w-full"
+        data-testid="mr-form-floor"
         filterable
         :model-value="floorName"
         :placeholder="buildingName ? '请选择楼层' : '请先选择建筑'"

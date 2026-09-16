@@ -18,6 +18,7 @@
           <button
             type="button"
             class="w-full flex items-center justify-between gap-12px px-12px py-10px rounded-8px border border-edge bg-grayLight text-left cursor-pointer hover:border-primaryBorder hover:bg-primaryLight"
+            data-testid="mr-demo-enter-booking"
             @click="enterAsJavaUser('booking')"
           >
             <span class="min-w-0">
@@ -44,6 +45,7 @@
           <button
             type="button"
             class="w-full flex items-center justify-between gap-12px px-12px py-10px rounded-8px border border-edge bg-grayLight text-left cursor-pointer hover:border-primaryBorder hover:bg-primaryLight"
+            data-testid="mr-demo-enter-admin"
             @click="enterAsJavaUser('admin')"
           >
             <span class="min-w-0">
@@ -68,6 +70,7 @@
           <button
             type="button"
             class="w-full flex items-center justify-between gap-12px px-12px py-10px rounded-8px border border-edge bg-grayLight text-left cursor-pointer hover:border-primaryBorder hover:bg-primaryLight"
+            data-testid="mr-demo-enter-race"
             @click="enterAsJavaUser('race')"
           >
             <span class="min-w-0">

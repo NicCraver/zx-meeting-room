@@ -1,6 +1,6 @@
 <template>
   <XPopup @close="emit('close')">
-    <div class="sheet-header">
+    <div class="sheet-header" data-testid="mr-dialog-detail">
       <span class="sheet-title">会议室详情</span>
       <button type="button" class="navbar-action" @click="emit('close')">
         关闭
@@ -61,6 +61,7 @@
     <div v-if="showBook" class="sheet-footer">
       <AcButton
         class="h-11 w-full"
+        data-testid="mr-detail-book"
         type="primary"
         title="预定该会议室"
         @click="emit('book', room)"

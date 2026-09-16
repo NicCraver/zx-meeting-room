@@ -1,6 +1,7 @@
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 import { confirmAsk } from "@/utils";
+import { formSnapshot, isFormDirty } from "./dirtyGuard";
 
 /**
  * 表单脏检查：JSON.stringify(form) 对比 snapshot。
@@ -8,12 +9,12 @@ import { confirmAsk } from "@/utils";
  * @param {Record<string, unknown>} form
  */
 export const useDirtyGuard = (form) => {
-  const snapshot = ref(JSON.stringify(form));
+  const snapshot = ref(formSnapshot(form));
 
-  const isDirty = () => JSON.stringify(form) !== snapshot.value;
+  const isDirty = () => isFormDirty(form, snapshot.value);
 
   const markClean = () => {
-    snapshot.value = JSON.stringify(form);
+    snapshot.value = formSnapshot(form);
   };
 
   const confirmLeave = async () => {

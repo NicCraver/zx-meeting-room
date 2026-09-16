@@ -390,3 +390,22 @@ export const availableDurations = (
   });
   return durations.filter((min) => start + min <= high);
 };
+
+/**
+ * 日视图时间轴默认 scrollLeft：把「现在」放在可视轨道左侧约 1 小时处，
+ * 清晨贴左、傍晚贴右。周视图轨道撑满、不调用。
+ */
+export const nowScrollLeft = ({
+  nowMin,
+  trackWidth,
+  clientWidth,
+  roomWidth,
+  dayMin = DAY_MIN
+}) => {
+  const maxScroll = Math.max(0, roomWidth + trackWidth - clientWidth);
+  if (maxScroll <= 0 || trackWidth <= 0) return 0;
+  const hourWidth = trackWidth / 24;
+  const nowX = (Math.max(0, Math.min(dayMin, nowMin)) / dayMin) * trackWidth;
+  const left = nowX - hourWidth;
+  return Math.round(Math.max(0, Math.min(maxScroll, left)));
+};

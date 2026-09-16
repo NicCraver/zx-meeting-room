@@ -2,6 +2,7 @@
 import type { AcDialogProps, AcDialogEmits } from "./types";
 import { ref } from "vue";
 import AcButton from "../AcButton";
+import SvgIcon from "../SvgIcon";
 
 /**
  * PC 端弹窗（apps/web/src/components/common/AcDialog.vue 移植）。
@@ -64,17 +65,15 @@ const visible = ref(true);
           }}</span>
         </span>
         <span
-          class="flex items-center justify-center shrink-0 w-12 h-12 ml-4 self-start"
+          class="flex items-center justify-center shrink-0 w-12 h-12 ml-4 self-start cursor-pointer text-grayDark hover:text-primary"
+          role="button"
+          tabindex="0"
+          aria-label="关闭"
+          title="关闭"
+          @click="emit('close')"
+          @keydown.enter="emit('close')"
         >
-          <span
-            class="i-carbon-close w-4 h-4 shrink-0 cursor-pointer text-grayDark hover:text-primary"
-            role="button"
-            tabindex="0"
-            aria-label="关闭"
-            title="关闭"
-            @click="emit('close')"
-            @keydown.enter="emit('close')"
-          ></span>
+          <SvgIcon name="close" class="w-4 h-4 shrink-0" />
         </span>
       </span>
     </template>
@@ -108,6 +107,7 @@ const visible = ref(true);
           />
           <AcButton
             class="h-8 shrink-0"
+            data-testid="mr-dialog-submit"
             :class="submitClass"
             type="primary"
             @click="emit('submit')"

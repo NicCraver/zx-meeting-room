@@ -14,6 +14,7 @@
           v-loading="loading"
           :data="list"
           class="w-full booking-history-table"
+          data-testid="mr-history-table"
         >
           <el-table-column prop="date" label="日期" width="120" />
           <el-table-column label="时段" width="130">
@@ -42,6 +43,7 @@
                 type="primary"
                 plain
                 title="审计"
+                data-testid="mr-history-audit"
                 @click="openAudit(row)"
               />
             </template>

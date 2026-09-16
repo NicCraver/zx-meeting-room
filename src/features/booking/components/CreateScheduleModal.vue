@@ -9,10 +9,15 @@
     :submit-title="editing ? '保存修改' : '提交预定'"
     width="400px"
     class="create-schedule-dialog"
+    data-testid="mr-dialog-create"
     @submit="handleSubmit"
     @close="emit('close')"
   >
-    <form class="create-schedule-form" @submit.prevent="handleSubmit">
+    <form
+      class="create-schedule-form"
+      data-testid="mr-form-create"
+      @submit.prevent="handleSubmit"
+    >
       <div v-if="fullScreen" class="sheet-header">
         <button
           type="button"
@@ -43,6 +48,7 @@
               v-model="title"
               type="text"
               name="title"
+              data-testid="mr-form-title"
               autocomplete="off"
               class="form-input-text form-input-title"
               maxlength="50"
@@ -53,19 +59,25 @@
         </div>
 
         <div class="form-group-card">
-          <label class="form-cell">
+          <div class="form-cell">
             <span class="form-cell-label">会议室</span>
-            <select
+            <el-select
               v-model="roomId"
               class="form-select"
+              data-testid="mr-form-room"
               aria-label="会议室"
+              placeholder="请选择会议室"
               :disabled="Boolean(editing)"
+              :fit-input-width="true"
             >
-              <option v-for="r in roomOptions" :key="r.id" :value="r.id">
-                {{ r.name }}（{{ r.buildingName }} {{ r.floorName }}）
-              </option>
-            </select>
-          </label>
+              <el-option
+                v-for="r in roomOptions"
+                :key="r.id"
+                :label="`${r.name}（${r.buildingName} ${r.floorName}）`"
+                :value="r.id"
+              />
+            </el-select>
+          </div>
           <div class="form-cell">
             <span class="form-cell-label">预定时段</span>
             <div class="form-cell-value">
@@ -88,6 +100,7 @@
             <input
               v-model="attendees"
               type="text"
+              data-testid="mr-form-attendees"
               class="form-input-text form-input-end"
               maxlength="80"
               aria-label="参会人"
@@ -104,6 +117,7 @@
               v-model="remark"
               type="text"
               name="remark"
+              data-testid="mr-form-remark"
               autocomplete="off"
               class="form-input-text form-input-end"
               maxlength="100"
@@ -115,6 +129,7 @@
         <p
           v-if="conflictText"
           class="form-inline-error"
+          data-testid="mr-form-conflict"
           role="alert"
           aria-live="polite"
         >
@@ -128,6 +143,7 @@
       <div v-if="fullScreen" class="sheet-footer">
         <AcButton
           class="h-11 w-full"
+          data-testid="mr-form-submit"
           type="primary"
           :title="
             submitting ? '提交中…' : editing ? '保存修改' : '提交预定'

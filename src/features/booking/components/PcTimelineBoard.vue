@@ -1,7 +1,9 @@
 <template>
   <div
     id="room-table"
+    ref="boardEl"
     class="tl-board"
+    data-testid="mr-board"
     data-tour="room-table"
     :class="{ 'is-week': isWeek }"
     @pointermove="handlePointerMove"
@@ -128,11 +130,15 @@
           v-for="room in rooms"
           :key="room.id"
           class="tl-row"
+          data-testid="mr-room-row"
+          :data-room-id="room.id"
           :class="{ 'is-picking': selection && selection.roomId === room.id }"
         >
           <button
             type="button"
             class="tl-room-cell"
+            data-testid="mr-room-book"
+            :data-room-id="room.id"
             :aria-label="`预约 ${room.name}`"
             title="点击预约该会议室"
             @click="emit('book-room', room)"
@@ -151,6 +157,8 @@
 
           <div
             class="tl-track"
+            data-testid="mr-room-track"
+            :data-room-id="room.id"
             :class="{
               'is-blocked':
                 hoverHint && hoverHint.roomId === room.id && hoverHint.disabled
@@ -169,6 +177,7 @@
               v-for="ev in roomEvents(room)"
               :key="ev.key"
               class="tl-event"
+              data-testid="mr-busy-block"
               :class="{ mine: ev.mine }"
               :style="ev.style"
               @mouseenter="showTip(ev, $event.currentTarget)"
@@ -233,7 +242,11 @@
           <div class="tl-track" />
         </div>
 
-        <div v-if="rooms.length === 0" class="pc-empty">
+        <div
+          v-if="rooms.length === 0"
+          class="pc-empty"
+          data-testid="mr-board-empty"
+        >
           <span class="pc-empty-title">没有符合筛选条件的会议室</span>
           <span class="pc-empty-caption">试试调整建筑、楼层或设施条件</span>
         </div>
@@ -247,6 +260,7 @@
       <div
         ref="confirmCard"
         class="tl-confirm-card"
+        data-testid="mr-slot-confirm-card"
         role="dialog"
         aria-modal="true"
         aria-labelledby="tl-confirm-title"
@@ -260,6 +274,7 @@
         <div class="tl-confirm-actions">
           <button
             type="button"
+            data-testid="mr-slot-cancel"
             class="tl-btn-ghost"
             @click="emit('update:selection', null)"
           >
@@ -268,6 +283,7 @@
           <button
             ref="confirmBtn"
             type="button"
+            data-testid="mr-slot-confirm"
             class="tl-btn-primary"
             @click="emit('commit', confirmRoom, selection)"
           >
@@ -317,7 +333,8 @@ import {
   weekRangeLabel,
   minutesNear,
   dayAxisHourHidden,
-  dayAxisNowHidden
+  dayAxisNowHidden,
+  nowScrollLeft
 } from "../time";
 import { placeConfirmCard } from "../confirmPlace";
 import { SvgIcon } from "@/components/base";
@@ -346,6 +363,7 @@ const shanghaiNowMinutes = () => {
 };
 
 const nowMin = ref(shanghaiNowMinutes());
+const boardEl = ref(null);
 const dragRef = ref(null);
 /** 拖选过程中最新选区（pointerup 时 props 可能尚未同步） */
 const lastSelection = ref(null);
@@ -372,6 +390,7 @@ onMounted(() => {
   timer = window.setInterval(() => {
     nowMin.value = shanghaiNowMinutes();
   }, 30000);
+  scrollBoardToNow();
 });
 
 onBeforeUnmount(() => {
@@ -549,6 +568,32 @@ const syncConfirmPos = () => {
 const onBoardScroll = () => {
   syncConfirmPos();
 };
+
+const scrollBoardToNow = async () => {
+  await nextTick();
+  const el = boardEl.value;
+  if (!el || isWeek.value || !props.isToday) return;
+  const apply = () => {
+    const track = el.querySelector(".tl-axis");
+    const roomCell = el.querySelector(".tl-room-cell");
+    if (!track?.offsetWidth) return false;
+    el.scrollLeft = nowScrollLeft({
+      nowMin: nowMin.value,
+      trackWidth: track.offsetWidth,
+      clientWidth: el.clientWidth,
+      roomWidth: roomCell?.offsetWidth || 0
+    });
+    return true;
+  };
+  if (!apply()) requestAnimationFrame(apply);
+};
+
+watch(
+  () => [props.isToday, isWeek.value, props.rooms.length],
+  () => {
+    scrollBoardToNow();
+  }
+);
 
 const confirmRoom = computed(() => {
   const sel = props.selection;

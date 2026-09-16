@@ -28,6 +28,7 @@
           v-for="item in navItems"
           :key="item.id"
           :to="item.path"
+          :data-testid="`mr-admin-nav-${item.id}`"
           class="relative w-full h-44px flex flex-col items-center justify-center gap-2px border-none cursor-pointer text-10px leading-16px whitespace-nowrap no-underline"
           :class="
             active === item.id

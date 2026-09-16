@@ -22,6 +22,8 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed --slow-mo=400",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:live": "playwright test --config playwright.live.config.js",
+    "test:quality": "pnpm test && pnpm test:e2e",
     "format": "prettier --write src/",
     "perf:size": "node scripts/perf-size.mjs",
     "perf:e2e": "playwright test --config playwright.perf.config.js"
@@ -31,6 +33,7 @@
     "dayjs": "^1.11.19",
     "driver.js": "^1.8.0",
     "element-plus": "^2.11.7",
+    "marked": "14.1.4",
     "vant": "^4.9.21",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"

@@ -1,6 +1,6 @@
 <template>
-  <XPopup bg-transparent @close="emit('cancel')">
-    <div class="m-action-sheet" @click.stop>
+  <XPopup bg-transparent :z-index="4000" @close="emit('cancel')">
+    <div class="m-action-sheet" data-testid="mr-sheet-confirm" @click.stop>
       <div class="m-action-desc">
         <strong>{{ title }}</strong>
         <span>{{ message }}</span>

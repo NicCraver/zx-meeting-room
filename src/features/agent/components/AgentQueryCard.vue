@@ -4,7 +4,7 @@
     data-testid="mr-ai-query-card"
     aria-label="空闲会议室"
   >
-    <h3 class="ai-buddy-card-title">{{ heading }}</h3>
+    <AgentMarkdown class="ai-buddy-card-title" :source="heading" />
     <ul v-if="rooms.length" class="ai-buddy-query-list">
       <li v-for="room in rooms" :key="room.roomId" class="ai-buddy-query-row">
         <div class="ai-buddy-query-meta">
@@ -68,6 +68,7 @@
 
 <script setup>
 import { toMinutes } from "@/features/booking/time";
+import AgentMarkdown from "./AgentMarkdown.vue";
 
 defineProps({
   heading: { type: String, default: "" },

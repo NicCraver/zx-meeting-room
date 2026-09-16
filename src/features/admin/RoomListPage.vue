@@ -10,7 +10,12 @@
             维护企业会议室主数据、位置、设施与预定规则
           </p>
         </div>
-        <AcButton type="primary" title="新建会议室" @click="goCreate" />
+        <AcButton
+          data-testid="mr-admin-room-create"
+          type="primary"
+          title="新建会议室"
+          @click="goCreate"
+        />
       </div>
       <RoomFilters
         :keyword="keywordInput"

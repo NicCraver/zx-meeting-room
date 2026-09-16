@@ -1,3 +1,5 @@
+import { toMinutes } from "@/features/booking/time";
+
 export const DRAFT_TTL_MS = 10 * 60 * 1000;
 
 export const slotKey = (slot) =>
@@ -34,6 +36,27 @@ export function createDraftStore({ now = () => Date.now(), ttlMs = DRAFT_TTL_MS 
       title: "",
       createdAt: now()
     };
+    return draft;
+  };
+
+  const updateSlot = (patch = {}) => {
+    if (!draft) {
+      throw Object.assign(new Error("没有待确认草稿"), { code: "NO_DRAFT" });
+    }
+    if (expired(draft.createdAt)) {
+      draft = null;
+      throw Object.assign(new Error("草稿已过期"), { code: "DRAFT_EXPIRED" });
+    }
+    const next = {
+      ...draft.slot,
+      ...patch
+    };
+    if (toMinutes(next.end) <= toMinutes(next.start)) {
+      throw Object.assign(new Error("结束时间必须晚于开始时间"), {
+        code: "BAD_RANGE"
+      });
+    }
+    draft = { ...draft, slot: next };
     return draft;
   };
 
@@ -74,6 +97,7 @@ export function createDraftStore({ now = () => Date.now(), ttlMs = DRAFT_TTL_MS 
   return {
     issueFromRooms,
     pickSlot,
+    updateSlot,
     confirmPayload,
     setRelease,
     takeRelease,

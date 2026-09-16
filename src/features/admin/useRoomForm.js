@@ -4,6 +4,12 @@ import { createRoom, getRoom, updateRoom } from "@/api/module/room";
 import { listDicts } from "@/api/module/dict";
 import { showToastError, showToastSuccess } from "@/utils";
 import { BOOK_AHEAD_OPTIONS, FLOOR_OPTIONS } from "./constants";
+import {
+  capacityError,
+  locationDescError,
+  openHoursError,
+  roomNameError
+} from "./roomFormRules";
 
 const toastError = (error) => {
   const msg =
@@ -115,28 +121,20 @@ export const useRoomForm = ({ id, active } = {}) => {
     };
   };
 
+  const callbackErr = (callback, err) => {
+    if (err) callback(new Error(err));
+    else callback();
+  };
+
   const validateOpenHours = (_rule, _value, callback) => {
-    if (!form.openStart || !form.openEnd) {
-      callback(new Error("请选择开放时间"));
-      return;
-    }
-    if (form.openEnd <= form.openStart) {
-      callback(new Error("结束时间必须晚于开始时间"));
-      return;
-    }
-    callback();
+    callbackErr(callback, openHoursError(form.openStart, form.openEnd));
   };
 
   const rules = {
     name: [
       {
-        validator: (_rule, value, callback) => {
-          const trimmed = String(value || "").trim();
-          if (!trimmed) callback(new Error("请输入名称"));
-          else if (trimmed.length > 30)
-            callback(new Error("名称不超过 30 个字"));
-          else callback();
-        },
+        validator: (_rule, value, callback) =>
+          callbackErr(callback, roomNameError(value)),
         trigger: "blur"
       }
     ],
@@ -146,29 +144,15 @@ export const useRoomForm = ({ id, active } = {}) => {
     floorName: [{ required: true, message: "请选择楼层", trigger: "change" }],
     locationDesc: [
       {
-        validator: (_rule, value, callback) => {
-          if (String(value || "").trim().length > 50) {
-            callback(new Error("位置描述不超过 50 个字"));
-          } else callback();
-        },
+        validator: (_rule, value, callback) =>
+          callbackErr(callback, locationDescError(value)),
         trigger: "blur"
       }
     ],
     capacity: [
       {
-        validator: (_rule, value, callback) => {
-          const cap = Number(value);
-          if (
-            value === null ||
-            value === undefined ||
-            value === "" ||
-            !Number.isInteger(cap) ||
-            cap < 1 ||
-            cap > 999
-          ) {
-            callback(new Error("请输入容纳人数（1-999整数）"));
-          } else callback();
-        },
+        validator: (_rule, value, callback) =>
+          callbackErr(callback, capacityError(value)),
         trigger: "change"
       }
     ],

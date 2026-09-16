@@ -4,6 +4,7 @@
       <div class="pc-dropdown" @pointerdown.stop>
         <button
           type="button"
+          data-testid="mr-filter-place"
           class="pc-select pc-select-wide"
           :class="{ active: filters.place !== 'all' }"
           @click="toggleMenu('place')"
@@ -65,6 +66,7 @@
         </svg>
         <input
           type="search"
+          data-testid="mr-toolbar-search"
           placeholder="搜索会议室"
           :value="keyword"
           @input="emit('update:keyword', $event.target.value)"
@@ -74,6 +76,7 @@
       <div class="pc-dropdown" @pointerdown.stop>
         <button
           type="button"
+          data-testid="mr-filter-advanced"
           class="pc-advanced-btn"
           :class="{
             active: filters.capacity !== 'all' || filters.facilities.length > 0
@@ -139,17 +142,19 @@
       </div>
 
       <div class="pc-toolbar-end">
-        <span class="pc-book-cta-wrap" title="+ 预约会议室">
+        <span class="pc-book-cta-wrap">
           <AcButton
             id="tour-book-cta"
+            data-testid="mr-toolbar-book"
             data-tour="book-cta"
             class="pc-book-cta"
             type="primary"
-            :title="bookCtaTitle"
+            title="+ 预约会议室"
             @click="emit('openBook')"
           />
         </span>
         <AcButton
+          data-testid="mr-toolbar-mine"
           type="primary"
           plain
           title="我的预定"
@@ -158,6 +163,7 @@
         />
         <button
           type="button"
+          data-testid="mr-toolbar-tour"
           class="pc-tour-help"
           aria-label="使用指引"
           title="使用指引"
@@ -172,6 +178,7 @@
       <div class="pc-dropdown" @pointerdown.stop>
         <button
           type="button"
+          data-testid="mr-date-select"
           class="pc-select pc-date-select"
           @click="toggleMenu('date')"
         >
@@ -216,6 +223,7 @@
 
       <button
         type="button"
+        data-testid="mr-date-prev"
         class="pc-icon-btn"
         :title="viewMode === 'week' ? '上一周' : '前一天'"
         @click="emit('prevDay')"
@@ -234,11 +242,17 @@
           <polyline points="15 18 9 12 15 6" />
         </svg>
       </button>
-      <button type="button" class="pc-link-btn" @click="emit('today')">
+      <button
+        type="button"
+        data-testid="mr-date-today"
+        class="pc-link-btn"
+        @click="emit('today')"
+      >
         回到今天
       </button>
       <button
         type="button"
+        data-testid="mr-date-next"
         class="pc-icon-btn"
         :title="viewMode === 'week' ? '下一周' : '后一天'"
         @click="emit('nextDay')"
@@ -260,6 +274,7 @@
       <div class="pc-view-switch" role="radiogroup" aria-label="视图">
         <button
           type="button"
+          data-testid="mr-view-day"
           class="pc-view-chip"
           role="radio"
           :aria-checked="viewMode === 'day'"
@@ -270,6 +285,7 @@
         </button>
         <button
           type="button"
+          data-testid="mr-view-week"
           class="pc-view-chip"
           role="radio"
           :aria-checked="viewMode === 'week'"
@@ -282,11 +298,17 @@
       </div>
 
       <div class="pc-toolbar-end pc-toolbar-checks">
-        <button type="button" class="pc-link-btn" @click="emit('switchUser')">
+        <button
+          type="button"
+          data-testid="mr-switch-user"
+          class="pc-link-btn"
+          @click="emit('switchUser')"
+        >
           切换用户
         </button>
         <AcButton
           v-if="isAdmin"
+          data-testid="mr-toolbar-admin"
           type="primary"
           plain
           title="会议室管理"
@@ -330,22 +352,6 @@ const emit = defineEmits([
   "switchUser",
   "changeView"
 ]);
-
-const compactCta = ref(
-  typeof window !== "undefined"
-    ? window.matchMedia("(max-width: 720px)").matches
-    : false
-);
-let ctaMql;
-if (typeof window !== "undefined") {
-  ctaMql = window.matchMedia("(max-width: 720px)");
-  const onCtaMql = (e) => {
-    compactCta.value = e.matches;
-  };
-  if (ctaMql.addEventListener) ctaMql.addEventListener("change", onCtaMql);
-  else ctaMql.addListener(onCtaMql);
-}
-const bookCtaTitle = computed(() => (compactCta.value ? "+" : "+ 预约会议室"));
 
 const openMenu = ref(null);
 

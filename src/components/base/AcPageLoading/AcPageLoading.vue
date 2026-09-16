@@ -12,6 +12,7 @@ withDefaults(defineProps<AcPageLoadingProps>(), {
 
 <template>
   <div
+    data-testid="mr-page-loading"
     class="flex flex-col items-center justify-center w-full gap-3 bg-canvas-soft"
     :class="fullScreen ? 'fixed inset-0 z-50' : 'h-full flex-1 min-h-0'"
   >
