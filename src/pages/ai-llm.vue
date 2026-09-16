@@ -36,8 +36,9 @@
     <p class="mb-4 text-3.5 text-body">
       真正的 while：<code class="text-3">kind=tool_call</code> 就执行工具，把
       <code class="text-3">toolResults</code> 连同原 prompt 再打
-      <code class="text-3">/v1/aiMeet</code>，直到 <code class="text-3">kind=text</code>。
-      本例会先 <code class="text-3">add</code> 再 <code class="text-3">multiply</code>。
+      <code class="text-3">/v1/aiMeet</code>，直到
+      <code class="text-3">kind=text</code>。 本例会先
+      <code class="text-3">add</code> 再 <code class="text-3">multiply</code>。
     </p>
     <label class="mb-1 block text-3.5 text-body">循环提问</label>
     <textarea
@@ -208,7 +209,8 @@ const ask = async () => {
       payload.tools = [ADD_TOOL];
       payload.toolChoice = "add";
     } else {
-      payload.systemPrompt = "你是会议室助手。用简短中文回答。不要声称已经预定。";
+      payload.systemPrompt =
+        "你是会议室助手。用简短中文回答。不要声称已经预定。";
     }
     const first = await requestLlm(askTrace, payload, "请求 LLM");
 

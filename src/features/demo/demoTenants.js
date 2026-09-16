@@ -87,3 +87,5 @@ export const clearDemoSession = (storage) => {
 };
 
 export const demoHomeUrl = (base) => normalizeBase(base);
+
+export const debuggerHomeUrl = (base) => `${normalizeBase(base)}debugger`;

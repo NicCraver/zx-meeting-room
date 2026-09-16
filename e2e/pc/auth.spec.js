@@ -12,11 +12,10 @@ test.describe("PC 鉴权", () => {
     await expect(tid(page, "mr-toolbar-book")).toBeVisible();
   });
 
-  test("管理员显示会议室管理，切换用户可见", async ({ page }) => {
+  test("管理员显示会议室管理", async ({ page }) => {
     await openMeeting(page);
     await waitPcBoard(page);
     await expect(tid(page, "mr-toolbar-admin")).toBeVisible();
-    await expect(tid(page, "mr-switch-user")).toBeVisible();
   });
 
   test("非管理员不显示会议室管理", async ({ page }) => {

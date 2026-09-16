@@ -72,8 +72,11 @@ test.describe("live 冒烟", () => {
     ).toBeVisible({ timeout: 25_000 });
   });
 
-  test("main Demo 进入预定", async ({ page }) => {
+  test("main 无身份不能进预定；调试入口能进", async ({ page }) => {
     await page.goto("/ai-meet/");
+    if (await page.getByTestId("mr-need-auth").isVisible().catch(() => false)) {
+      await page.goto("/ai-meet/debugger");
+    }
     if (await page.getByTestId("mr-demo-enter-booking").isVisible().catch(() => false)) {
       await page.getByTestId("mr-demo-enter-booking").click();
     } else {

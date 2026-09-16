@@ -34,6 +34,12 @@ pnpm i          # 首次
 pnpm dev        # http://localhost:6273/ai-meet/
 ```
 
+原生 WebView 打开 `/ai-meet/`（或 `/zx/` `/m/`）会从地址栏带 token，进预定看板。本机没有宿主登录态时，首页只提示从智信打开，调试入口在：
+
+```
+http://localhost:6273/ai-meet/debugger
+```
+
 本机 query 鉴权（`AAuthFilter` 读 query，不读 header；`zxClientType` 必须是 `app` 或 `webapp`）：
 
 ```

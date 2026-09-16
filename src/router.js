@@ -22,7 +22,8 @@ export const createAppRouter = (routes, subPath = "") => {
    * 捕获该错误 → 比对线上 build_version 与编译期常量 → 不一致就提示刷新。
    */
   router.onError((error, to) => {
-    const message = error && error.message ? String(error.message) : String(error);
+    const message =
+      error && error.message ? String(error.message) : String(error);
     console.log("router.onError", { message, to: to && to.fullPath });
     if (
       message.includes("Failed to fetch dynamically imported module") ||

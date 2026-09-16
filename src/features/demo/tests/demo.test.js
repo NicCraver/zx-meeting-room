@@ -9,6 +9,7 @@ import {
   destPath,
   javaEnterUrl,
   demoHomeUrl,
+  debuggerHomeUrl,
   hasDemoIdentity
 } from "../demoTenants.js";
 
@@ -82,6 +83,11 @@ test("clearDemoSession drops identity keys only", () => {
 test("demoHomeUrl normalizes trailing slash", () => {
   assert.equal(demoHomeUrl("/ai-meet/zx"), "/ai-meet/zx/");
   assert.equal(demoHomeUrl("/ai-meet/m/"), "/ai-meet/m/");
+});
+
+test("debuggerHomeUrl sits under the MPA base", () => {
+  assert.equal(debuggerHomeUrl("/ai-meet/"), "/ai-meet/debugger");
+  assert.equal(debuggerHomeUrl("/ai-meet/zx"), "/ai-meet/zx/debugger");
 });
 
 test("destPath maps race pages off the booking home", () => {
