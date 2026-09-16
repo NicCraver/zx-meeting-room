@@ -8,7 +8,10 @@ const items = [
 ];
 
 test("空名 / 超长 / 同类型重名", () => {
-  assert.equal(dictNameError({ name: "", items, type: "building" }), "请输入名称");
+  assert.equal(
+    dictNameError({ name: "", items, type: "building" }),
+    "请输入名称"
+  );
   assert.equal(
     dictNameError({ name: "啊".repeat(21), items, type: "building" }),
     "名称不超过 20 个字"

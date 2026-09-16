@@ -11,9 +11,13 @@ export const resolveAdminAccess = ({ corpId, me, meError } = {}) => {
     return { ok: false, reason: "missing-corp", toast: MISSING_CORP_TOAST };
   }
   if (meError) {
-    return { ok: false, reason: "me-failed", toast: meError || ME_FAILED_TOAST };
+    return {
+      ok: false,
+      reason: "me-failed",
+      toast: meError || ME_FAILED_TOAST
+    };
   }
-  if (me && me.isAdmin === false) {
+  if (!me || me.isAdmin !== true) {
     return { ok: false, reason: "forbidden", toast: FORBIDDEN_TOAST };
   }
   return { ok: true, reason: "admin" };

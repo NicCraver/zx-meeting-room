@@ -32,6 +32,15 @@ test("管理员", () => {
   assert.equal(access.ok, true);
 });
 
+test("isAdmin 缺省当非管理员", () => {
+  const access = resolveAdminAccess({
+    corpId: "6",
+    me: { userId: "u1" }
+  });
+  assert.equal(access.ok, false);
+  assert.equal(access.reason, "forbidden");
+});
+
 test("/me 失败", () => {
   const access = resolveAdminAccess({
     corpId: "6",
