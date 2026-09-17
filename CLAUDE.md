@@ -40,7 +40,10 @@
 - 三个 HTML 入口各有独立 `main.js`。**新增全局插件、全局样式、全局指令必须同步三处**
   （`src/main.js`、`src/mpa/desktop/main.js`、`src/mpa/mobile/main.js`）。
 - 部署 base 固定 `/ai-meet/`（与 Jenkins `moduleName` / 测试机路径一致），改动需同步 `vite.config.js`。
-- 取 token 一律走 `src/utils/index.js` 的 `bootstrapAuthFromUrl()`；将来接 JSBridge 也只改这一个函数。
+- 取登录态一律走 `src/features/auth/bootstrapAuth.js` 的 `bootstrapAuth()`（三个 `main.js` 挂载前各调一次，**异步**）：
+  内部先跑 `src/utils/index.js` 的 `bootstrapAuthFromUrl()` 收宿主带的 token，再处理地址栏的一次性
+  `userCode`（换 token → `get_my_info` → 写 accountId / 企业内 userId → 摘掉 userCode）。将来接 JSBridge 也只改这两处。
+- **router 必须在 `bootstrapAuth()` 之后再建**：`createWebHistory` 建的时候就快照了当时的地址，提前建会在挂载时把已摘掉的 `userCode` 推回地址栏。
 
 ## 生成物勿动
 `src/api/index.js`、`src/assets/index.ts`、`components.d.ts`、`auto-imports.d.ts` —— 均由插件生成，已在 `.gitignore`。
