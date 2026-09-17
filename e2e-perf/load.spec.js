@@ -19,13 +19,14 @@ test.describe("首屏加载打点", () => {
     test(`${entry.name} 入口`, async ({ page }) => {
       const requests = [];
 
-      await page.route("**/meetingApi/**", (route) =>
+      const fulfillEmpty = (route) =>
         route.fulfill({
           status: 200,
           contentType: "application/json",
           body: JSON.stringify({ code: "M0000", data: null, msg: "ok" })
-        })
-      );
+        });
+      await page.route("**/meetingApi/**", fulfillEmpty);
+      await page.route("**/api/contact/v1/meetingRoom/**", fulfillEmpty);
 
       page.on("requestfinished", async (req) => {
         const sizes = await req.sizes().catch(() => null);
@@ -71,7 +72,10 @@ test.describe("首屏加载打点", () => {
 
       // 只统计站内静态资源，排除被 mock 的接口
       const staticRequests = requests.filter(
-        (r) => r.url.includes("/ai-meet/") && !r.url.includes("/meetingApi/")
+        (r) =>
+          r.url.includes("/ai-meet/") &&
+          !r.url.includes("/meetingApi/") &&
+          !r.url.includes("/api/contact/v1/meetingRoom/")
       );
 
       results[entry.name] = {

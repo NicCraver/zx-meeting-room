@@ -25,6 +25,7 @@ testid 约定：`mr-<区域>-<控件>`，kebab-case。列表项加 `data-room-id
 1. 需要的控件若没有 testid，先打在 Vue 上，再写测试。
 2. 默认套件用 `createStore(overrides)` + `openMeeting(page, { store })`（见 `e2e/helpers/open.js`）。
 3. 时钟冻结在 `2026-09-15T10:00+08:00`（`e2e/helpers/clock.js`），种子占用/预定都相对这一天。
-4. 未识别的 `/meetingApi` 路径回 `M9999`，不要依赖真后端。
+4. 未识别的会议室接口路径回 `M9999`，不要依赖真后端。
+   mock 同时拦 `/meetingApi` 与 `/api/contact/v1/meetingRoom`。
    `/aiChatApi/v1/aiMeet` 走内存 SSE（第一枪 tool_call，第二枪 text）；助手工具仍打被拦截的 board/mine/create/release。
 5. 打真实 Java 的用例只放 `e2e/live/`，由 `pnpm test:e2e:live` 跑。

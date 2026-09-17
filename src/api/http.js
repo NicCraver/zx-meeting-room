@@ -19,7 +19,9 @@ const retryMap = new Map();
 export const baseMap = {
   base: "/api/",
   auth: "/api/oauth",
-  meeting: "/meetingApi",
+  // 走智信网关现成前缀。测试/生产 OpenResty 没有 /meetingApi；
+  // 本机 Vite 已把 /api 反代到 192.168.10.25。
+  meeting: "/api/contact/v1/meetingRoom",
   contact: "/api/contact/v1",
   aiChat: "/aiChatApi"
 };

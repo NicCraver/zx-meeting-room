@@ -100,9 +100,8 @@ export default defineConfig(({ mode }) => {
   return {
     base,
     server: {
-      // 两条本地后端同时挂：contact :7004（会议室 CRUD）+ ai-chat :8020（/v1/aiMeet SSE）。
-      // 键要写 base 内外两套——Vite base 是 /ai-meet/，只写 /meetingApi 时
-      // /ai-meet/meetingApi 会落到 SPA HTML。/api 仍走测试网关（oauth 等）。
+      // 会议室 CRUD 走 /api/contact/v1/meetingRoom → 测试网关（contact 已部署）。
+      // 助手 SSE 仍打本机 ai-chat :8020。键要写 base 内外两套，避免 /ai-meet 前缀落到 SPA HTML。
       proxy: {
         ...devProxy("/aiChatApi", {
           target: "http://localhost:8020",
@@ -111,14 +110,6 @@ export default defineConfig(({ mode }) => {
           proxyTimeout: 0,
           rewrite: (path) =>
             path.replace(/^\/ai-meet/, "").replace(/^\/aiChatApi/, "")
-        }),
-        ...devProxy("/meetingApi", {
-          target: "http://localhost:7004",
-          changeOrigin: true,
-          rewrite: (path) =>
-            path
-              .replace(/^\/ai-meet/, "")
-              .replace(/^\/meetingApi/, "/meetingRoom")
         }),
         "/api": "http://192.168.10.25"
       },

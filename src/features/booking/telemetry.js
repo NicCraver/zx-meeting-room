@@ -1,3 +1,5 @@
+const MEETING_API = "/api/contact/v1/meetingRoom";
+
 const EVENT_NAMES = new Set([
   "page_view",
   "booking_open",
@@ -92,7 +94,7 @@ export const flush = async () => {
   flushing = true;
   const batch = queue.splice(0, MAX_BATCH);
   try {
-    await fetch(`/meetingApi/events${authQuery()}`, {
+    await fetch(`${MEETING_API}/events${authQuery()}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ events: batch }),
@@ -114,7 +116,7 @@ if (typeof window !== "undefined") {
     try {
       if (navigator.sendBeacon) {
         navigator.sendBeacon(
-          `/meetingApi/events${qs}`,
+          `${MEETING_API}/events${qs}`,
           new Blob([JSON.stringify({ events: batch })], {
             type: "application/json"
           })

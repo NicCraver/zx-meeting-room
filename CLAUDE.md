@@ -10,7 +10,7 @@
 | 场景 | 命令（在 `apps/meeting/` 根执行） |
 |------|------|
 | 安装依赖 | `pnpm i` |
-| 起前端 | `pnpm dev`（:6273；`/api`→网关，`/meetingApi`→contact :7004，`/aiChatApi`→ai-chat :8020） |
+| 起前端 | `pnpm dev`（:6273；`/api`→测试网关 192.168.10.25，`/aiChatApi`→本机 ai-chat :8020） |
 | 全量构建 | `pnpm build`（vue-tsc → main/zx/m → mergeDist） |
 | 生产构建 | `pnpm build:prod` |
 | 仅类型检查 | `pnpm typecheck` |

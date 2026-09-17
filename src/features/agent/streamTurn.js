@@ -10,7 +10,7 @@ import { flushSseLines } from "./sseLines.js";
 import { encodeHeaderValue } from "./headers.js";
 
 /** @deprecated 正式助手走 runMeetingAgent + /v1/aiMeet，不再打 /agent/turn */
-const TURN_URL = "/meetingApi/agent/turn";
+const TURN_URL = "/api/contact/v1/meetingRoom/agent/turn";
 
 export { encodeHeaderValue };
 
