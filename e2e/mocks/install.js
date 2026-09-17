@@ -1,10 +1,14 @@
 import { aiMeetSseFrames } from "./aiMeetSse.js";
 
+const MEETING_PREFIXES = ["/api/contact/v1/meetingRoom", "/meetingApi"];
+
 const meetingPath = (url) => {
   const u = new URL(url);
-  const idx = u.pathname.indexOf("/meetingApi");
-  const rest = idx >= 0 ? u.pathname.slice(idx + "/meetingApi".length) : u.pathname;
-  return rest || "/";
+  for (const prefix of MEETING_PREFIXES) {
+    const idx = u.pathname.indexOf(prefix);
+    if (idx >= 0) return u.pathname.slice(idx + prefix.length) || "/";
+  }
+  return u.pathname;
 };
 
 const readBody = (request) => {
@@ -38,10 +42,10 @@ const fulfillSse = (route, frames) => {
 };
 
 /**
- * 拦截 /meetingApi 与 /aiChatApi。未识别路径回 M9999，避免 25s 空等。
+ * 拦截会议室接口与 /aiChatApi。未识别路径回 M9999，避免 25s 空等。
  */
 export async function installMeetingApi(page, store) {
-  await page.route("**/meetingApi/**", async (route) => {
+  const handleMeeting = async (route) => {
     const request = route.request();
     const method = request.method();
     if (method === "OPTIONS") {
@@ -60,7 +64,9 @@ export async function installMeetingApi(page, store) {
       return;
     }
     await fulfillJson(route, result);
-  });
+  };
+  await page.route("**/meetingApi/**", handleMeeting);
+  await page.route("**/api/contact/v1/meetingRoom/**", handleMeeting);
 
   await page.route("**/aiChatApi/**", async (route) => {
     const request = route.request();
