@@ -133,7 +133,6 @@
         @tap-event="(room, event) => (occupancy = { room, event })"
         @open-room="detailRoom = $event"
         @notice="onNotice"
-        @toggle-favorite="toggleFavorite"
       />
 
       <MobileSelectionBar
@@ -257,8 +256,7 @@ const {
   places,
   rooms,
   visibleRooms,
-  reload,
-  toggleFavorite
+  reload
 } = board;
 
 const showMore = ref(false);

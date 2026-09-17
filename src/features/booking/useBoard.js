@@ -10,8 +10,6 @@ import {
   workweekOf
 } from "./time";
 import { getBoard } from "@/api/module/booking";
-import { setRoomFavorite } from "@/api/module/room";
-import { applyFavorite } from "./favorites";
 import { showToastError } from "@/utils";
 
 const WEEK_LABELS = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
@@ -115,27 +113,6 @@ export const useBoard = () => {
     }
   };
 
-  /**
-   * 星标：本地先按回参落位再重排，不重新拉看板——reload 会把当前拖选的时段冲掉。
-   * 以后端回的 favorite 为准，不用点击时的乐观值。
-   */
-  const toggleFavorite = async (room) => {
-    if (!room || !room.id) return;
-    const next = !room.favorite;
-    try {
-      const data = await setRoomFavorite(room.id, next);
-      const saved = data && data.favorite !== undefined ? data.favorite : next;
-      // 先本地落位，星标与排序立刻响应
-      rooms.value = applyFavorite(rooms.value, room.id, saved);
-      // 没有正在拖选的时段时再悄悄拉一次看板：本地只按档位挪行，档位**内**的次序
-      // 归后端（两边的中文排序规则不一致，见 favorites.js）。有选区时不拉，
-      // reload 会把选区冲掉。
-      if (!selection.value) await reload();
-    } catch (error) {
-      toastError(error);
-    }
-  };
-
   watch([boardDate, viewMode], reload, { immediate: true });
 
   watch(visibleRooms, (list) => {
@@ -161,7 +138,6 @@ export const useBoard = () => {
     loading,
     places,
     visibleRooms,
-    reload,
-    toggleFavorite
+    reload
   };
 };

@@ -41,7 +41,6 @@
         @commit="handleCommitRange"
         @notice="onNotice"
         @book-room="onBookRoom"
-        @toggle-favorite="toggleFavorite"
       />
 
       <BookingTour ref="tourRef" :ready="tourReady" @start="onTourStart" />
@@ -143,8 +142,7 @@ const {
   rooms,
   visibleRooms,
   loading,
-  reload,
-  toggleFavorite
+  reload
 } = board;
 
 const bootLoading = computed(() => loading.value && rooms.value.length === 0);

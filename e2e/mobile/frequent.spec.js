@@ -22,31 +22,8 @@ const storeWithFrequentRoom = (roomId) => {
   return store;
 };
 
-test.describe("移动收藏与常用", () => {
-  test("点星标只切收藏并置顶，不产生「常用」徽标", async ({ page }) => {
-    await openMeeting(page, { path: "/ai-meet/m/" });
-    await waitMobileBoard(page);
-
-    await expect(frequentBadge(page)).toHaveCount(0);
-
-    const star = tid(page, "mr-room-fav").last();
-    const roomId = await star.getAttribute("data-room-id");
-    await star.click();
-
-    await expect(tid(page, "mr-room-card").first()).toHaveAttribute(
-      "data-room-id",
-      roomId
-    );
-    await expect(frequentBadge(page)).toHaveCount(0);
-
-    await tid(page, "mr-room-fav").first().click();
-    await expect(tid(page, "mr-room-fav").first()).toHaveAttribute(
-      "data-favorite",
-      "0"
-    );
-  });
-
-  test("订满 3 次的房间挂「常用」徽标", async ({ page }) => {
+test.describe("移动常用会议室", () => {
+  test("订满 3 次的房间挂「常用」徽标并置顶", async ({ page }) => {
     const store = storeWithFrequentRoom("room-b");
     await openMeeting(page, { path: "/ai-meet/m/", store });
     await waitMobileBoard(page);
@@ -58,11 +35,11 @@ test.describe("移动收藏与常用", () => {
     );
   });
 
-  test("点星标不会打开房间详情", async ({ page }) => {
+  test("卡片上没有收藏星标（收藏暂不上线）", async ({ page }) => {
     await openMeeting(page, { path: "/ai-meet/m/" });
     await waitMobileBoard(page);
 
-    await tid(page, "mr-room-fav").first().click();
-    await expect(tid(page, "mr-dialog-detail")).toHaveCount(0);
+    await expect(frequentBadge(page)).toHaveCount(0);
+    await expect(tid(page, "mr-room-fav")).toHaveCount(0);
   });
 });

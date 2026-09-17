@@ -28,7 +28,6 @@ export const createStore = (overrides = {}) => {
     bookings: clone(overrides.bookings || defaultBookings()),
     audits: clone(overrides.audits || {}),
     suggestions: clone(overrides.suggestions || SUGGESTIONS),
-    favorites: clone(overrides.favorites || []),
     events: [],
     lastCreatePayload: null,
     lastBoardDate: null,
@@ -95,18 +94,13 @@ export const createStore = (overrides = {}) => {
       .filter((r) => r.enabled !== false)
       .map((r) => ({
         ...r,
-        favorite: state.favorites.includes(r.id),
         frequent: frequentRoomIds().includes(r.id),
         busyEvents: liveBookings()
           .filter((b) => b.roomId === r.id && b.date === date)
           .map((b) => toBusy(b, meId))
       }));
-    // 与后端一致：收藏置顶 → 常用次之 → 其余保持种子顺序
-    rooms.sort(
-      (a, b) =>
-        (a.favorite ? 0 : 1) - (b.favorite ? 0 : 1) ||
-        (a.frequent ? 0 : 1) - (b.frequent ? 0 : 1)
-    );
+    // 与后端一致：常用置顶，其余保持种子顺序
+    rooms.sort((a, b) => (a.frequent ? 0 : 1) - (b.frequent ? 0 : 1));
     const facilitySet = new Set();
     rooms.forEach((r) => (r.facilities || []).forEach((f) => facilitySet.add(f)));
     return {
@@ -183,23 +177,6 @@ export const createStore = (overrides = {}) => {
       if (state.flags.boardFail) return fail("M5000", "加载失败");
       state.lastBoardDate = query.date || TODAY;
       return ok(boardForDate(query.date || TODAY));
-    }
-
-    const favoriteMatch = path.match(/^\/favorites\/set\/(.+)$/);
-    if (favoriteMatch && method === "POST") {
-      const roomId = favoriteMatch[1];
-      if (!state.rooms.some((r) => r.id === roomId)) {
-        return fail("M4004", "会议室不存在");
-      }
-      const want = body && body.favorite !== undefined ? Boolean(body.favorite) : true;
-      const idx = state.favorites.indexOf(roomId);
-      if (want && idx < 0) state.favorites.push(roomId);
-      if (!want && idx >= 0) state.favorites.splice(idx, 1);
-      return ok({ roomId, favorite: want });
-    }
-
-    if (path === "/favorites/mine" && method === "POST") {
-      return ok(state.favorites.slice());
     }
 
     if (path === "/bookings/mine" && method === "GET") {
