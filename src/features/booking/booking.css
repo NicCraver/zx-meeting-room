@@ -1498,7 +1498,8 @@
   flex-direction: column-reverse;
   align-items: stretch;
   gap: 8px;
-  overflow: hidden;
+  /* 阴影画在子卡片上。外壳 hidden 会按矩形裁切，圆角输入框底下会多一块方影 */
+  overflow: visible;
   transition: bottom 0.22s var(--ease-out);
 }
 
@@ -3058,7 +3059,7 @@ html[data-device="pc"] {
   align-items: stretch;
   gap: 8px;
   pointer-events: none;
-  overflow: hidden;
+  overflow: visible;
   transition: bottom 0.22s var(--ease-out);
 }
 
