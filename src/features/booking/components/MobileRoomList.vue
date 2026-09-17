@@ -46,7 +46,7 @@
           <span class="m-room-copy">
             <span class="m-room-title-row">
               <span class="m-room-name">{{ room.name }}</span>
-              <span v-if="room.favorite" class="m-room-badge">常用</span>
+              <span v-if="room.frequent" class="m-room-badge">常用</span>
             </span>
             <span class="m-room-meta">
               {{ room.capacity }}人&nbsp;&nbsp;{{

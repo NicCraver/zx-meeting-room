@@ -147,7 +147,7 @@
             >
               <div class="tl-room-name">
                 <span class="tl-room-name-text">{{ room.name }}</span>
-                <span v-if="room.favorite" class="tl-room-badge">常用</span>
+                <span v-if="room.frequent" class="tl-room-badge">常用</span>
               </div>
               <div class="tl-room-meta-row">
                 <span class="tl-room-meta">

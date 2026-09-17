@@ -74,6 +74,21 @@ export const createStore = (overrides = {}) => {
     mine: b.hostUserId === meId
   });
 
+  /**
+   * 常用＝我自己近 30 天未释放的预定 >= 3 次，与收藏无关（口径抄后端
+   * MeetingRoomFrequentService，改一边要同步另一边）。
+   */
+  const FREQUENT_MIN_TIMES = 3;
+  const frequentRoomIds = () => {
+    const counts = {};
+    liveBookings()
+      .filter((b) => b.hostUserId === state.me.userId)
+      .forEach((b) => {
+        counts[b.roomId] = (counts[b.roomId] || 0) + 1;
+      });
+    return Object.keys(counts).filter((id) => counts[id] >= FREQUENT_MIN_TIMES);
+  };
+
   const boardForDate = (date) => {
     const meId = state.me.userId;
     const rooms = state.rooms
@@ -81,12 +96,17 @@ export const createStore = (overrides = {}) => {
       .map((r) => ({
         ...r,
         favorite: state.favorites.includes(r.id),
+        frequent: frequentRoomIds().includes(r.id),
         busyEvents: liveBookings()
           .filter((b) => b.roomId === r.id && b.date === date)
           .map((b) => toBusy(b, meId))
       }));
-    // 与后端一致：常用置顶，其余保持种子顺序
-    rooms.sort((a, b) => (a.favorite ? 0 : 1) - (b.favorite ? 0 : 1));
+    // 与后端一致：收藏置顶 → 常用次之 → 其余保持种子顺序
+    rooms.sort(
+      (a, b) =>
+        (a.favorite ? 0 : 1) - (b.favorite ? 0 : 1) ||
+        (a.frequent ? 0 : 1) - (b.frequent ? 0 : 1)
+    );
     const facilitySet = new Set();
     rooms.forEach((r) => (r.facilities || []).forEach((f) => facilitySet.add(f)));
     return {

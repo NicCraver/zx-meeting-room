@@ -125,7 +125,12 @@ export const useBoard = () => {
     try {
       const data = await setRoomFavorite(room.id, next);
       const saved = data && data.favorite !== undefined ? data.favorite : next;
+      // 先本地落位，星标与排序立刻响应
       rooms.value = applyFavorite(rooms.value, room.id, saved);
+      // 没有正在拖选的时段时再悄悄拉一次看板：本地只按档位挪行，档位**内**的次序
+      // 归后端（两边的中文排序规则不一致，见 favorites.js）。有选区时不拉，
+      // reload 会把选区冲掉。
+      if (!selection.value) await reload();
     } catch (error) {
       toastError(error);
     }
