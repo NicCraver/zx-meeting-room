@@ -20,6 +20,9 @@
         </div>
         <p class="ai-buddy-mine-meta">{{ row.roomName }}</p>
         <p class="ai-buddy-mine-meta">{{ formatMineWhen(row) }}</p>
+        <p v-if="bookingRemark(row)" class="ai-buddy-mine-meta">
+          说明：{{ bookingRemark(row) }}
+        </p>
       </li>
     </ul>
   </article>
@@ -27,7 +30,11 @@
 
 <script setup>
 import { computed } from "vue";
-import { formatMineWhen, MINE_STATUS_LABEL } from "@/features/booking/mine.js";
+import {
+  bookingRemark,
+  formatMineWhen,
+  MINE_STATUS_LABEL
+} from "@/features/booking/mine.js";
 
 const props = defineProps({
   text: { type: String, default: "" },

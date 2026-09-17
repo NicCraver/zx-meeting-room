@@ -29,7 +29,8 @@ const toRow = (b) => ({
   date: b.date,
   start: b.start,
   end: b.end,
-  status: b.status
+  status: b.status,
+  remark: String(b.remark || "").trim()
 });
 
 /**

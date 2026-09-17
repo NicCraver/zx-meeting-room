@@ -107,7 +107,7 @@ export const defaultBookings = () => [
     start: "16:00",
     end: "17:00",
     title: "我的周会",
-    remark: "",
+    remark: "议程：周进度",
     hostUserId: "u-li",
     hostUserName: "李权泓",
     dept: "研发",

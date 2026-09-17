@@ -21,9 +21,11 @@ test.describe("PC 我的预定", () => {
     const live = mineCard(page, "bk-mine-pm");
     await expect(live.getByTestId("mr-mine-title")).toHaveText("我的周会");
     await expect(live).toContainText("星海");
+    await expect(live.getByTestId("mr-mine-remark")).toHaveText("说明：议程：周进度");
     await expect(mineCard(page, "bk-mine-ended").getByTestId("mr-mine-title")).toHaveText(
       "昨日评审"
     );
+    await expect(mineCard(page, "bk-mine-ended").getByTestId("mr-mine-remark")).toHaveCount(0);
   });
 
   test("upcoming 能释放，ended 没有释放按钮", async ({ page }) => {

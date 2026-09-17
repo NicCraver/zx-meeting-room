@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import {
+  bookingRemark,
   defaultMineTab,
   draftRangeFromMine,
   formatMineAddress,
@@ -64,6 +65,12 @@ test("formatMineDate 用月日而不是 ISO", () => {
 test("formatMineSlashDate 用斜杠年月日", () => {
   assert.equal(formatMineSlashDate("2026-09-04"), "2026/09/04");
   assert.equal(formatMineSlashDate(""), "");
+});
+
+test("bookingRemark 去掉空白，空则不展示", () => {
+  assert.equal(bookingRemark({ remark: " 议程：周进度 " }), "议程：周进度");
+  assert.equal(bookingRemark({ remark: "   " }), "");
+  assert.equal(bookingRemark({}), "");
 });
 
 test("formatMineWhen 拼日期和时段", () => {

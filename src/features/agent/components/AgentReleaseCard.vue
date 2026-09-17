@@ -18,6 +18,10 @@
         <dt>时间</dt>
         <dd>{{ booking.date }} {{ booking.start }}–{{ booking.end }}</dd>
       </div>
+      <div v-if="bookingRemark(booking)">
+        <dt>说明</dt>
+        <dd>{{ bookingRemark(booking) }}</dd>
+      </div>
     </dl>
     <div class="ai-buddy-card-actions">
       <button type="button" class="ai-buddy-btn-ghost" @click="emit('cancel')">
@@ -36,6 +40,8 @@
 </template>
 
 <script setup>
+import { bookingRemark } from "@/features/booking/mine.js";
+
 defineProps({
   booking: { type: Object, required: true }
 });

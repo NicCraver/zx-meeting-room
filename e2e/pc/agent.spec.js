@@ -97,6 +97,7 @@ test.describe("PC 助手", () => {
     await tid(page, "mr-ai-chip-my-meetings").click();
     await expect(tid(page, "mr-ai-mine-card")).toBeVisible();
     await expect(tid(page, "mr-ai-mine-card").getByText("我的周会")).toBeVisible();
+    await expect(tid(page, "mr-ai-mine-card").getByText("说明：议程：周进度")).toBeVisible();
   });
 
   test("关闭结果卡回到快捷指令", async ({ page }) => {

@@ -14,4 +14,5 @@ test("system prompt names tools and forbids write claims", () => {
   assert.match(text, /15:00/);
   assert.match(text, /24\s*小时/);
   assert.match(text, /start=15:00/);
+  assert.match(text, /remark/);
 });

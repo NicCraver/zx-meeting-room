@@ -64,7 +64,8 @@ test("list_my_meetings drops released and can filter date", async () => {
       end: "11:00",
       title: "A",
       roomName: "星海",
-      status: "upcoming"
+      status: "upcoming",
+      remark: "议程：周进度"
     },
     {
       id: "b",
@@ -97,6 +98,7 @@ test("list_my_meetings drops released and can filter date", async () => {
     today.bookings.map((b) => b.id),
     ["a"]
   );
+  assert.equal(today.bookings[0].remark, "议程：周进度");
 });
 
 test("search start and title are echoed and pin 15:00", async () => {

@@ -114,6 +114,13 @@
                     <p class="mine-card-meta">
                       地址：{{ formatMineAddress(b) }}
                     </p>
+                    <p
+                      v-if="bookingRemark(b)"
+                      class="mine-card-meta"
+                      data-testid="mr-mine-remark"
+                    >
+                      说明：{{ bookingRemark(b) }}
+                    </p>
                   </div>
                 </div>
                 <div v-if="canChangeBooking(b.status)" class="booking-actions">
@@ -140,6 +147,7 @@ import { computed } from "vue";
 import { AcEmpty, AcPageLoading } from "@/components/base";
 import useMobileEnv from "@/composables/useMobileEnv";
 import {
+  bookingRemark,
   canChangeBooking,
   formatMineAddress,
   formatMineWhen,

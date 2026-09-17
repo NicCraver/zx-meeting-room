@@ -1,7 +1,7 @@
 export const LIST_MY_MEETINGS_TOOL = {
   name: "list_my_meetings",
   description:
-    "列出我的预定。可传 date（yyyy-MM-dd）只看当天。不要声称已经取消。",
+    "列出我的预定。可传 date（yyyy-MM-dd）只看当天。结果含 title/roomName/时段/remark（会议说明）。不要声称已经取消。",
   parameters: {
     type: "object",
     properties: {
@@ -26,7 +26,8 @@ const toRow = (b) => ({
   date: b.date,
   start: b.start,
   end: b.end,
-  status: b.status
+  status: b.status,
+  remark: String(b.remark || "").trim()
 });
 
 /**

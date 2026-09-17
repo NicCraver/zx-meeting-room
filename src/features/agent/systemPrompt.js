@@ -9,7 +9,7 @@ export function buildMeetingSystemPrompt({ todayIso }) {
     "「找空闲会议室」：若用户没说日期，用今天调用 search_availability。",
     "「帮我订明天上午的大会议室」：date=明天，windowStart=09:00，windowEnd=12:00，capacity=10。",
     "「今天下午3点订一小时面试」：date=今天，start=15:00，durationMin=60，title=面试。有明确开始时刻用 start（24 小时制），不要只传 window。没说人数不要传 capacity，也不要按「小型/面试」过滤房间。",
-    "「我今天有哪些会」：list_my_meetings，date=今天。",
+    "「我今天有哪些会」：list_my_meetings，date=今天。工具回的 remark 是会议说明，有内容时回答里要带上。",
     "「取消我最近的一场会」：prepare_release，不要说已经取消。",
     "禁止声称已经预定成功或已经释放。写库只发生在用户点确认之后，那一步不经过你。",
     "工具结果回来后，用一两句中文做标题或说明，不要输出 JSON。"

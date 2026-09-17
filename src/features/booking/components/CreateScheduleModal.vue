@@ -95,22 +95,6 @@
         </div>
 
         <div class="form-group-card">
-          <label class="form-cell">
-            <span class="form-cell-label">参会人</span>
-            <input
-              v-model="attendees"
-              type="text"
-              data-testid="mr-form-attendees"
-              class="form-input-text form-input-end"
-              maxlength="80"
-              aria-label="参会人"
-              placeholder="选填，如：王五、赵六"
-            />
-          </label>
-          <div class="form-cell">
-            <span class="form-cell-label">会议提醒</span>
-            <span class="form-cell-value">开始前 15 分钟</span>
-          </div>
           <div class="form-cell">
             <span class="form-cell-label">会议说明</span>
             <input
@@ -193,7 +177,6 @@ const hostName = getUserName() || "";
 const titlePlaceholder = defaultBookingTitle(hostName);
 const title = ref(props.editing?.title || titlePlaceholder);
 const remark = ref(String(props.editing?.remark || ""));
-const attendees = ref("");
 const submitting = ref(false);
 const formError = ref("");
 const conflictText = ref("");
@@ -308,10 +291,6 @@ const handleSubmit = async () => {
   try {
     const trimmed = title.value.trim();
     const dates = bookingDates.value;
-    const people = attendees.value.trim();
-    const note = [remark.value.trim(), people ? `参会人：${people}` : ""]
-      .filter(Boolean)
-      .join("；");
     const payload = {
       roomId: selectedRoom.value.id,
       date: dates[0],
@@ -319,7 +298,7 @@ const handleSubmit = async () => {
       start: fromMinutes(startMin.value),
       end: fromMinutes(endMin.value),
       title: trimmed || defaultBookingTitle(hostName),
-      remark: note
+      remark: remark.value.trim()
     };
     if (props.editing?.id) {
       await updateBooking(props.editing.id, {

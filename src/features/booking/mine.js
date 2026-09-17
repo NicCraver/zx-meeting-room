@@ -50,6 +50,10 @@ export const formatMineAddress = (booking) => {
   return loc || "暂无";
 };
 
+/** 会议说明；空串表示没有备注，列表和助手都不展示 */
+export const bookingRemark = (booking) =>
+  String(booking?.remark || "").trim();
+
 export const formatMinePlace = (booking) => {
   const name = String(booking?.roomName || "").trim();
   const loc = [booking?.buildingName, booking?.floorName]
