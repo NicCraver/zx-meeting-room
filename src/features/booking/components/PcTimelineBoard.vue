@@ -143,16 +143,16 @@
             title="点击预约该会议室"
             @click="emit('book-room', room)"
           >
-            <div class="tl-room-name">
-              <span class="tl-room-name-text">{{ room.name }}</span>
-              <span class="tl-room-badge">常用</span>
-            </div>
-            <div class="tl-room-meta-row">
-              <span class="tl-room-meta">
+            <div class="tl-room-info">
+              <div class="tl-room-name">
+                <span class="tl-room-name-text">{{ room.name }}</span>
+                <span v-if="room.frequent" class="tl-room-badge">常用</span>
+              </div>
+              <div class="tl-room-meta">
                 {{ room.capacity }}人 {{ (room.facilities || []).join("/") }}
-              </span>
-              <SvgIcon name="plus" class="tl-room-plus" />
+              </div>
             </div>
+            <SvgIcon name="plus" class="tl-room-plus" />
           </button>
 
           <div

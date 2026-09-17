@@ -52,14 +52,13 @@ test.describe("PC 看板", () => {
     await expect(tid(page, "mr-room-row")).toHaveCount(1);
   });
 
-  test("日周切换", async ({ page }) => {
+  test("周视图入口已隐藏，看板固定日视图", async ({ page }) => {
     await openMeeting(page);
     await waitPcBoard(page);
-    await tid(page, "mr-view-week").click();
-    await expect(tid(page, "mr-view-week")).toHaveAttribute("aria-checked", "true");
-    await expect(tid(page, "mr-board")).toHaveClass(/is-week/);
-    await tid(page, "mr-view-day").click();
-    await expect(tid(page, "mr-view-day")).toHaveAttribute("aria-checked", "true");
+    // 2026-09-17 起周视图暂不上线（PcToolbar 的 SHOW_WEEK_VIEW）
+    await expect(tid(page, "mr-view-week")).toHaveCount(0);
+    await expect(tid(page, "mr-view-day")).toHaveCount(0);
+    await expect(tid(page, "mr-board")).not.toHaveClass(/is-week/);
   });
 
   test("切到明天会请求对应日期", async ({ page }) => {
@@ -96,5 +95,33 @@ test.describe("PC 看板", () => {
     await expect(tid(page, "mr-board-empty")).toBeVisible();
     await tid(page, "mr-toolbar-book").click();
     await expectToast(page, "暂无会议室");
+  });
+
+  test("会议室单元格快捷预约加号上下居中", async ({ page }) => {
+    await openMeeting(page);
+    await waitPcBoard(page);
+
+    const btn = page.locator("button.tl-room-cell").first();
+    await expect(btn).toBeVisible();
+
+    const metrics = await btn.evaluate((b) => {
+      const plus = b.querySelector(".tl-room-plus");
+      const info = b.querySelector(".tl-room-info");
+      const bRect = b.getBoundingClientRect();
+      const pRect = plus.getBoundingClientRect();
+      const iRect = info.getBoundingClientRect();
+
+      const bCenterY = bRect.top + bRect.height / 2;
+      const pCenterY = pRect.top + pRect.height / 2;
+      const iCenterY = iRect.top + iRect.height / 2;
+
+      return {
+        diffPlus: Math.abs(pCenterY - bCenterY),
+        diffInfo: Math.abs(iCenterY - bCenterY)
+      };
+    });
+
+    expect(metrics.diffPlus).toBeLessThanOrEqual(1);
+    expect(metrics.diffInfo).toBeLessThanOrEqual(1);
   });
 });

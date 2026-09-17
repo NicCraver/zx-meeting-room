@@ -106,7 +106,9 @@ test.describe("PC 预定漏斗", () => {
     await expectFitsViewport(tid(page, "mr-form-create"), page);
   });
 
-  test("周视图跨天拖选 payload 带 dates", async ({ page }) => {
+  // 周视图入口 2026-09-17 起隐藏（PcToolbar 的 SHOW_WEEK_VIEW），跨天拖选暂时跑不了。
+  // 放出周视图时把 skip 去掉即可，用例本身没动。
+  test.skip("周视图跨天拖选 payload 带 dates", async ({ page }) => {
     const store = createStore();
     await openMeeting(page, { store });
     await waitPcBoard(page);

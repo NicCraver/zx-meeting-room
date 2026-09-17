@@ -99,6 +99,7 @@ button:disabled,
   border-radius: var(--zx-rounded-lg) !important;
   box-shadow: var(--zx-shadow-heavy);
   padding: 0;
+  overflow: hidden;
 }
 
 .el-dialog__header {

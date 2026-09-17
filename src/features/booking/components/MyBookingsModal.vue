@@ -17,15 +17,11 @@
         </button>
       </div>
       <div class="sheet-body bookings-dialog-body">
-        <div
+        <AcPageLoading
           v-if="loading"
-          class="bookings-loading"
           data-testid="mr-mine-loading"
-          role="status"
-        >
-          <span class="i-carbon-circle-dash animate-spin" aria-hidden="true" />
-          加载中…
-        </div>
+          text="数据加载中..."
+        />
         <AcEmpty
           v-else-if="!bookings.length"
           data-testid="mr-mine-empty"
@@ -99,9 +95,12 @@
                   </div>
                   <div class="mine-card-copy">
                     <div class="mine-card-title-row">
-                      <span class="mine-card-name" :title="b.roomName">{{
-                        b.roomName
-                      }}</span>
+                      <span
+                        class="mine-card-name"
+                        data-testid="mr-mine-title"
+                        :title="b.title || '会议'"
+                        >{{ b.title || "会议" }}</span
+                      >
                       <span
                         v-if="showStatusBadge(b.status)"
                         class="room-status-badge"
@@ -110,6 +109,7 @@
                         {{ statusLabel(b.status) }}
                       </span>
                     </div>
+                    <p class="mine-card-meta">会议室：{{ b.roomName }}</p>
                     <p class="mine-card-meta">时间：{{ formatMineWhen(b) }}</p>
                     <p class="mine-card-meta">
                       地址：{{ formatMineAddress(b) }}
@@ -137,7 +137,7 @@
 
 <script setup>
 import { computed } from "vue";
-import { AcEmpty } from "@/components/base";
+import { AcEmpty, AcPageLoading } from "@/components/base";
 import useMobileEnv from "@/composables/useMobileEnv";
 import {
   canChangeBooking,

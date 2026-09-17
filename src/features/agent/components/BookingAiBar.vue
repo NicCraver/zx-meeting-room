@@ -102,66 +102,66 @@
         <AcButton title="重试" @click="retry" />
       </div>
       <el-scrollbar v-else class="booking-ai-results-scroll">
-      <AgentQueryCard
-        v-if="card.type === 'query'"
-        :heading="card.heading"
-        :rooms="card.rooms"
-        @pick="pickSlot"
-        @book="pickSlot"
-      />
-      <AgentConfirmCard
-        v-else-if="card.type === 'confirm'"
-        :draft="card.draft"
-        @confirm="confirmDraft"
-        @cancel="goBack"
-        @retarget="retargetSlot"
-      />
-      <AgentMineCard
-        v-else-if="card.type === 'mine'"
-        :text="card.text"
-        :bookings="card.bookings"
-      />
-      <AgentReleaseCard
-        v-else-if="card.type === 'release_confirm'"
-        :booking="card.booking"
-        @confirm="confirmRelease"
-        @cancel="goBack"
-      />
-      <article v-else-if="card.type === 'suggest'" class="ai-buddy-card">
-        <h3 class="ai-buddy-card-title">换个时间？</h3>
-        <p class="ai-buddy-card-copy">{{ card.reason }}</p>
-        <div class="ai-buddy-slot-btns">
-          <p class="ai-buddy-slot-hint">点选一个时段</p>
-          <button
-            v-for="opt in card.options"
-            :key="`${opt.roomId}-${opt.date}-${opt.start}-${opt.end}`"
-            type="button"
-            class="ai-buddy-slot-btn"
-            @click="pickSlot(opt)"
-          >
-            <span class="ai-buddy-slot-time"
-              >{{ opt.roomName }} {{ opt.start }}–{{ opt.end }}</span
+        <AgentQueryCard
+          v-if="card.type === 'query'"
+          :heading="card.heading"
+          :rooms="card.rooms"
+          @pick="pickSlot"
+          @book="pickSlot"
+        />
+        <AgentConfirmCard
+          v-else-if="card.type === 'confirm'"
+          :draft="card.draft"
+          @confirm="confirmDraft"
+          @cancel="goBack"
+          @retarget="retargetSlot"
+        />
+        <AgentMineCard
+          v-else-if="card.type === 'mine'"
+          :text="card.text"
+          :bookings="card.bookings"
+        />
+        <AgentReleaseCard
+          v-else-if="card.type === 'release_confirm'"
+          :booking="card.booking"
+          @confirm="confirmRelease"
+          @cancel="goBack"
+        />
+        <article v-else-if="card.type === 'suggest'" class="ai-buddy-card">
+          <h3 class="ai-buddy-card-title">换个时间？</h3>
+          <p class="ai-buddy-card-copy">{{ card.reason }}</p>
+          <div class="ai-buddy-slot-btns">
+            <p class="ai-buddy-slot-hint">点选一个时段</p>
+            <button
+              v-for="opt in card.options"
+              :key="`${opt.roomId}-${opt.date}-${opt.start}-${opt.end}`"
+              type="button"
+              class="ai-buddy-slot-btn"
+              @click="pickSlot(opt)"
             >
-            <span class="ai-buddy-slot-cta">选这个</span>
-          </button>
-        </div>
-      </article>
-      <article
-        v-else-if="card.type === 'booked'"
-        class="ai-buddy-card ai-buddy-card-ok"
-        data-testid="mr-ai-booked"
-        aria-label="预定成功"
-      >
-        <h3 class="ai-buddy-card-title">
-          {{ bookedHeading }}
-        </h3>
-        <p class="ai-buddy-card-copy">{{ bookedSummary }}</p>
-        <div class="ai-buddy-card-actions">
-          <button type="button" class="ai-buddy-btn-primary" @click="dismiss">
-            知道了
-          </button>
-        </div>
-      </article>
+              <span class="ai-buddy-slot-time"
+                >{{ opt.roomName }} {{ opt.start }}–{{ opt.end }}</span
+              >
+              <span class="ai-buddy-slot-cta">选这个</span>
+            </button>
+          </div>
+        </article>
+        <article
+          v-else-if="card.type === 'booked'"
+          class="ai-buddy-card ai-buddy-card-ok"
+          data-testid="mr-ai-booked"
+          aria-label="预定成功"
+        >
+          <h3 class="ai-buddy-card-title">
+            {{ bookedHeading }}
+          </h3>
+          <p class="ai-buddy-card-copy">{{ bookedSummary }}</p>
+          <div class="ai-buddy-card-actions">
+            <button type="button" class="ai-buddy-btn-primary" @click="dismiss">
+              知道了
+            </button>
+          </div>
+        </article>
       </el-scrollbar>
     </div>
   </section>

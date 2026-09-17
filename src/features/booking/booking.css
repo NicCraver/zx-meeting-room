@@ -1044,6 +1044,7 @@
   flex-direction: column;
   max-height: min(80vh, 720px);
   margin-top: 8vh !important;
+  overflow: hidden;
 }
 
 .el-dialog.mine-bookings-dialog .bg-grayLight {
@@ -1063,7 +1064,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-bottom: 0;
+  padding: 0 !important;
   background: #f4f6f8;
 }
 
@@ -1086,7 +1087,7 @@
 }
 
 .bookings-dialog-body {
-  padding: 12px 16px 16px;
+  padding: 16px;
   flex: 1;
   min-height: 0;
   overflow: auto;
@@ -2285,6 +2286,19 @@ button.tl-room-cell {
   border-top: none;
   border-bottom: none;
   border-left: none;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tl-room-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
 }
 
 .tl-row.is-picking .tl-room-cell {

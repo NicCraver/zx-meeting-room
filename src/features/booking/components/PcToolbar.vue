@@ -271,7 +271,12 @@
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </button>
-      <div class="pc-view-switch" role="radiogroup" aria-label="视图">
+      <div
+        v-if="SHOW_WEEK_VIEW"
+        class="pc-view-switch"
+        role="radiogroup"
+        aria-label="视图"
+      >
         <button
           type="button"
           data-testid="mr-view-day"
@@ -313,6 +318,13 @@
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { AcButton } from "@/components/base";
+
+/**
+ * 周视图暂不上线（2026-09-17）：整个日/周切换按钮组藏起来，看板固定日视图。
+ * 代码全留着——`useBoard` 的 week 分支、`PcTimelineBoard` 的周轨道、跨天拖选都没动，
+ * 想放出来把这里改成 true 即可。
+ */
+const SHOW_WEEK_VIEW = false;
 
 const props = defineProps({
   dateLabel: { type: String, required: true },
