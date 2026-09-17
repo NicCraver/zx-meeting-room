@@ -96,4 +96,32 @@ test.describe("PC 看板", () => {
     await tid(page, "mr-toolbar-book").click();
     await expectToast(page, "暂无会议室");
   });
+
+  test("会议室单元格快捷预约加号上下居中", async ({ page }) => {
+    await openMeeting(page);
+    await waitPcBoard(page);
+
+    const btn = page.locator("button.tl-room-cell").first();
+    await expect(btn).toBeVisible();
+
+    const metrics = await btn.evaluate((b) => {
+      const plus = b.querySelector(".tl-room-plus");
+      const info = b.querySelector(".tl-room-info");
+      const bRect = b.getBoundingClientRect();
+      const pRect = plus.getBoundingClientRect();
+      const iRect = info.getBoundingClientRect();
+
+      const bCenterY = bRect.top + bRect.height / 2;
+      const pCenterY = pRect.top + pRect.height / 2;
+      const iCenterY = iRect.top + iRect.height / 2;
+
+      return {
+        diffPlus: Math.abs(pCenterY - bCenterY),
+        diffInfo: Math.abs(iCenterY - bCenterY)
+      };
+    });
+
+    expect(metrics.diffPlus).toBeLessThanOrEqual(1);
+    expect(metrics.diffInfo).toBeLessThanOrEqual(1);
+  });
 });

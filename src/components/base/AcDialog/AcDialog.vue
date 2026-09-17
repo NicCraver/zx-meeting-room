@@ -37,7 +37,7 @@ const visible = ref(true);
     :destroy-on-close="true"
     :show-close="false"
     :append-to-body="true"
-    class="!p-0 !rounded-lg flex flex-col"
+    class="!p-0 !rounded-lg !overflow-hidden flex flex-col"
     header-class="!pb-0"
     footer-class="!pt-0"
     body-class="flex-1 min-h-0 overflow-hidden flex flex-col"
@@ -82,7 +82,10 @@ const visible = ref(true);
       <slot name="content" />
     </div>
 
-    <template #footer>
+    <template
+      #footer
+      v-if="!noBtn || $slots['footer-left'] || $slots['footer-before-actions']"
+    >
       <div
         v-if="!noBtn"
         class="flex items-center gap-4 shrink-0 w-full h-16 px-4"
