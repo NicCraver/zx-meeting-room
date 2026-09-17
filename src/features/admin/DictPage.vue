@@ -10,6 +10,7 @@
           </p>
         </div>
         <AcButton
+          data-testid="mr-dict-create"
           type="primary"
           :title="`新增${typeLabel}`"
           @click="openCreate"
@@ -29,6 +30,7 @@
               : 'bg-canvas border-hairline text-black'
           "
           :aria-selected="activeType === tab.id"
+          :data-testid="`mr-dict-tab-${tab.id}`"
           @click="setActiveType(tab.id)"
         >
           {{ tab.label }}
@@ -75,7 +77,13 @@
                 title="启用"
                 @click="toggleEnabled(row)"
               />
-              <AcButton type="danger" plain title="删除" @click="remove(row)" />
+              <AcButton
+                type="danger"
+                plain
+                title="删除"
+                data-testid="mr-dict-delete"
+                @click="remove(row)"
+              />
             </template>
           </el-table-column>
           <template #empty>
@@ -112,6 +120,7 @@
             </label>
             <el-input
               id="dict-name"
+              data-testid="mr-dict-name"
               :model-value="draftName"
               maxlength="20"
               :placeholder="namePlaceholder"

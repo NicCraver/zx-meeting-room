@@ -87,6 +87,36 @@ export const nextMissingFindFreeField = (query, { todayIso } = {}) => {
 
 const intersects = (a0, a1, b0, b1) => a0 < b1 && a1 > b0;
 
+const EARLY_AM_END = 6 * 60;
+const NOON = 12 * 60;
+
+/** 时段必须能放下整段 duration；点时刻（15:00–15:00）按开始时刻 + 时长展开。 */
+const normalizeWindow = (windowStart, windowEnd, durationMin) => {
+  if (
+    windowStart != null &&
+    windowEnd != null &&
+    windowEnd - windowStart < durationMin
+  ) {
+    return {
+      windowStart,
+      windowEnd: Math.min(TL.DAY_MIN, windowStart + durationMin)
+    };
+  }
+  return { windowStart, windowEnd };
+};
+
+/** 明确开始时刻：对齐 30 分格；06:00 前按下午 +12 小时。 */
+const normalizePreferredStart = (raw) => {
+  if (raw == null || raw === "") return null;
+  const parsed = toMinutes(String(raw).trim());
+  if (!Number.isFinite(parsed)) return null;
+  let minute = TL.snap(parsed);
+  if (minute < EARLY_AM_END && minute + NOON < TL.DAY_MIN) {
+    minute += NOON;
+  }
+  return minute;
+};
+
 const roomMatches = (room, query) => {
   if (query.capacity != null && room.capacity < query.capacity) return false;
   if (
@@ -127,16 +157,47 @@ const computeSlots = (
   return slots;
 };
 
+const toSlot = (room, date, range) => ({
+  roomId: room.id,
+  roomName: room.name,
+  buildingName: room.buildingName,
+  floorName: room.floorName,
+  capacity: room.capacity,
+  facilities: room.facilities || [],
+  date,
+  start: fromMinutes(range.start),
+  end: fromMinutes(range.end)
+});
+
+const pickSlotRanges = (ranges, preferredStart) => {
+  if (preferredStart == null) return ranges.slice(0, 4);
+  const exact = ranges.filter((s) => s.start === preferredStart);
+  const rest = ranges.filter((s) => s.start !== preferredStart);
+  return [...exact, ...rest].slice(0, 4);
+};
+
 export const searchFreeSlots = (rooms, query, now) => {
   const durationMin = query.durationMin || 60;
-  const windowStart = query.windowStart ? toMinutes(query.windowStart) : null;
-  const windowEnd = query.windowEnd ? toMinutes(query.windowEnd) : null;
+  const preferredStart = normalizePreferredStart(query.start);
+  const rawStart = query.windowStart ? toMinutes(query.windowStart) : null;
+  const rawEnd = query.windowEnd ? toMinutes(query.windowEnd) : null;
+  let { windowStart, windowEnd } = normalizeWindow(
+    rawStart,
+    rawEnd,
+    durationMin
+  );
+  if (preferredStart != null) {
+    windowStart = preferredStart;
+    windowEnd = Math.min(TL.DAY_MIN, preferredStart + durationMin);
+  }
   const date = query.dateIso;
   const out = [];
+  let matchedRooms = 0;
 
   for (const room of rooms || []) {
     if (!roomMatches(room, query)) continue;
     if (date < now.date) continue;
+    matchedRooms += 1;
     let rangeStart = toMinutes(room.openStart || "09:00");
     const rangeEnd = toMinutes(room.openEnd || "18:00");
     if (date === now.date) {
@@ -146,13 +207,16 @@ export const searchFreeSlots = (rooms, query, now) => {
       start: toMinutes(e.start),
       end: toMinutes(e.end)
     }));
-    const slotRanges = computeSlots(
-      rangeStart,
-      rangeEnd,
-      busy,
-      durationMin,
-      windowStart,
-      windowEnd
+    const slotRanges = pickSlotRanges(
+      computeSlots(
+        rangeStart,
+        rangeEnd,
+        busy,
+        durationMin,
+        windowStart,
+        windowEnd
+      ),
+      preferredStart
     );
     if (!slotRanges.length) continue;
     out.push({
@@ -168,24 +232,42 @@ export const searchFreeSlots = (rooms, query, now) => {
         start: e.start,
         end: e.end
       })),
-      slots: slotRanges.slice(0, 4).map((s) => ({
-        roomId: room.id,
-        roomName: room.name,
-        buildingName: room.buildingName,
-        floorName: room.floorName,
-        capacity: room.capacity,
-        facilities: room.facilities || [],
-        date,
-        start: fromMinutes(s.start),
-        end: fromMinutes(s.end)
-      }))
+      slots: slotRanges.map((s) => toSlot(room, date, s))
     });
   }
+  if (
+    !out.length &&
+    matchedRooms &&
+    windowStart != null &&
+    windowEnd != null &&
+    windowEnd <= EARLY_AM_END &&
+    windowStart + NOON < TL.DAY_MIN
+  ) {
+    return searchFreeSlots(
+      rooms,
+      {
+        ...query,
+        start: null,
+        windowStart: fromMinutes(windowStart + NOON),
+        windowEnd: fromMinutes(Math.min(TL.DAY_MIN, windowEnd + NOON))
+      },
+      now
+    );
+  }
   out.sort((a, b) => b.slots.length - a.slots.length);
-  const heading = query.windowStart
-    ? `${date} · ${query.windowStart}–${query.windowEnd}`
-    : `${date} · 空闲 ≥ ${durationMin / 60} 小时`;
-  return { heading, rooms: out.slice(0, 5) };
+  const heading =
+    preferredStart != null
+      ? `${date} · ${fromMinutes(preferredStart)} 起`
+      : windowStart != null
+        ? `${date} · ${fromMinutes(windowStart)}–${
+            windowEnd != null ? fromMinutes(windowEnd) : ""
+          }`
+        : `${date} · 空闲 ≥ ${durationMin / 60} 小时`;
+  return {
+    heading,
+    rooms: out.slice(0, 5),
+    ...(preferredStart != null ? { start: fromMinutes(preferredStart) } : {})
+  };
 };
 
 export const fallbackAdvice = (rooms, query, now) => {

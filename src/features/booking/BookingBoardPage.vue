@@ -2,84 +2,82 @@
   <div class="pc-app">
     <AcPageLoading v-if="bootLoading" full-screen text="数据加载中..." />
     <template v-else>
-    <PcToolbar
-      :date-label="dateLabel"
-      :days="days"
-      :selected-date="boardDate"
-      :keyword="keyword"
-      :filters="filters"
-      :places="places"
-      :facility-options="facilityOptions"
-      :capacity-options="CAPACITY_OPTIONS"
-      :is-admin="isAdmin"
-      :mine-open="mine.open.value"
-      :view-mode="viewMode"
-      @update:keyword="keyword = $event"
-      @update:filters="onFilters"
-      @select-date="onSelectDate"
-      @prev-day="shiftBoard(-1)"
-      @next-day="shiftBoard(1)"
-      @today="goToday"
-      @reset="resetFilters"
-      @open-mine="toggleMine"
-      @open-book="openManualBooking"
-      @replay-tour="replayTour"
-      @admin="router.push('/admin')"
-      @switch-user="switchDemoUser"
-      @change-view="onChangeView"
-    />
+      <PcToolbar
+        :date-label="dateLabel"
+        :days="days"
+        :selected-date="boardDate"
+        :keyword="keyword"
+        :filters="filters"
+        :places="places"
+        :facility-options="facilityOptions"
+        :capacity-options="CAPACITY_OPTIONS"
+        :is-admin="isAdmin"
+        :mine-open="mine.open.value"
+        :view-mode="viewMode"
+        @update:keyword="keyword = $event"
+        @update:filters="onFilters"
+        @select-date="onSelectDate"
+        @prev-day="shiftBoard(-1)"
+        @next-day="shiftBoard(1)"
+        @today="goToday"
+        @reset="resetFilters"
+        @open-mine="toggleMine"
+        @open-book="openManualBooking"
+        @replay-tour="replayTour"
+        @admin="router.push('/admin')"
+        @change-view="onChangeView"
+      />
 
-    <PcTimelineBoard
-      :rooms="visibleRooms"
-      :selection="selection"
-      :is-today="isToday"
-      :booking-open="Boolean(bookingRoom)"
-      :view-mode="viewMode"
-      :week-dates="weekDaysMeta"
-      :today-iso="todayIso"
-      @update:selection="selection = $event"
-      @commit="handleCommitRange"
-      @notice="onNotice"
-      @book-room="onBookRoom"
-    />
+      <PcTimelineBoard
+        ref="boardRef"
+        :rooms="visibleRooms"
+        :selection="selection"
+        :is-today="isToday"
+        :booking-open="Boolean(bookingRoom)"
+        :view-mode="viewMode"
+        :week-dates="weekDaysMeta"
+        :today-iso="todayIso"
+        @update:selection="selection = $event"
+        @commit="handleCommitRange"
+        @notice="onNotice"
+        @book-room="onBookRoom"
+      />
 
-    <BookingTour ref="tourRef" :ready="tourReady" />
-    <CreateScheduleModal
-      v-if="bookingRoom && bookingRange"
-      :room="bookingRoom"
-      :rooms="visibleRooms"
-      :range-text="bookingRange.text"
-      :date-label="bookingRange.dateLabel"
-      :date-iso="bookingRange.dateIso"
-      :dates="bookingRange.dates"
-      :start="bookingRange.start"
-      :end="bookingRange.end"
-      :board-date="boardDate"
-      :full-screen="false"
-      :editing="editingBooking"
-      @close="closeBooking"
-      @success="handleBookingSuccess"
-    />
-    <MyBookingsModal
-      v-if="mine.open.value"
-      :bookings="mine.items.value"
-      :loading="mine.loading.value"
-      @close="closeMine"
-      @release="onRelease"
-      @edit="onEditMine"
-      @locate="onLocateMine"
-    />
-    <BookingAiBar
-      ref="aiBarRef"
-      :rooms="visibleRooms"
-      :board-date="boardDate"
-      @booked="reload"
-    />
-    <AiBuddyFab
-      companion
-      @activate="aiBarRef?.focusInput()"
-      @booked="reload"
-    />
+      <BookingTour ref="tourRef" :ready="tourReady" @start="onTourStart" />
+      <CreateScheduleModal
+        v-if="bookingRoom && bookingRange"
+        :room="bookingRoom"
+        :rooms="visibleRooms"
+        :range-text="bookingRange.text"
+        :date-label="bookingRange.dateLabel"
+        :date-iso="bookingRange.dateIso"
+        :dates="bookingRange.dates"
+        :start="bookingRange.start"
+        :end="bookingRange.end"
+        :board-date="boardDate"
+        :full-screen="false"
+        :editing="editingBooking"
+        @close="closeBooking"
+        @success="handleBookingSuccess"
+      />
+      <MyBookingsModal
+        v-if="mine.open.value"
+        :bookings="mine.items.value"
+        :loading="mine.loading.value"
+        @close="closeMine"
+        @release="onRelease"
+      />
+      <BookingAiBar
+        ref="aiBarRef"
+        :rooms="visibleRooms"
+        :board-date="boardDate"
+        @booked="reload"
+      />
+      <AiBuddyFab
+        companion
+        @activate="aiBarRef?.focusInput()"
+        @booked="reload"
+      />
     </template>
   </div>
 </template>
@@ -88,8 +86,12 @@
 import { computed, onMounted, ref } from "vue";
 import { track } from "./telemetry";
 import { useRouter } from "vue-router";
-import { switchDemoUser } from "@/features/demo/session";
-import { getAccountId, getUserId, showToastError, showToastSuccess } from "@/utils";
+import {
+  getAccountId,
+  getUserId,
+  showToastError,
+  showToastSuccess
+} from "@/utils";
 import { getMe } from "@/api/module/me";
 import { useBoard } from "./useBoard";
 import { useMine } from "./useMine";
@@ -102,7 +104,6 @@ import {
   workweekOf
 } from "./time";
 import { draftFromRoomCell, draftFromToolbar } from "./bookingDefaults";
-import { draftRangeFromMine, roomFromMine } from "./mine";
 import { AcPageLoading } from "@/components/base";
 import PcToolbar from "./components/PcToolbar.vue";
 import BookingAiBar from "@/features/agent/components/BookingAiBar.vue";
@@ -144,12 +145,17 @@ const {
   reload
 } = board;
 
-const bootLoading = computed(
-  () => loading.value && rooms.value.length === 0
-);
+const bootLoading = computed(() => loading.value && rooms.value.length === 0);
 
 const tourReady = computed(() => !loading.value);
-const replayTour = () => tourRef.value?.replay?.();
+const boardRef = ref(null);
+const onTourStart = () => {
+  boardRef.value?.refreshNow?.();
+};
+const replayTour = () => {
+  boardRef.value?.refreshNow?.();
+  tourRef.value?.replay?.();
+};
 
 const todayIso = shanghaiToday();
 
@@ -355,20 +361,6 @@ const handleBookingSuccess = async (count = 1) => {
         : "预定成功，已加入「我的预定」"
   );
   await reload();
-};
-
-const onEditMine = (booking) => {
-  mine.open.value = false;
-  editingBooking.value = booking;
-  bookingRoom.value = roomFromMine(booking, rooms.value);
-  bookingRange.value = draftRangeFromMine(booking);
-};
-
-const onLocateMine = (booking) => {
-  mine.open.value = false;
-  viewMode.value = "day";
-  boardDate.value = booking.date;
-  selection.value = null;
 };
 
 const onRelease = async (booking) => {

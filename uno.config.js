@@ -1,3 +1,4 @@
+import { createRequire } from "node:module";
 import {
   defineConfig,
   transformerVariantGroup,
@@ -7,6 +8,9 @@ import {
 import { presetWind3 } from "@unocss/preset-wind3";
 import transformerDirectives from "@unocss/transformer-directives";
 
+const require = createRequire(import.meta.url);
+const carbonIcons = require("@iconify-json/carbon/icons.json");
+
 const fontSans =
   '-apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif';
 
@@ -14,7 +18,19 @@ export default defineConfig({
   presets: [
     presetWind3(),
     presetTypography(),
-    presetIcons({ scale: 1.2, warn: true })
+    presetIcons({
+      scale: 1.2,
+      warn: true,
+      extraProperties: {
+        display: "inline-block",
+        "vertical-align": "middle"
+      },
+      // Cursor / VS Code 终端会注入 VSCODE_CWD，preset-icons 会当成扩展环境
+      // 跳过 node 文件系统 loader，i-carbon-* 全部生成失败（色块 / 空白）。
+      collections: {
+        carbon: () => carbonIcons
+      }
+    })
   ],
   theme: {
     fontFamily: {

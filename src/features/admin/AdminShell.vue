@@ -1,115 +1,39 @@
 <template>
-  <div class="flex h-full min-h-full">
-    <a class="sr-only" href="#admin-main">跳到主内容</a>
-    <aside
-      class="w-60px shrink-0 bg-grayLight border-r border-edge flex flex-col items-center py-12px"
+  <div class="flex h-full min-h-full w-full overflow-hidden bg-grayLight">
+    <!-- 无障碍：键盘跳到主内容区域 -->
+    <a
+      class="sr-only focus:not-sr-only focus:fixed focus:top-12px focus:left-12px focus:z-50 focus:px-12px focus:py-8px focus:bg-primary focus:text-onPrimary focus:rounded-6px focus:shadow-md"
+      href="#admin-main"
     >
-      <div
-        class="w-36px h-36px mb-20px rounded-8px bg-primary text-onPrimary flex items-center justify-center"
-        aria-hidden="true"
+      跳到主内容
+    </a>
+
+    <!-- 侧边栏导航 -->
+    <AdminSidebar
+      :active="active"
+      :collapsed="collapsed"
+      @toggle-collapse="toggleCollapse"
+    />
+
+    <!-- 右侧主体：顶栏 + 主工作区 -->
+    <div class="flex-1 min-w-0 min-h-0 flex flex-col bg-grayLight">
+      <!-- 统一管理顶栏 -->
+      <AdminHeader
+        :active="active"
+        :collapsed="collapsed"
+        @toggle-collapse="toggleCollapse"
+        @refresh="handleRefresh"
+      />
+
+      <!-- 主工作区内容容器 -->
+      <main
+        id="admin-main"
+        class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden gutter-stable"
+        tabindex="-1"
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+        <div
+          class="w-full max-w-1680px mx-auto p-16px md:p-20px lg:p-24px min-h-full"
         >
-          <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-          <line x1="8" y1="21" x2="16" y2="21" />
-          <line x1="12" y1="17" x2="12" y2="21" />
-        </svg>
-      </div>
-      <nav class="w-full" aria-label="主导航">
-        <router-link
-          v-for="item in navItems"
-          :key="item.id"
-          :to="item.path"
-          class="relative w-full h-44px flex flex-col items-center justify-center gap-2px border-none cursor-pointer text-10px leading-16px whitespace-nowrap no-underline"
-          :class="
-            active === item.id
-              ? 'bg-primaryLight text-primary'
-              : 'bg-transparent text-grayDark'
-          "
-          :aria-current="active === item.id ? 'page' : undefined"
-        >
-          <span
-            v-if="active === item.id"
-            class="absolute left-0 top-0 bottom-0 w-4px bg-primary"
-          />
-          <svg
-            v-if="item.id === 'rooms'"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M3 3h18v18H3zM3 9h18M9 21V9" />
-          </svg>
-          <svg
-            v-else-if="item.id === 'history'"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-          <svg
-            v-else
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-            <path
-              d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
-            />
-            <path d="M8 7h8M8 11h6" />
-          </svg>
-          <span>{{ item.label }}</span>
-        </router-link>
-      </nav>
-    </aside>
-    <div class="flex-1 min-w-0 min-h-0 flex flex-col">
-      <header
-        class="h-48px shrink-0 bg-canvas border-b border-edge flex items-center justify-between gap-12px px-20px"
-      >
-        <span
-          class="text-16px font-500 leading-24px text-black whitespace-nowrap overflow-hidden text-ellipsis text-pretty"
-        >
-          智信 · 智能会议室管理平台
-        </span>
-        <button
-          type="button"
-          class="shrink-0 border-none bg-transparent text-14px leading-20px text-primary cursor-pointer px-0"
-          @click="switchDemoUser"
-        >
-          切换用户
-        </button>
-      </header>
-      <main id="admin-main" class="flex-1 min-h-0 overflow-auto" tabindex="-1">
-        <div class="p-20px bg-grayLight min-h-full">
           <slot />
         </div>
       </main>
@@ -118,7 +42,10 @@
 </template>
 
 <script setup>
-import { switchDemoUser } from "@/features/demo/session";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import AdminSidebar from "./components/AdminSidebar.vue";
+import AdminHeader from "./components/AdminHeader.vue";
 
 defineProps({
   active: {
@@ -129,9 +56,41 @@ defineProps({
   }
 });
 
-const navItems = [
-  { id: "rooms", label: "会议室", path: "/admin" },
-  { id: "history", label: "记录", path: "/admin/history" },
-  { id: "dicts", label: "字典表", path: "/admin/dicts" }
-];
+const emit = defineEmits(["refresh"]);
+const router = useRouter();
+
+const STORAGE_KEY = "mr_admin_sidebar_collapsed";
+const collapsed = ref(false);
+
+onMounted(() => {
+  // 从本地存储读取用户折叠偏好
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved !== null) {
+    collapsed.value = saved === "true";
+  } else if (window.innerWidth < 1080) {
+    // 较小屏幕默认折叠
+    collapsed.value = true;
+  }
+});
+
+const toggleCollapse = () => {
+  collapsed.value = !collapsed.value;
+  try {
+    localStorage.setItem(STORAGE_KEY, String(collapsed.value));
+  } catch {
+    // ignore storage quota error
+  }
+};
+
+const handleRefresh = () => {
+  emit("refresh");
+  // 触发软刷新或重新加载当前路由
+  router.replace({
+    path: router.currentRoute.value.path,
+    query: {
+      ...router.currentRoute.value.query,
+      _t: Date.now()
+    }
+  });
+};
 </script>

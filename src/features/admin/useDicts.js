@@ -7,6 +7,7 @@ import {
   updateDict
 } from "@/api/module/dict";
 import { confirmAsk, showToastError, showToastSuccess } from "@/utils";
+import { dictDeleteBlockedMessage, dictNameError } from "./dictRules";
 
 export const DICT_TYPES = [
   { id: "building", label: "建筑" },
@@ -121,19 +122,13 @@ export const useDicts = ({ active } = {}) => {
     formError.value = "";
   };
 
-  const validateDraft = () => {
-    const name = draftName.value.trim();
-    if (!name) return "请输入名称";
-    if (name.length > 20) return "名称不超过 20 个字";
-    const dup = dicts.value.find(
-      (item) =>
-        item.type === activeType.value &&
-        item.name === name &&
-        item.id !== editingId.value
-    );
-    if (dup) return "同类型下已有相同名称";
-    return "";
-  };
+  const validateDraft = () =>
+    dictNameError({
+      name: draftName.value,
+      items: dicts.value,
+      type: activeType.value,
+      editingId: editingId.value
+    });
 
   const normalizedSort = () => {
     const sort = Number(draftSort.value);
@@ -192,9 +187,9 @@ export const useDicts = ({ active } = {}) => {
   };
 
   const remove = async (item) => {
-    const used = item.usageCount || 0;
-    if (used > 0) {
-      showToastError(`有 ${used} 间会议室正在使用「${item.name}」，无法删除`);
+    const blocked = dictDeleteBlockedMessage(item);
+    if (blocked) {
+      showToastError(blocked);
       return;
     }
     const ok = await confirmAsk(`确定删除字典项「${item.name}」？`, {

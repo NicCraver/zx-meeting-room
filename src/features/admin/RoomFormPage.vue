@@ -25,6 +25,7 @@
           <el-form-item label="会议室名称" prop="name">
             <el-input
               v-model="form.name"
+              data-testid="mr-form-room-name"
               maxlength="30"
               placeholder="例如：1号会议室（1-30字）"
               class="max-w-480px"
@@ -51,6 +52,7 @@
           <el-form-item label="位置描述" prop="locationDesc">
             <el-input
               v-model="form.locationDesc"
+              data-testid="mr-form-location-desc"
               maxlength="50"
               show-word-limit
               placeholder="选填，例如：7层711办公室 / 715财务办公室旁边（上限50字）"
@@ -61,6 +63,7 @@
             <div class="flex items-center gap-8px">
               <el-input-number
                 v-model="form.capacity"
+                data-testid="mr-form-capacity"
                 :min="1"
                 :max="999"
                 :precision="0"
@@ -161,6 +164,7 @@
       <div class="flex justify-end gap-12px pb-8px">
         <AcButton title="取消" @click="onCancel" />
         <AcButton
+          data-testid="mr-admin-save"
           type="primary"
           :title="saving ? '保存中...' : '保存'"
           :loading="saving"

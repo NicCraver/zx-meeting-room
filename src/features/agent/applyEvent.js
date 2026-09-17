@@ -18,6 +18,8 @@
  *   | { type: 'need_more', text: string }
  *   | { type: 'error', msg: string, code?: string }
  *   | { type: 'booked', bookingId: string, title: string, slot: unknown }
+ *   | { type: 'mine', text: string, bookings: unknown[] }
+ *   | { type: 'release_confirm', booking: unknown }
  * )} AgentCard
  */
 
@@ -89,10 +91,35 @@ export function applyAgentEvent(state, event) {
         status: "",
         expression: event.expression,
         backCard:
-          state.card?.type === "query" || state.card?.type === "suggest"
+          state.card?.type === "query" ||
+          state.card?.type === "suggest" ||
+          state.card?.type === "mine"
             ? state.card
             : state.backCard,
         card: { type: "confirm", draft: event.draft }
+      };
+
+    case "mine":
+      return {
+        ...state,
+        open: true,
+        status: "",
+        expression: event.expression,
+        card: {
+          type: "mine",
+          text: event.text,
+          bookings: event.bookings
+        }
+      };
+
+    case "release_confirm":
+      return {
+        ...state,
+        open: true,
+        status: "",
+        expression: event.expression,
+        backCard: state.card?.type === "mine" ? state.card : state.backCard,
+        card: { type: "release_confirm", booking: event.booking }
       };
 
     case "suggest":
@@ -165,7 +192,12 @@ export function applyAgentEvent(state, event) {
 
 /** 确认卡取消：回到上一张空档/换档卡，不收起助手。 */
 export function backFromConfirm(state) {
-  if (state.card?.type !== "confirm") return state;
+  if (
+    state.card?.type !== "confirm" &&
+    state.card?.type !== "release_confirm"
+  ) {
+    return state;
+  }
   if (state.backCard) {
     return {
       ...state,

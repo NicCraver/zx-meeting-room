@@ -19,9 +19,7 @@ test("findSlotOccupant reports the overlapping host", () => {
 });
 
 test("findSlotOccupant 修改自己的预定时忽略本条占用", () => {
-  const events = [
-    { id: "b1", start: "10:00", end: "11:00", host: "我" }
-  ];
+  const events = [{ id: "b1", start: "10:00", end: "11:00", host: "我" }];
   assert.equal(findSlotOccupant(events, 10 * 60, 11 * 60, "b1"), null);
   assert.equal(findSlotOccupant(events, 10 * 60, 11 * 60).id, "b1");
 });
@@ -107,7 +105,10 @@ test("occupancySource 周视图用预约日那一列，不用日视图 busyEvent
     fetchedBusy: null
   });
   assert.equal(monday.fetch, false);
-  assert.equal(findSlotOccupant(monday.events, 14 * 60, 15 * 60).host, "周一的人");
+  assert.equal(
+    findSlotOccupant(monday.events, 14 * 60, 15 * 60).host,
+    "周一的人"
+  );
   assert.equal(findSlotOccupant(monday.events, 9 * 60, 10 * 60), null);
 
   const missingDay = occupancySource({

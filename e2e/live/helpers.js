@@ -8,8 +8,18 @@ export const meetingUrl = (path = "/ai-meet/zx/") => {
   return `${path}${sep}${AUTH_QS}`;
 };
 
-/** 跳过首次使用指引；每条用例独立 origin。 */
-export async function openMeeting(page, path = "/ai-meet/zx/") {
+export async function javaReady() {
+  try {
+    const res = await fetch("http://127.0.0.1:7004/swagger-ui.html", {
+      signal: AbortSignal.timeout(3000)
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function openLive(page, path = "/ai-meet/zx/") {
   await page.addInitScript(() => {
     try {
       localStorage.setItem("mr_tour_v1", "1");
@@ -25,31 +35,12 @@ export async function openMeeting(page, path = "/ai-meet/zx/") {
 }
 
 export async function waitPcBoard(page) {
-  await page.locator('[data-tour="room-table"]').waitFor();
+  await page.getByTestId("mr-board").waitFor({ timeout: 20_000 });
   await page.getByText("数据加载中...").waitFor({ state: "hidden" }).catch(() => {});
-  await page.locator(".tl-room-name-text").first().waitFor();
 }
 
-export async function waitMobileBoard(page) {
-  await page.getByText("预定会议室").first().waitFor();
-  await page.locator(".m-room-card, .m-empty").first().waitFor();
-}
-
-/** 弹层整体落在视口内，底部不被裁掉。 */
-export async function expectFitsViewport(locator, page) {
-  await expect(locator).toBeVisible();
-  const box = await locator.boundingBox();
-  const vp = page.viewportSize();
-  const height = vp?.height || 900;
-  expect(box, "应能量到弹层盒子").toBeTruthy();
-  expect(box.y).toBeGreaterThanOrEqual(-1);
-  expect(box.y + box.height).toBeLessThanOrEqual(height + 2);
-}
-
-/** 避开中午占用，改成开放时间内的 19:00–20:00。 */
 export async function pickEveningSlot(page) {
-  const visiblePop = () =>
-    page.locator(".dt-time-pop").filter({ visible: true });
+  const visiblePop = () => page.locator(".dt-time-pop").filter({ visible: true });
 
   await page.getByRole("button", { name: "开始时间" }).click();
   const startItem = visiblePop().getByRole("button", { name: "19:00", exact: true });
@@ -66,5 +57,4 @@ export async function pickEveningSlot(page) {
   await endItem.scrollIntoViewIfNeeded();
   await endItem.click();
   await expect(page.getByRole("button", { name: "结束时间" })).toHaveText("20:00");
-  await expect(page.getByRole("alert")).toHaveCount(0, { timeout: 15_000 });
 }

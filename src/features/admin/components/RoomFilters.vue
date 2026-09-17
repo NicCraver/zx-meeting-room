@@ -3,6 +3,7 @@
     <div class="flex items-center gap-12px flex-nowrap overflow-x-auto">
       <el-input
         class="!w-220px shrink-0"
+        data-testid="mr-admin-room-search"
         clearable
         placeholder="搜索会议室"
         :model-value="keyword"

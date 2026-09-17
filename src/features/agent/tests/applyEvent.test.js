@@ -244,6 +244,26 @@ test("empty slot need_more is the no-result copy, not other need_more", () => {
   assert.equal(isEmptySlotNeedMore(null), false);
 });
 
+test("mine and release_confirm replace card; back restores mine", () => {
+  const mineEvent = {
+    type: "mine",
+    text: "今天有 1 场",
+    bookings: [{ id: "b1", title: "周会" }],
+    expression: "ease"
+  };
+  const withMine = applyAgentEvent(emptyAgentUi(), mineEvent);
+  assert.equal(withMine.card?.type, "mine");
+  const withRelease = applyAgentEvent(withMine, {
+    type: "release_confirm",
+    booking: { id: "b1", title: "周会" },
+    expression: "expect"
+  });
+  assert.equal(withRelease.card?.type, "release_confirm");
+  assert.equal(withRelease.backCard?.type, "mine");
+  const back = backFromConfirm(withRelease);
+  assert.equal(back.card?.type, "mine");
+});
+
 test("idleAfterEmptyResult clears card and keeps session", () => {
   const prev = applyAgentEvent(
     { ...emptyAgentUi(), sessionId: "sess-1", open: true },

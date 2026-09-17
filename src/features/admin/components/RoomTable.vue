@@ -1,6 +1,11 @@
 <template>
   <div class="zx-card !p-0 overflow-hidden">
-    <el-table v-loading="loading" :data="rooms" class="w-full">
+    <el-table
+      v-loading="loading"
+      :data="rooms"
+      class="w-full"
+      data-testid="mr-admin-room-table"
+    >
       <el-table-column label="名称" min-width="160">
         <template #default="{ row }">
           <div>{{ row.name }}</div>
@@ -47,6 +52,8 @@
             type="primary"
             plain
             title="编辑"
+            data-testid="mr-admin-room-edit"
+            :data-room-id="row.id"
             @click="$emit('edit', row.id)"
           />
           <AcButton
@@ -54,6 +61,8 @@
             type="danger"
             plain
             title="停用"
+            data-testid="mr-admin-room-toggle"
+            :data-room-id="row.id"
             @click="$emit('toggle', row)"
           />
           <AcButton
@@ -61,6 +70,8 @@
             type="primary"
             plain
             title="启用"
+            data-testid="mr-admin-room-toggle"
+            :data-room-id="row.id"
             @click="$emit('toggle', row)"
           />
         </template>

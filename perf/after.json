@@ -1,0 +1,171 @@
+{
+  "generatedAt": "2026-09-08T09:18:36.995Z",
+  "entries": {
+    "main": {
+      "eagerRaw": 858153,
+      "eagerGzip": 272812,
+      "totalRaw": 1177078,
+      "files": [
+        {
+          "file": "index.html",
+          "raw": 1332,
+          "gzip": 479
+        },
+        {
+          "file": "assets/main-pxHRgSwu.js",
+          "raw": 218114,
+          "gzip": 64722
+        },
+        {
+          "file": "assets/rolldown-runtime-hePW80VL.js",
+          "raw": 716,
+          "gzip": 428
+        },
+        {
+          "file": "assets/vendor-vue-f_bTKERu.js",
+          "raw": 105309,
+          "gzip": 39952
+        },
+        {
+          "file": "assets/vendor-vant-DX2w1H8x.js",
+          "raw": 23492,
+          "gzip": 9382
+        },
+        {
+          "file": "assets/vendor-base-DQCVmdq3.js",
+          "raw": 65004,
+          "gzip": 23762
+        },
+        {
+          "file": "assets/http-CvikznDU.js",
+          "raw": 115693,
+          "gzip": 40454
+        },
+        {
+          "file": "assets/css-DGKWzsMl.js",
+          "raw": 75286,
+          "gzip": 26178
+        },
+        {
+          "file": "assets/session-Dfm71F5O.js",
+          "raw": 1528,
+          "gzip": 860
+        },
+        {
+          "file": "assets/time-BMS00QoE.js",
+          "raw": 4295,
+          "gzip": 2032
+        },
+        {
+          "file": "assets/vendor-vant-CWY1-n6m.css",
+          "raw": 69232,
+          "gzip": 34014
+        },
+        {
+          "file": "assets/css-dKyg442A.css",
+          "raw": 27088,
+          "gzip": 5086
+        },
+        {
+          "file": "assets/main-Cy8OE9ZX.css",
+          "raw": 151064,
+          "gzip": 25463
+        }
+      ]
+    },
+    "zx": {
+      "eagerRaw": 761722,
+      "eagerGzip": 226578,
+      "totalRaw": 1068304,
+      "files": [
+        {
+          "file": "zx/index.html",
+          "raw": 949,
+          "gzip": 452
+        },
+        {
+          "file": "assets/zx-BkVD7fKi.js",
+          "raw": 221056,
+          "gzip": 65955
+        },
+        {
+          "file": "assets/rolldown-runtime-hePW80VL.js",
+          "raw": 716,
+          "gzip": 428
+        },
+        {
+          "file": "assets/vendor-vue-f_bTKERu.js",
+          "raw": 105309,
+          "gzip": 39952
+        },
+        {
+          "file": "assets/vendor-base-DQCVmdq3.js",
+          "raw": 65004,
+          "gzip": 23762
+        },
+        {
+          "file": "assets/css-BTKfsuoZ.js",
+          "raw": 191459,
+          "gzip": 65680
+        },
+        {
+          "file": "assets/css-dKyg442A.css",
+          "raw": 27088,
+          "gzip": 5086
+        },
+        {
+          "file": "assets/zx-BdzwXc6R.css",
+          "raw": 150141,
+          "gzip": 25263
+        }
+      ]
+    },
+    "m": {
+      "eagerRaw": 760567,
+      "eagerGzip": 241495,
+      "totalRaw": 760567,
+      "files": [
+        {
+          "file": "m/index.html",
+          "raw": 2243,
+          "gzip": 923
+        },
+        {
+          "file": "assets/m-DnLys-95.js",
+          "raw": 338556,
+          "gzip": 107601
+        },
+        {
+          "file": "assets/rolldown-runtime-hePW80VL.js",
+          "raw": 716,
+          "gzip": 428
+        },
+        {
+          "file": "assets/vendor-vue-B3G5zIjm.js",
+          "raw": 102196,
+          "gzip": 38847
+        },
+        {
+          "file": "assets/vendor-vant-Bzmuj8V1.js",
+          "raw": 23497,
+          "gzip": 9387
+        },
+        {
+          "file": "assets/vendor-base-CcV-gl5d.js",
+          "raw": 65004,
+          "gzip": 23784
+        },
+        {
+          "file": "assets/vendor-vant-CWY1-n6m.css",
+          "raw": 69232,
+          "gzip": 34014
+        },
+        {
+          "file": "assets/m-Dxvs_NSo.css",
+          "raw": 159123,
+          "gzip": 26511
+        }
+      ]
+    }
+  }
+}

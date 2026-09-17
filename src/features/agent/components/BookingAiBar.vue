@@ -1,6 +1,7 @@
 <template>
   <section
     class="booking-ai-bar"
+    data-testid="mr-ai-bar"
     :class="{ 'is-lifted': lifted }"
     aria-label="会议室助手"
   >
@@ -8,6 +9,7 @@
       <textarea
         id="tour-ai-input"
         ref="inputRef"
+        data-testid="mr-ai-input"
         data-tour="ai-input"
         v-model="draft"
         rows="3"
@@ -23,6 +25,7 @@
       <button
         type="submit"
         class="booking-ai-send"
+        data-testid="mr-ai-send"
         :disabled="sending"
         :aria-label="sending ? '发送中' : '发送'"
       >
@@ -53,6 +56,7 @@
         :key="chip.id"
         type="button"
         class="booking-ai-chip"
+        :data-testid="`mr-ai-chip-${chip.id}`"
         :data-tour="chip.id === 'find-free' ? 'chip-find-free' : undefined"
         :disabled="sending"
         role="listitem"
@@ -62,21 +66,42 @@
       </button>
     </div>
 
-    <div v-if="ui.status" class="booking-ai-status" aria-live="polite">
+    <div
+      v-if="ui.status"
+      class="booking-ai-status"
+      data-testid="mr-ai-status"
+      aria-live="polite"
+    >
       {{ ui.status }}
     </div>
-    <p v-else-if="card?.type === 'need_more'" class="booking-ai-status">
-      {{ card.text }}
-    </p>
     <div
-      v-else-if="card?.type === 'error'"
-      class="booking-ai-status"
-      role="alert"
+      v-else-if="card"
+      class="booking-ai-results"
+      data-testid="mr-ai-results"
     >
-      <span>{{ card.msg }}</span>
-      <AcButton title="重试" @click="retry" />
-    </div>
-    <el-scrollbar v-else-if="card" class="booking-ai-results">
+      <button
+        type="button"
+        class="booking-ai-result-close"
+        data-testid="mr-ai-result-close"
+        aria-label="关闭"
+        @click="dismiss"
+      >
+        <SvgIcon name="close" class="w-4 h-4" />
+      </button>
+      <AgentMarkdown
+        v-if="card.type === 'need_more'"
+        class="ai-buddy-card-copy booking-ai-need-more"
+        :source="card.text"
+      />
+      <div
+        v-else-if="card.type === 'error'"
+        class="booking-ai-error"
+        role="alert"
+      >
+        <span>{{ card.msg }}</span>
+        <AcButton title="重试" @click="retry" />
+      </div>
+      <el-scrollbar v-else class="booking-ai-results-scroll">
       <AgentQueryCard
         v-if="card.type === 'query'"
         :heading="card.heading"
@@ -88,6 +113,18 @@
         v-else-if="card.type === 'confirm'"
         :draft="card.draft"
         @confirm="confirmDraft"
+        @cancel="goBack"
+        @retarget="retargetSlot"
+      />
+      <AgentMineCard
+        v-else-if="card.type === 'mine'"
+        :text="card.text"
+        :bookings="card.bookings"
+      />
+      <AgentReleaseCard
+        v-else-if="card.type === 'release_confirm'"
+        :booking="card.booking"
+        @confirm="confirmRelease"
         @cancel="goBack"
       />
       <article v-else-if="card.type === 'suggest'" class="ai-buddy-card">
@@ -112,9 +149,12 @@
       <article
         v-else-if="card.type === 'booked'"
         class="ai-buddy-card ai-buddy-card-ok"
+        data-testid="mr-ai-booked"
         aria-label="预定成功"
       >
-        <h3 class="ai-buddy-card-title">预定成功</h3>
+        <h3 class="ai-buddy-card-title">
+          {{ bookedHeading }}
+        </h3>
         <p class="ai-buddy-card-copy">{{ bookedSummary }}</p>
         <div class="ai-buddy-card-actions">
           <button type="button" class="ai-buddy-btn-primary" @click="dismiss">
@@ -122,14 +162,15 @@
           </button>
         </div>
       </article>
-    </el-scrollbar>
+      </el-scrollbar>
+    </div>
   </section>
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { ElScrollbar } from "element-plus";
-import { AcButton } from "@/components/base";
+import { AcButton, SvgIcon } from "@/components/base";
 import { getUserName } from "@/utils";
 import {
   AI_CHIPS,
@@ -145,7 +186,13 @@ import {
   idleAfterEmptyResult,
   isEmptySlotNeedMore
 } from "../applyEvent.js";
-import { streamTurn } from "../streamTurn.js";
+import { streamAiMeet } from "@/api/module/aiMeet.js";
+import {
+  confirmBookingAction,
+  confirmReleaseAction
+} from "../assistantActions.js";
+import { createDraftStore } from "../draftStore.js";
+import { runMeetingAgent } from "../runMeetingAgent.js";
 import { waitHintAt, waitHintsForAction } from "../waitHints.js";
 import {
   trackAgentBack,
@@ -157,7 +204,10 @@ import {
 } from "../telemetry.js";
 import { defaultBookingTitle } from "@/features/booking/defaultTitle.js";
 import AgentConfirmCard from "./AgentConfirmCard.vue";
+import AgentMarkdown from "./AgentMarkdown.vue";
+import AgentMineCard from "./AgentMineCard.vue";
 import AgentQueryCard from "./AgentQueryCard.vue";
+import AgentReleaseCard from "./AgentReleaseCard.vue";
 
 defineProps({
   rooms: { type: Array, default: () => [] },
@@ -181,14 +231,21 @@ const showShortcutChips = computed(
   () => !sending.value && !ui.value.status && !card.value
 );
 
+const bookedHeading = computed(() =>
+  String(card.value?.title || "").startsWith("已释放") ? "已释放" : "预定成功"
+);
+
 const bookedSummary = computed(() => {
   const current = card.value;
   if (current?.type !== "booked") return "";
   const title = current.title || defaultBookingTitle(getUserName());
+  if (String(title).startsWith("已释放")) return title;
   const slot = current.slot;
   if (!slot) return `${title} 已预定`;
   return `${title} · ${slot.roomName} · ${slot.date} ${slot.start}–${slot.end}`;
 });
+
+const drafts = createDraftStore();
 
 /** @type {AbortController | null} */
 let turnAbort = null;
@@ -270,27 +327,44 @@ const onEvent = (event, gen) => {
   scheduleEmptyIdle();
 };
 
-const runTurn = async (body) => {
+const failTurn = (err, gen) => {
+  if (gen !== turnGen) return;
+  stopWait();
+  const failEvent = {
+    type: "error",
+    msg: err.msg || err.message || "请求失败",
+    code: err.code,
+    expression: "sorry"
+  };
+  onEvent(failEvent, gen);
+};
+
+const runMessage = async (message) => {
   abortInFlightTurn();
   const gen = ++turnGen;
   const ac = new AbortController();
   turnAbort = ac;
   sending.value = true;
-  const action = typeof body.action === "string" ? body.action : "message";
-  if (action !== "cancel") startWait(action);
+  startWait("message");
   try {
-    await streamTurn(body, (e) => onEvent(e, gen), { signal: ac.signal });
+    const { event, issuedRooms } = await runMeetingAgent({
+      prompt: message,
+      complete: (payload) => streamAiMeet(payload, { signal: ac.signal }),
+      signal: ac.signal
+    });
+    if (ac.signal.aborted || gen !== turnGen) return;
+    if (event.type === "confirm" && event.slot) {
+      drafts.issueFromRooms(event.rooms || issuedRooms);
+      const draftCard = drafts.pickSlot(event.slot, { title: event.title });
+      onEvent({ type: "confirm", draft: draftCard, expression: "expect" }, gen);
+      return;
+    }
+    if (event.type === "query") drafts.issueFromRooms(issuedRooms);
+    if (event.type === "release_confirm") drafts.setRelease(event.booking);
+    onEvent(event, gen);
   } catch (err) {
-    if (ac.signal.aborted) return;
-    stopWait();
-    const failEvent = {
-      type: "error",
-      msg: err.msg || err.message || "请求失败",
-      code: err.code,
-      expression: "sorry"
-    };
-    ui.value = applyAgentEvent(ui.value, failEvent);
-    trackAgentStreamEvent(ui.value, failEvent);
+    if (ac.signal.aborted || err?.name === "AbortError") return;
+    failTurn(err, gen);
   } finally {
     stopWait();
     if (turnAbort === ac) turnAbort = null;
@@ -312,11 +386,7 @@ const sendMessage = (text, meta = {}) => {
     backCard: null,
     status: ""
   };
-  runTurn({
-    ...(ui.value.sessionId ? { sessionId: ui.value.sessionId } : {}),
-    action: "message",
-    message
-  });
+  runMessage(message);
 };
 
 const onSubmit = () => sendMessage(draft.value);
@@ -328,28 +398,82 @@ const retry = () => {
 const pickSlot = (slot) => {
   if (sending.value || !slot) return;
   trackAgentPick(ui.value, slot);
-  runTurn({
-    ...(ui.value.sessionId ? { sessionId: ui.value.sessionId } : {}),
-    action: "pick_slot",
-    slot
-  });
+  try {
+    const draftCard = drafts.pickSlot(slot);
+    onEvent(
+      { type: "confirm", draft: draftCard, expression: "expect" },
+      turnGen
+    );
+  } catch (err) {
+    failTurn(err, turnGen);
+  }
 };
 
-const confirmDraft = (title) => {
+const retargetSlot = (patch) => {
+  if (sending.value || card.value?.type !== "confirm") return;
+  try {
+    const next = drafts.updateSlot(patch);
+    ui.value = {
+      ...ui.value,
+      card: { ...card.value, draft: next }
+    };
+  } catch (err) {
+    failTurn(err, turnGen);
+  }
+};
+
+const confirmDraft = async (title) => {
   const draftCard = card.value?.type === "confirm" ? card.value.draft : null;
   if (!draftCard || sending.value) return;
   trackAgentConfirm(ui.value);
-  runTurn({
-    ...(ui.value.sessionId ? { sessionId: ui.value.sessionId } : {}),
-    action: "confirm",
-    draftId: draftCard.draftId,
-    title: String(title || "").slice(0, 50)
-  });
+  abortInFlightTurn();
+  const gen = ++turnGen;
+  sending.value = true;
+  startWait("confirm");
+  try {
+    drafts.confirmPayload(title);
+    const latest = drafts.peek().draft || draftCard;
+    const event = await confirmBookingAction(latest, title, {
+      userName: getUserName()
+    });
+    if (event.type === "suggest") {
+      drafts.issueFromRooms([{ slots: event.options }]);
+    } else {
+      drafts.clear();
+    }
+    onEvent(event, gen);
+  } catch (err) {
+    failTurn(err, gen);
+  } finally {
+    stopWait();
+    sending.value = false;
+  }
+};
+
+const confirmRelease = async () => {
+  const booking =
+    card.value?.type === "release_confirm" ? card.value.booking : null;
+  if (!booking || sending.value) return;
+  abortInFlightTurn();
+  const gen = ++turnGen;
+  sending.value = true;
+  startWait("confirm");
+  try {
+    const event = await confirmReleaseAction(booking);
+    drafts.clear();
+    onEvent(event, gen);
+  } catch (err) {
+    failTurn(err, gen);
+  } finally {
+    stopWait();
+    sending.value = false;
+  }
 };
 
 const goBack = () => {
   abortInFlightTurn();
   trackAgentBack(ui.value);
+  drafts.clear();
   ui.value = backFromConfirm(ui.value);
 };
 
@@ -357,22 +481,11 @@ const dismiss = () => {
   abortInFlightTurn();
   stopWait();
   stopEmptyIdle();
-  const sessionId = ui.value.sessionId;
+  drafts.clear();
   ui.value = applyAgentEvent(ui.value, {
     type: "closed",
     expression: "down"
   });
-  if (!sessionId) return;
-  const gen = ++turnGen;
-  const ac = new AbortController();
-  turnAbort = ac;
-  streamTurn({ sessionId, action: "cancel" }, (e) => onEvent(e, gen), {
-    signal: ac.signal
-  })
-    .catch(() => {})
-    .finally(() => {
-      if (turnAbort === ac) turnAbort = null;
-    });
 };
 
 const focusInput = () => {

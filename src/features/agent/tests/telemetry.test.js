@@ -35,7 +35,10 @@ test("agent_message 只带 len", async () => {
 });
 
 test("query 结果带 roomCount", async () => {
-  trackAgentStreamEvent({ sessionId: "s3" }, { type: "query", rooms: [{}, {}] });
+  trackAgentStreamEvent(
+    { sessionId: "s3" },
+    { type: "query", rooms: [{}, {}] }
+  );
   const events = await lastBatch();
   assert.equal(events[0].eventName, "agent_result");
   assert.equal(events[0].props.kind, "query");

@@ -1,6 +1,10 @@
 <template>
-  <article class="ai-buddy-card ai-buddy-query" aria-label="空闲会议室">
-    <h3 class="ai-buddy-card-title">{{ heading }}</h3>
+  <article
+    class="ai-buddy-card ai-buddy-query"
+    data-testid="mr-ai-query-card"
+    aria-label="空闲会议室"
+  >
+    <AgentMarkdown class="ai-buddy-card-title" :source="heading" />
     <ul v-if="rooms.length" class="ai-buddy-query-list">
       <li v-for="room in rooms" :key="room.roomId" class="ai-buddy-query-row">
         <div class="ai-buddy-query-meta">
@@ -34,10 +38,11 @@
         <div class="ai-buddy-slot-btns">
           <p class="ai-buddy-slot-hint">点选一个时段</p>
           <button
-            v-for="slot in (room.slots || []).slice(0, 3)"
+            v-for="slot in (room.slots || []).slice(0, 4)"
             :key="`${slot.roomId}-${slot.date}-${slot.start}-${slot.end}`"
             type="button"
             class="ai-buddy-slot-btn"
+            data-testid="mr-ai-slot"
             :aria-label="`选择 ${slot.start} 到 ${slot.end}`"
             @click="emit('pick', slot)"
           >
@@ -63,6 +68,7 @@
 
 <script setup>
 import { toMinutes } from "@/features/booking/time";
+import AgentMarkdown from "./AgentMarkdown.vue";
 
 defineProps({
   heading: { type: String, default: "" },

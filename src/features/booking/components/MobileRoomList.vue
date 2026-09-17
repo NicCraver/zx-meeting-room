@@ -1,13 +1,20 @@
 <template>
   <div class="m-room-list">
-    <MEmpty v-if="!rooms.length" class="m-empty">
+    <MEmpty v-if="!rooms.length" class="m-empty" data-testid="mr-m-empty">
       没有符合筛选条件的会议室
     </MEmpty>
-    <article v-for="room in rooms" :key="room.id" class="m-room-card">
+    <article
+      v-for="room in rooms"
+      :key="room.id"
+      class="m-room-card"
+      data-testid="mr-room-card"
+      :data-room-id="room.id"
+    >
       <div class="m-room-head">
         <button
           type="button"
           class="m-room-main"
+          data-testid="mr-room-open"
           @click="emit('openRoom', room)"
         >
           <span class="m-room-icon" aria-hidden="true">
@@ -54,7 +61,12 @@
       </div>
 
       <div class="m-mini">
-        <div class="m-mini-bar" @click="handleTapTrack(room, $event)">
+        <div
+          class="m-mini-bar"
+          data-testid="mr-room-track"
+          :data-room-id="room.id"
+          @click="handleTapTrack(room, $event)"
+        >
           <div class="m-mini-track">
             <span
               v-if="pastEnd > TL.LIST_START"
@@ -68,6 +80,7 @@
               v-for="ev in visibleEvents(room)"
               :key="`${room.id}-${ev.start}-${ev.end}-${ev.title}`"
               class="m-mini-busy"
+              data-testid="mr-busy-block"
               :class="{ mine: ev.mine }"
               :style="{
                 left: TL.listPct(toMinutes(ev.start)),

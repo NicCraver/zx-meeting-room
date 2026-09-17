@@ -15,6 +15,7 @@ import {
   TL,
   toMinutes,
   WEEK,
+  nowScrollLeft,
   weekDayHasSlot,
   weekDragSlot,
   weekExpandDays,
@@ -343,4 +344,38 @@ test("mergeWeekBoards overlays busyEvents by date onto each room", () => {
   assert.equal(merged.facilityOptions[0], "电视");
   assert.equal(merged.rooms[0].weekDays[0].busyEvents[0].start, "09:00");
   assert.equal(merged.rooms[0].weekDays[1].busyEvents[0].start, "14:00");
+});
+
+const DAY_BOARD = {
+  trackWidth: 80 * 24,
+  clientWidth: 1440,
+  roomWidth: 180
+};
+
+test("nowScrollLeft keeps early morning at the start", () => {
+  assert.equal(nowScrollLeft({ ...DAY_BOARD, nowMin: 30 }), 0);
+});
+
+test("nowScrollLeft puts 10:00 one hour from the track's left edge", () => {
+  // nowX = 10h * 80px; lead = 80px
+  assert.equal(
+    nowScrollLeft({ ...DAY_BOARD, clientWidth: 1000, nowMin: 10 * 60 }),
+    720
+  );
+});
+
+test("nowScrollLeft clamps late night to max scroll", () => {
+  assert.equal(nowScrollLeft({ ...DAY_BOARD, nowMin: 23 * 60 }), 660);
+});
+
+test("nowScrollLeft is 0 when the whole day already fits", () => {
+  assert.equal(
+    nowScrollLeft({
+      nowMin: 10 * 60,
+      trackWidth: 800,
+      clientWidth: 1200,
+      roomWidth: 180
+    }),
+    0
+  );
 });

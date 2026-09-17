@@ -29,6 +29,19 @@ export const shanghaiToday = (now = new Date()) => {
   return `${pick("year")}-${pick("month")}-${pick("day")}`;
 };
 
+/** 上海时区当前分钟数（0 - 1439） */
+export const shanghaiNowMinutes = (now = new Date()) => {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Shanghai",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(now);
+  const h = Number(parts.find((p) => p.type === "hour")?.value || 0);
+  const m = Number(parts.find((p) => p.type === "minute")?.value || 0);
+  return h * 60 + m;
+};
+
 export const addDays = (date, days) => {
   const [y, m, d] = date.split("-").map(Number);
   const utc = Date.UTC(y, m - 1, d + days);
@@ -389,4 +402,23 @@ export const availableDurations = (
     listEnd
   });
   return durations.filter((min) => start + min <= high);
+};
+
+/**
+ * 日视图时间轴默认 scrollLeft：把「现在」放在可视轨道左侧约 1 小时处，
+ * 清晨贴左、傍晚贴右。周视图轨道撑满、不调用。
+ */
+export const nowScrollLeft = ({
+  nowMin,
+  trackWidth,
+  clientWidth,
+  roomWidth,
+  dayMin = DAY_MIN
+}) => {
+  const maxScroll = Math.max(0, roomWidth + trackWidth - clientWidth);
+  if (maxScroll <= 0 || trackWidth <= 0) return 0;
+  const hourWidth = trackWidth / 24;
+  const nowX = (Math.max(0, Math.min(dayMin, nowMin)) / dayMin) * trackWidth;
+  const left = nowX - hourWidth;
+  return Math.round(Math.max(0, Math.min(maxScroll, left)));
 };

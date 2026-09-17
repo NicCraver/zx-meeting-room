@@ -10,14 +10,16 @@
 | 场景 | 命令（在 `apps/meeting/` 根执行） |
 |------|------|
 | 安装依赖 | `pnpm i` |
-| 起前端 | `pnpm dev`（端口 6273，`/api`→192.168.10.25，`/meetingApi`→Java 7004 `/meetingRoom`） |
+| 起前端 | `pnpm dev`（:6273；`/api`→网关，`/meetingApi`→contact :7004，`/aiChatApi`→ai-chat :8020） |
 | 全量构建 | `pnpm build`（vue-tsc → main/zx/m → mergeDist） |
 | 生产构建 | `pnpm build:prod` |
 | 仅类型检查 | `pnpm typecheck` |
-| 单测 | `pnpm test`（Vitest 5） |
+| 单测 | `pnpm test`（Vitest 5，含 `e2e/mocks`） |
 | 单测 UI | `pnpm test:ui` |
-| UI E2E | `pnpm test:e2e`（Playwright，需 Java :7004 + 前端 :6273） |
-| UI E2E 看着跑 | `pnpm test:e2e:headed` 弹出浏览器；`pnpm test:e2e:ui` 逐步点选用例 |
+| UI E2E | `pnpm test:e2e`（Playwright **内存 mock**，不需要 Java） |
+| UI E2E 看着跑 | `pnpm test:e2e:headed` / `pnpm test:e2e:ui` |
+| live 冒烟 | `pnpm test:e2e:live`（真 contact :7004；没起则 skip） |
+| 质量门 | `pnpm test:quality`（单测 + 默认 E2E） |
 | 格式化 | `pnpm format` |
 
 > ⚠️ 没有 ESLint。类型检查用 `vue-tsc`（已内嵌在 `build`）。

@@ -23,6 +23,7 @@
       <el-date-picker
         v-model="dateIso"
         type="date"
+        data-testid="mr-form-date"
         value-format="YYYY-MM-DD"
         format="M月D日"
         :clearable="false"
@@ -43,7 +44,12 @@
         @show="scrollActive('start')"
       >
         <template #reference>
-          <button type="button" class="dt-range-time" aria-label="开始时间">
+          <button
+            type="button"
+            class="dt-range-time"
+            data-testid="mr-form-start"
+            aria-label="开始时间"
+          >
             {{ fromMinutes(start) }}
           </button>
         </template>
@@ -53,6 +59,7 @@
             :key="t"
             type="button"
             class="dt-time-item"
+            :data-testid="`mr-time-start-${fromMinutes(t)}`"
             :class="{ 'is-active': t === start }"
             @click="pickStart(t)"
           >
@@ -72,7 +79,12 @@
         @show="scrollActive('end')"
       >
         <template #reference>
-          <button type="button" class="dt-range-time" aria-label="结束时间">
+          <button
+            type="button"
+            class="dt-range-time"
+            data-testid="mr-form-end"
+            aria-label="结束时间"
+          >
             {{ fromMinutes(end) }}
           </button>
         </template>
@@ -82,6 +94,7 @@
             :key="opt.value"
             type="button"
             class="dt-time-item"
+            :data-testid="`mr-time-end-${fromMinutes(opt.value)}`"
             :class="{ 'is-active': opt.value === end }"
             @click="pickEnd(opt.value)"
           >

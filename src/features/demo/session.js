@@ -1,10 +1,7 @@
-import { getCorpId, getUserId } from "@/utils";
+import { getCorpId, getToken, getUserId } from "@/utils";
 import {
   canEnterDemoAdmin,
-  clearDemoSession,
-  demoEnterUrl,
   destPath,
-  demoHomeUrl,
   hasDemoIdentity,
   javaEnterUrl
 } from "./demoTenants";
@@ -20,6 +17,7 @@ export {
 } from "./demoTenants";
 
 export const currentHasDemoIdentity = () => {
+  if (getToken()) return true;
   const accountId =
     typeof sessionStorage !== "undefined"
       ? sessionStorage.getItem("zxAccountId")
@@ -39,17 +37,6 @@ export const currentCanEnterDemoAdmin = () => {
   return canEnterDemoAdmin(platform);
 };
 
-export const enterAsDemoUser = (corpId, user, dest = "booking") => {
-  location.assign(
-    demoEnterUrl(corpId, user, import.meta.env.BASE_URL, destPath(dest))
-  );
-};
-
 export const enterAsJavaUser = (dest = "booking") => {
   location.assign(javaEnterUrl(import.meta.env.BASE_URL, destPath(dest)));
-};
-
-export const switchDemoUser = () => {
-  clearDemoSession(sessionStorage);
-  location.assign(demoHomeUrl(import.meta.env.BASE_URL));
 };
