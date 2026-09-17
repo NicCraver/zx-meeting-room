@@ -160,6 +160,10 @@ export default defineConfig(({ mode }) => {
       environment: "node"
     },
     build: {
+      // 智信 PC Electron 19 = Chromium 102。高于此的语法（dvh、:has、CSS nesting）
+      // 在 WebView 里会整条声明作废；cssTarget 避免压缩时丢掉 vh 回退只留 dvh。
+      target: "chrome102",
+      cssTarget: "chrome102",
       // 9 个 SvgIcon 图标 0.23–2.15 KB，内联成 data URI 可省下 9 次 WebView 往返；
       // SvgIcon 的 mask-image 已按 data URL 处理引号（见 SvgIcon.vue 注释）
       assetsInlineLimit: 4096,

@@ -13,7 +13,7 @@
         @click="goAdminHome"
       >
         <div
-          class="w-34px h-34px shrink-0 rounded-8px bg-gradient-to-br from-primary to-primaryActive text-onPrimary flex items-center justify-center shadow-sm"
+          class="admin-brand-mark w-34px h-34px shrink-0 rounded-8px text-onPrimary flex items-center justify-center shadow-sm"
           aria-hidden="true"
         >
           <!-- 会议室与大屏设计图标 -->

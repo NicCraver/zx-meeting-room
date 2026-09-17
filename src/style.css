@@ -33,6 +33,15 @@ a:hover {
   color: var(--color-primary-pressed);
 }
 
+/* Chrome 102 不支持渐变插值 `in oklch`（UnoCSS wind3 默认），改用普通 linear-gradient */
+.admin-brand-mark {
+  background-image: linear-gradient(
+    to bottom right,
+    var(--zx-color-primary),
+    var(--zx-color-primary-pressed)
+  );
+}
+
 button,
 [role="button"],
 .cursor-pointer {

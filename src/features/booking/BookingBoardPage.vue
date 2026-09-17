@@ -72,9 +72,11 @@
         :rooms="visibleRooms"
         :board-date="boardDate"
         @booked="reload"
+        @expression="buddyExpression = $event"
       />
       <AiBuddyFab
         companion
+        :expression="buddyExpression"
         @activate="aiBarRef?.focusInput()"
         @booked="reload"
       />
@@ -118,6 +120,7 @@ import "./booking.css";
 const router = useRouter();
 const tourRef = ref(null);
 const aiBarRef = ref(null);
+const buddyExpression = ref("idle");
 const isAdmin = ref(false);
 const bookingRoom = ref(null);
 const bookingRange = ref(null);

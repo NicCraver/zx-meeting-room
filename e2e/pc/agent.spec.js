@@ -12,6 +12,10 @@ test.describe("PC 助手", () => {
     await waitPcBoard(page);
     await tid(page, "mr-ai-chip-find-free").click();
     await expect(tid(page, "mr-ai-query-card")).toBeVisible({ timeout: 15_000 });
+    await expect(tid(page, "mr-buddy-fab")).not.toHaveAttribute(
+      "data-expression",
+      "idle"
+    );
   });
 
   test("多房间 query 卡不超出视口", async ({ page }) => {

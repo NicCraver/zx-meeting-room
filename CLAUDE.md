@@ -5,6 +5,7 @@
 
 ## 环境要求
 - Node 22.16.0 / pnpm 10.22.0（根 `package.json#volta` 锁定）。
+- **PC 宿主 Electron 19 / Chromium 102。** `vite.config.js` 的 `build.target` / `cssTarget` 锁 `chrome102`。样式不要用 `dvh` / `:has()` / CSS nesting；`min()` 里掺了不认识的单位会整条作废。
 
 ## 常用命令
 | 场景 | 命令（在 `apps/meeting/` 根执行） |

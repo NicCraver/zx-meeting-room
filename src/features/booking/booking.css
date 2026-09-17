@@ -1488,8 +1488,8 @@
   bottom: calc(116px + env(safe-area-inset-bottom, 0px));
   z-index: 41;
   width: min(300px, calc(100vw - 48px));
+  /* Electron 19 / Chrome 102 没有 dvh；min() 里掺 dvh 会整条 max-height 作废 */
   max-height: calc(100vh - 132px - env(safe-area-inset-bottom, 0px));
-  max-height: calc(100dvh - 132px - env(safe-area-inset-bottom, 0px));
   padding: 0;
   border: none;
   background: transparent;
@@ -1505,7 +1505,6 @@
 .booking-ai-bar.is-lifted {
   bottom: calc(268px + env(safe-area-inset-bottom, 0px));
   max-height: calc(100vh - 284px - env(safe-area-inset-bottom, 0px));
-  max-height: calc(100dvh - 284px - env(safe-area-inset-bottom, 0px));
 }
 
 /* 多房间卡会很高：高度锁在整条 bar 上，结果区自己滚。el-scrollbar 的 max-height
@@ -3001,7 +3000,9 @@ html[data-device="pc"] {
   padding: 0;
   border: none;
   background: transparent;
+  box-shadow: none;
   line-height: 0;
+  -webkit-tap-highlight-color: transparent;
   transition: bottom 0.22s var(--ease-out);
 }
 
@@ -3011,6 +3012,7 @@ html[data-device="pc"] {
 
 .ai-buddy-svg {
   display: block;
+  overflow: visible;
   width: 64px;
   height: 64px;
 }
@@ -3051,7 +3053,6 @@ html[data-device="pc"] {
   z-index: 40;
   width: min(360px, calc(100vw - 32px));
   max-height: calc(100vh - 136px - env(safe-area-inset-bottom, 0px));
-  max-height: calc(100dvh - 136px - env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -3064,7 +3065,6 @@ html[data-device="pc"] {
 .ai-buddy-dock.is-lifted {
   bottom: calc(240px + env(safe-area-inset-bottom, 0px));
   max-height: calc(100vh - 256px - env(safe-area-inset-bottom, 0px));
-  max-height: calc(100dvh - 256px - env(safe-area-inset-bottom, 0px));
 }
 
 .ai-buddy-dock > * {
@@ -3211,7 +3211,7 @@ html[data-device="mobile"] .ai-buddy-dock {
   max-height: min(
     52vh,
     420px,
-    calc(100dvh - 200px - env(safe-area-inset-bottom, 0px))
+    calc(100vh - 200px - env(safe-area-inset-bottom, 0px))
   );
 }
 

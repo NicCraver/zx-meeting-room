@@ -22,20 +22,8 @@
         height="64"
         aria-hidden="true"
       >
-        <defs>
-          <filter :id="glowId" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow
-              dx="0"
-              dy="3"
-              stdDeviation="2.2"
-              flood-color="#1f2329"
-              flood-opacity="0.16"
-            />
-          </filter>
-        </defs>
         <path
           class="ai-buddy-body"
-          :filter="`url(#${glowId})`"
           d="M32.2 5.2c15.4 0 26.6 10.8 26.6 26.6 0 15.6-11.2 27-26.8 27C16.4 58.8 5.4 47.8 5.4 31.8 5.4 16.4 16.8 5.2 32.2 5.2Z"
         />
         <g ref="exprRef" class="ai-buddy-expr">
@@ -285,12 +273,11 @@ import AgentReleaseCard from "./AgentReleaseCard.vue";
 
 const props = defineProps({
   lifted: { type: Boolean, default: false },
-  companion: { type: Boolean, default: false }
+  companion: { type: Boolean, default: false },
+  expression: { type: String, default: "" }
 });
 
 const emit = defineEmits(["booked", "activate"]);
-
-const glowId = `ai-buddy-glow-${Math.random().toString(36).slice(2, 8)}`;
 
 const fabRef = ref(null);
 const exprRef = ref(null);
@@ -647,6 +634,15 @@ watch(
   () => ui.value.expression,
   (expression) => {
     beginPose(expression);
+  }
+);
+
+watch(
+  () => props.expression,
+  (expression) => {
+    if (!props.companion || !expression) return;
+    if (ui.value.expression === expression) return;
+    ui.value = { ...ui.value, expression };
   }
 );
 

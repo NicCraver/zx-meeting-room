@@ -168,7 +168,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { ElScrollbar } from "element-plus";
 import { AcButton, SvgIcon } from "@/components/base";
 import { getUserName } from "@/utils";
@@ -215,7 +215,7 @@ defineProps({
   lifted: { type: Boolean, default: false }
 });
 
-const emit = defineEmits(["booked"]);
+const emit = defineEmits(["booked", "expression"]);
 
 const inputRef = ref(null);
 const chips = AI_CHIPS;
@@ -227,6 +227,11 @@ const sending = ref(false);
 const ui = ref(emptyAgentUi());
 const lastMessage = ref("");
 const card = computed(() => ui.value.card);
+
+watch(
+  () => ui.value.expression,
+  (expression) => emit("expression", expression)
+);
 const showShortcutChips = computed(
   () => !sending.value && !ui.value.status && !card.value
 );
