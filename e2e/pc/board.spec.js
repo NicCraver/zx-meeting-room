@@ -52,14 +52,13 @@ test.describe("PC 看板", () => {
     await expect(tid(page, "mr-room-row")).toHaveCount(1);
   });
 
-  test("日周切换", async ({ page }) => {
+  test("周视图入口已隐藏，看板固定日视图", async ({ page }) => {
     await openMeeting(page);
     await waitPcBoard(page);
-    await tid(page, "mr-view-week").click();
-    await expect(tid(page, "mr-view-week")).toHaveAttribute("aria-checked", "true");
-    await expect(tid(page, "mr-board")).toHaveClass(/is-week/);
-    await tid(page, "mr-view-day").click();
-    await expect(tid(page, "mr-view-day")).toHaveAttribute("aria-checked", "true");
+    // 2026-09-17 起周视图暂不上线（PcToolbar 的 SHOW_WEEK_VIEW）
+    await expect(tid(page, "mr-view-week")).toHaveCount(0);
+    await expect(tid(page, "mr-view-day")).toHaveCount(0);
+    await expect(tid(page, "mr-board")).not.toHaveClass(/is-week/);
   });
 
   test("切到明天会请求对应日期", async ({ page }) => {
