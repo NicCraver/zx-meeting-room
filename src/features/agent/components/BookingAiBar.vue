@@ -88,6 +88,7 @@
       >
         <SvgIcon name="close" class="w-4 h-4" />
       </button>
+      <div class="booking-ai-results-body">
       <AgentMarkdown
         v-if="card.type === 'need_more'"
         class="ai-buddy-card-copy booking-ai-need-more"
@@ -163,6 +164,7 @@
           </div>
         </article>
       </el-scrollbar>
+      </div>
     </div>
   </section>
 </template>

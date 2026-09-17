@@ -1513,6 +1513,15 @@
 .booking-ai-bar .booking-ai-results {
   flex: 1 1 auto;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.booking-ai-results-body {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -1555,7 +1564,7 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  z-index: 2;
+  z-index: 3;
   width: 28px;
   height: 28px;
   padding: 0;
@@ -1564,7 +1573,7 @@
   justify-content: center;
   border: none;
   border-radius: 14px;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.92);
   color: var(--color-mute);
   cursor: pointer;
 }
@@ -3203,6 +3212,8 @@ html[data-device="mobile"] .ai-buddy-dock {
   display: grid;
   grid-template-rows: 0fr;
   min-height: 0;
+  position: relative;
+  overflow: hidden;
   transition: grid-template-rows 0.28s var(--ease-out);
 }
 

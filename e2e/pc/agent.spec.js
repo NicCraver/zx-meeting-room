@@ -26,6 +26,16 @@ test.describe("PC 助手", () => {
     await tid(page, "mr-ai-send").click();
     await expect(tid(page, "mr-ai-query-card")).toBeVisible({ timeout: 15_000 });
     await expectFitsViewport(page.locator(".booking-ai-bar"), page);
+    await page.locator(".booking-ai-results-body").evaluate((el) => {
+      el.scrollTop = el.scrollHeight;
+    });
+    const closeBox = await tid(page, "mr-ai-result-close").boundingBox();
+    const cardBox = await page.locator(".booking-ai-results").boundingBox();
+    expect(closeBox, "关闭钮应仍在结果卡内").toBeTruthy();
+    expect(closeBox.y).toBeGreaterThanOrEqual(cardBox.y);
+    expect(closeBox.y + closeBox.height).toBeLessThanOrEqual(
+      cardBox.y + cardBox.height + 1
+    );
   });
 
   test("选档确认预定写入 store，不打 booking_submit", async ({ page }) => {

@@ -89,17 +89,17 @@
         class="ai-buddy-card-slot"
         :class="{ 'is-on': Boolean(ui.card || ui.status) }"
       >
+        <button
+          v-if="ui.card"
+          type="button"
+          class="booking-ai-result-close"
+          data-testid="mr-ai-result-close"
+          aria-label="关闭"
+          @click="dismiss"
+        >
+          <SvgIcon name="close" class="w-4 h-4" />
+        </button>
         <div class="ai-buddy-card-slot-inner">
-          <button
-            v-if="ui.card"
-            type="button"
-            class="booking-ai-result-close"
-            data-testid="mr-ai-result-close"
-            aria-label="关闭"
-            @click="dismiss"
-          >
-            <SvgIcon name="close" class="w-4 h-4" />
-          </button>
           <p
             v-if="ui.status"
             class="ai-buddy-status"
