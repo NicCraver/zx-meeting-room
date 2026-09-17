@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { createStore, openMeeting, waitPcBoard } from "../helpers/open.js";
+import { expectFitsViewport } from "../helpers/expect.js";
 import { tid } from "../locators.js";
 import { defaultRooms } from "../mocks/seed.js";
 
@@ -11,6 +12,16 @@ test.describe("PC 助手", () => {
     await waitPcBoard(page);
     await tid(page, "mr-ai-chip-find-free").click();
     await expect(tid(page, "mr-ai-query-card")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("多房间 query 卡不超出视口", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 560 });
+    await openMeeting(page);
+    await waitPcBoard(page);
+    await tid(page, "mr-ai-input").fill("很多空闲会议室");
+    await tid(page, "mr-ai-send").click();
+    await expect(tid(page, "mr-ai-query-card")).toBeVisible({ timeout: 15_000 });
+    await expectFitsViewport(page.locator(".booking-ai-bar"), page);
   });
 
   test("选档确认预定写入 store，不打 booking_submit", async ({ page }) => {

@@ -135,6 +135,51 @@ export const agentSseFrames = (state, body) => {
     );
   }
 
+  if (/很多空闲|三间空闲/.test(message)) {
+    const pairs = [
+      ["15:00", "16:00"],
+      ["15:30", "16:30"],
+      ["16:00", "17:00"],
+      ["16:30", "17:30"]
+    ];
+    const extra = {
+      id: "room-c",
+      name: "二号会议室",
+      buildingName: "奥城",
+      floorName: "5层",
+      capacity: 20,
+      facilities: ["电视", "投影", "音响"],
+      openStart: "08:00",
+      openEnd: "22:00"
+    };
+    return sse(
+      { type: "session", sessionId },
+      { type: "status", text: "正在查空档", expression: "focus" },
+      {
+        type: "query",
+        heading: "今天 · 空闲 ≥ 1 小时",
+        expression: "focus",
+        rooms: [
+          queryRoom(
+            roomA,
+            TODAY,
+            pairs.map(([s, e]) => slotOf(roomA, TODAY, s, e))
+          ),
+          queryRoom(
+            extra,
+            TODAY,
+            pairs.map(([s, e]) => slotOf(extra, TODAY, s, e))
+          ),
+          queryRoom(
+            roomB,
+            TODAY,
+            pairs.map(([s, e]) => slotOf(roomB, TODAY, s, e))
+          )
+        ]
+      }
+    );
+  }
+
   // 找空闲：直接给可点档，方便 E2E 走完确认卡（不跟真实 LLM 的 need_more 日期追问绑死）
   if (/找空闲|空闲会议室/.test(message) || !message) {
     const slot = slotOf(roomA, TODAY, "14:00", "15:00");

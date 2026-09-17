@@ -1488,6 +1488,8 @@
   bottom: calc(116px + env(safe-area-inset-bottom, 0px));
   z-index: 41;
   width: min(300px, calc(100vw - 48px));
+  max-height: calc(100vh - 132px - env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - 132px - env(safe-area-inset-bottom, 0px));
   padding: 0;
   border: none;
   background: transparent;
@@ -1496,27 +1498,30 @@
   flex-direction: column-reverse;
   align-items: stretch;
   gap: 8px;
+  overflow: hidden;
   transition: bottom 0.22s var(--ease-out);
 }
 
 .booking-ai-bar.is-lifted {
   bottom: calc(268px + env(safe-area-inset-bottom, 0px));
+  max-height: calc(100vh - 284px - env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - 284px - env(safe-area-inset-bottom, 0px));
+}
+
+/* 多房间卡会很高：高度锁在整条 bar 上，结果区自己滚。el-scrollbar 的 max-height
+   在 height:100% 循环里经常撑不开，不能当唯一约束。 */
+.booking-ai-bar .booking-ai-results {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .booking-ai-bar .booking-ai-results-scroll,
 .booking-ai-bar .booking-ai-results-scroll .el-scrollbar__wrap {
-  max-height: min(
-    52vh,
-    calc(100dvh - 280px - env(safe-area-inset-bottom, 0px))
-  );
-}
-
-.booking-ai-bar.is-lifted .booking-ai-results-scroll,
-.booking-ai-bar.is-lifted .booking-ai-results-scroll .el-scrollbar__wrap {
-  max-height: min(
-    42vh,
-    calc(100dvh - 420px - env(safe-area-inset-bottom, 0px))
-  );
+  max-height: none;
+  height: auto;
+  overflow: visible;
 }
 
 .booking-ai-form {
@@ -1526,6 +1531,7 @@
   align-items: stretch;
   gap: 0;
   width: 100%;
+  flex-shrink: 0;
   padding: 12px 14px 12px;
 }
 
@@ -1543,7 +1549,6 @@
 
 .booking-ai-bar .booking-ai-results {
   position: relative;
-  overflow: hidden;
 }
 
 .booking-ai-result-close {
@@ -1656,6 +1661,7 @@
   align-items: flex-start;
   gap: 8px;
   margin: 0;
+  flex-shrink: 0;
 }
 
 .booking-ai-chip {
@@ -3044,16 +3050,21 @@ html[data-device="pc"] {
   bottom: calc(120px + env(safe-area-inset-bottom, 0px));
   z-index: 40;
   width: min(360px, calc(100vw - 32px));
+  max-height: calc(100vh - 136px - env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - 136px - env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: 8px;
   pointer-events: none;
+  overflow: hidden;
   transition: bottom 0.22s var(--ease-out);
 }
 
 .ai-buddy-dock.is-lifted {
   bottom: calc(240px + env(safe-area-inset-bottom, 0px));
+  max-height: calc(100vh - 256px - env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - 256px - env(safe-area-inset-bottom, 0px));
 }
 
 .ai-buddy-dock > * {
@@ -3071,6 +3082,7 @@ html[data-device="mobile"] .ai-buddy-dock {
   flex-direction: column;
   align-items: stretch;
   gap: 8px;
+  flex-shrink: 0;
   padding: 8px;
   background: var(--color-canvas);
   border: 1px solid var(--color-hairline);
@@ -3189,12 +3201,18 @@ html[data-device="mobile"] .ai-buddy-dock {
 .ai-buddy-card-slot {
   display: grid;
   grid-template-rows: 0fr;
+  min-height: 0;
   transition: grid-template-rows 0.28s var(--ease-out);
 }
 
 .ai-buddy-card-slot.is-on {
   grid-template-rows: 1fr;
-  max-height: min(52vh, 420px);
+  flex: 1 1 auto;
+  max-height: min(
+    52vh,
+    420px,
+    calc(100dvh - 200px - env(safe-area-inset-bottom, 0px))
+  );
 }
 
 .ai-buddy-card-slot-inner {
@@ -3315,17 +3333,21 @@ html[data-device="mobile"] .ai-buddy-dock {
 
 .ai-buddy-query-meta {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
   margin: 0 0 10px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--color-hairline);
 }
 
 .ai-buddy-query-meta strong {
+  min-width: 0;
   font-weight: 500;
   color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ai-buddy-query-meta span {
