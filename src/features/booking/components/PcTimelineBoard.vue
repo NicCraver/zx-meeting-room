@@ -134,26 +134,46 @@
           :data-room-id="room.id"
           :class="{ 'is-picking': selection && selection.roomId === room.id }"
         >
-          <button
-            type="button"
-            class="tl-room-cell"
-            data-testid="mr-room-book"
-            :data-room-id="room.id"
-            :aria-label="`预约 ${room.name}`"
-            title="点击预约该会议室"
-            @click="emit('book-room', room)"
-          >
-            <div class="tl-room-name">
-              <span class="tl-room-name-text">{{ room.name }}</span>
-              <span class="tl-room-badge">常用</span>
-            </div>
-            <div class="tl-room-meta-row">
-              <span class="tl-room-meta">
-                {{ room.capacity }}人 {{ (room.facilities || []).join("/") }}
-              </span>
-              <SvgIcon name="plus" class="tl-room-plus" />
-            </div>
-          </button>
+          <!-- 星标不能嵌在预约按钮里（button 套 button 是非法结构），并排放、整块裁在同一格 -->
+          <div class="tl-room-cell-wrap">
+            <button
+              type="button"
+              class="tl-room-cell"
+              data-testid="mr-room-book"
+              :data-room-id="room.id"
+              :aria-label="`预约 ${room.name}`"
+              title="点击预约该会议室"
+              @click="emit('book-room', room)"
+            >
+              <div class="tl-room-name">
+                <span class="tl-room-name-text">{{ room.name }}</span>
+                <span v-if="room.favorite" class="tl-room-badge">常用</span>
+              </div>
+              <div class="tl-room-meta-row">
+                <span class="tl-room-meta">
+                  {{ room.capacity }}人 {{ (room.facilities || []).join("/") }}
+                </span>
+                <SvgIcon name="plus" class="tl-room-plus" />
+              </div>
+            </button>
+            <button
+              type="button"
+              class="tl-room-fav"
+              :class="{ 'is-on': room.favorite }"
+              data-testid="mr-room-fav"
+              :data-room-id="room.id"
+              :data-favorite="room.favorite ? '1' : '0'"
+              :aria-pressed="room.favorite ? 'true' : 'false'"
+              :aria-label="favoriteLabel(room)"
+              :title="favoriteLabel(room)"
+              @click.stop="emit('toggle-favorite', room)"
+            >
+              <SvgIcon
+                :name="room.favorite ? 'star-fill' : 'star'"
+                class="tl-room-fav-icon"
+              />
+            </button>
+          </div>
 
           <div
             class="tl-track"
@@ -353,6 +373,7 @@ import {
   shanghaiNowMinutes
 } from "../time";
 import { placeConfirmCard } from "../confirmPlace";
+import { favoriteLabel } from "../favorites";
 import { getTourDragRange, tourDragSlotStyle } from "../bookingTour";
 import { SvgIcon } from "@/components/base";
 
@@ -366,7 +387,13 @@ const props = defineProps({
   todayIso: { type: String, default: "" }
 });
 
-const emit = defineEmits(["update:selection", "commit", "notice", "book-room"]);
+const emit = defineEmits([
+  "update:selection",
+  "commit",
+  "notice",
+  "book-room",
+  "toggle-favorite"
+]);
 
 const nowMin = ref(shanghaiNowMinutes());
 const boardEl = ref(null);

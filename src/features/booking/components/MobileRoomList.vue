@@ -58,6 +58,23 @@
             </span>
           </span>
         </button>
+        <!-- 星标与整行按钮并排，不能嵌进去（button 套 button 非法） -->
+        <button
+          type="button"
+          class="m-room-fav"
+          :class="{ 'is-on': room.favorite }"
+          data-testid="mr-room-fav"
+          :data-room-id="room.id"
+          :data-favorite="room.favorite ? '1' : '0'"
+          :aria-pressed="room.favorite ? 'true' : 'false'"
+          :aria-label="favoriteLabel(room)"
+          @click.stop="emit('toggleFavorite', room)"
+        >
+          <SvgIcon
+            :name="room.favorite ? 'star-fill' : 'star'"
+            class="m-room-fav-icon"
+          />
+        </button>
       </div>
 
       <div class="m-mini">
@@ -113,7 +130,8 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { MEmpty } from "@/components/base";
+import { MEmpty, SvgIcon } from "@/components/base";
+import { favoriteLabel } from "../favorites";
 import { pickTapSlot, toMinutes, TL } from "../time";
 
 const M_DEFAULT_DURATION = 60;
@@ -128,7 +146,8 @@ const emit = defineEmits([
   "update:selection",
   "tapEvent",
   "openRoom",
-  "notice"
+  "notice",
+  "toggleFavorite"
 ]);
 
 const shanghaiNowMinutes = () => {

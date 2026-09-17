@@ -249,6 +249,29 @@
   gap: 8px;
 }
 
+.m-room-fav {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--color-mute);
+}
+
+.m-room-fav.is-on {
+  color: #f5a623;
+}
+
+.m-room-fav-icon {
+  width: 18px;
+  height: 18px;
+}
+
 .m-room-main {
   flex: 1;
   min-width: 0;
@@ -1044,6 +1067,7 @@
   flex-direction: column;
   max-height: min(80vh, 720px);
   margin-top: 8vh !important;
+  overflow: hidden;
 }
 
 .el-dialog.mine-bookings-dialog .bg-grayLight {
@@ -2316,6 +2340,56 @@ button.tl-room-cell {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/*
+ * 预约按钮 + 星标同占一格，星标浮在右上角。
+ * sticky 必须挂在外层：房间列是横向滚动时钉在左侧的，若仍让内层 .tl-room-cell 自己 sticky，
+ * 它只会在这个只有一格宽的 wrap 里「粘」，整列会跟着时间轴滚走（点星标点不到）。
+ */
+.tl-room-cell-wrap {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  flex: none;
+  display: flex;
+}
+
+.tl-room-cell-wrap .tl-room-cell {
+  position: static;
+  z-index: auto;
+}
+
+.tl-room-fav {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-mute);
+  cursor: pointer;
+}
+
+.tl-room-fav:hover {
+  background: var(--color-canvas-soft);
+  color: #f5a623;
+}
+
+.tl-room-fav.is-on {
+  color: #f5a623;
+}
+
+.tl-room-fav-icon {
+  width: 14px;
+  height: 14px;
 }
 
 .tl-room-badge {

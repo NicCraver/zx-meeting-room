@@ -28,3 +28,11 @@ export const updateRoom = (id, payload) =>
 
 export const setRoomEnabled = (id, enabled) =>
   http.post(`/rooms/enabled/${id}`, { enabled });
+
+/**
+ * 个人常用（收藏），任何人都能改自己的那份，不需要管理员。
+ * 走 /favorites 而不是 /rooms——后者整个 controller 挂了管理员校验。
+ * 回参 { roomId, favorite } 是落库后的状态，按它对账。
+ */
+export const setRoomFavorite = (id, favorite) =>
+  http.post(`/favorites/set/${id}`, { favorite });
